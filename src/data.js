@@ -14,22 +14,22 @@ export const brand = {
 
 export const navLinks = ['Home', 'Tours', 'Destinations', 'Hotels', 'Blog', 'Contact']
 
-export const heroImage = img('1476514525535-07fb3b4ae5f1', 1920)
+export const heroImage = '/images/cities/tunis-1.jpg'
 
 export const tours = [
-  { image: img('1552832230-c0197dd311b5'), location: 'Rome, Italy', title: 'Ancient Rome & the Colosseum Walking Tour', meta: '3 days 2 nights - Couple', price: 58, rating: 4.8 },
-  { image: img('1533105079780-92b9be482077'), location: 'Santorini, Greece', title: 'Whitewashed Cliffs and Caldera Sunset Cruise', meta: '4 days 3 nights - Couple', price: 63, rating: 4.9 },
-  { image: img('1530789253388-582c481c54b0'), location: 'Cappadocia, Turkey', title: 'Hot Air Balloons Over the Fairy Chimneys', meta: '3 days 2 nights - Family', price: 42, rating: 4.7 },
-  { image: img('1539650116574-8efeb43e2750'), location: 'Giza, Egypt', title: 'Pyramids, Sphinx and the Nile by Felucca', meta: '5 days 4 nights - Group', price: 52, rating: 4.8 },
+  { image: '/images/cities/kairouan-2.jpg', location: 'Rome, Italy', title: 'Ancient Rome & the Colosseum Walking Tour', meta: '3 days 2 nights - Couple', price: 58, rating: 4.8 },
+  { image: '/images/cities/tataouine-2.jpg', location: 'Santorini, Greece', title: 'Whitewashed Cliffs and Caldera Sunset Cruise', meta: '4 days 3 nights - Couple', price: 63, rating: 4.9 },
+  { image: '/images/cities/kebili-2.jpg', location: 'Cappadocia, Turkey', title: 'Hot Air Balloons Over the Fairy Chimneys', meta: '3 days 2 nights - Family', price: 42, rating: 4.7 },
+  { image: '/images/cities/beja-2.jpg', location: 'Giza, Egypt', title: 'Pyramids, Sphinx and the Nile by Felucca', meta: '5 days 4 nights - Group', price: 52, rating: 4.8 },
 ]
 
 export const popularDestinations = [
-  { image: img('1506929562872-bb421503ef21', 900), name: 'Maldives Islands', info: '5352+ tours & 856+ activities' },
-  { image: img('1499856871958-5b9627545d1a', 900), name: 'Paris, France', info: '4120+ tours & 612+ activities' },
-  { image: img('1537996194471-e657df975ab4', 900), name: 'Bali, Indonesia', info: '3870+ tours & 540+ activities' },
-  { image: img('1544735716-392fe2489ffa', 900), name: 'Mount Everest, Nepal', info: '980+ tours & 210+ activities' },
-  { image: img('1512453979798-5ea266f8880c', 900), name: 'Dubai, UAE', info: '2950+ tours & 430+ activities' },
-  { image: img('1518548419970-58e3b4079ab2', 900), name: 'Tanah Lot, Bali', info: '1640+ tours & 305+ activities' },
+  { image: '/images/cities/mahdia-2.jpg', name: 'Maldives Islands', info: '5352+ tours & 856+ activities' },
+  { image: '/images/cities/sousse-2.jpg', name: 'Paris, France', info: '4120+ tours & 612+ activities' },
+  { image: '/images/cities/monastir-2.jpg', name: 'Bali, Indonesia', info: '3870+ tours & 540+ activities' },
+  { image: '/images/cities/kef-2.jpg', name: 'Mount Everest, Nepal', info: '980+ tours & 210+ activities' },
+  { image: '/images/cities/sfax-2.jpg', name: 'Dubai, UAE', info: '2950+ tours & 430+ activities' },
+  { image: '/images/cities/bizerte-2.jpg', name: 'Tanah Lot, Bali', info: '1640+ tours & 305+ activities' },
 ]
 
 export const features = [
@@ -40,10 +40,10 @@ export const features = [
 ]
 
 export const hotels = [
-  { image: img('1566073771259-6a8506099945'), location: 'Ao Nang, Thailand', title: 'Brown Bench Poolside Resort & Spa', price: 85, rating: 4.8 },
-  { image: img('1571896349842-33c89424de2d'), location: 'Kigali, Rwanda', title: 'Green Gardens Lakeview Hotel', price: 92, rating: 4.7 },
-  { image: img('1582719508461-905c673771fd'), location: 'Phuket, Thailand', title: 'Sunset Deck Beach Villas', price: 110, rating: 4.9 },
-  { image: img('1551882547-ff40c63fe5fa'), location: 'Marrakech, Morocco', title: 'Palm Courtyard Boutique Riad', price: 78, rating: 4.8 },
+  { image: '/images/hostel/common1.jpg', location: 'Ao Nang, Thailand', title: 'Brown Bench Poolside Resort & Spa', price: 85, rating: 4.8 },
+  { image: '/images/hostel/common2.jpg', location: 'Kigali, Rwanda', title: 'Green Gardens Lakeview Hotel', price: 92, rating: 4.7 },
+  { image: '/images/hostel/common3.jpg', location: 'Phuket, Thailand', title: 'Sunset Deck Beach Villas', price: 110, rating: 4.9 },
+  { image: '/images/hostel/outdoors.jpg', location: 'Marrakech, Morocco', title: 'Palm Courtyard Boutique Riad', price: 78, rating: 4.8 },
 ]
 
 export const appPerks = ['Experienced Agency', 'Professional Team', 'Low Cost Travel', 'Online Support 24/7']
@@ -56,15 +56,15 @@ export const testimonials = [
 ]
 
 export const ctas = [
-  { image: img('1504280390367-361c6d9f38f4', 900), tag: 'Tent Camping', title: 'Explore the world’s best campsites' },
-  { image: img('1507525428034-b723cf961d3e', 900), tag: 'Sea Beach', title: 'The clearest beaches in Thailand' },
-  { image: img('1432405972618-c60b0225b8f9', 900), tag: 'Water Falls', title: 'Hidden waterfalls of Bali, Indonesia' },
+  { image: '/images/cities/tozeur-2.jpg', tag: 'Tent Camping', title: 'Explore the world’s best campsites' },
+  { image: '/images/cities/gabes-2.jpg', tag: 'Sea Beach', title: 'The clearest beaches in Thailand' },
+  { image: '/images/cities/zaghouan-2.jpg', tag: 'Water Falls', title: 'Hidden waterfalls of Bali, Indonesia' },
 ]
 
 export const posts = [
-  { image: img('1488646953014-85cb44e25828'), tag: 'Travel', title: 'The Ultimate Guide to Planning Your Dream Vacation', date: '25 February 2026', comments: 5 },
-  { image: img('1544551763-46a013bb70d5'), tag: 'Adventure', title: 'Unforgettable Adventures for Your Travel Bucket List', date: '18 March 2026', comments: 8 },
-  { image: img('1473496169904-658ba7c44d8a'), tag: 'Tips', title: 'Packing Light: What Actually Belongs in Your Bag', date: '02 April 2026', comments: 3 },
+  { image: '/images/cities/jendouba-2.jpg', tag: 'Travel', title: 'The Ultimate Guide to Planning Your Dream Vacation', date: '25 February 2026', comments: 5 },
+  { image: '/images/cities/medenine-2.jpg', tag: 'Adventure', title: 'Unforgettable Adventures for Your Travel Bucket List', date: '18 March 2026', comments: 8 },
+  { image: '/images/cities/gafsa-2.jpg', tag: 'Tips', title: 'Packing Light: What Actually Belongs in Your Bag', date: '02 April 2026', comments: 3 },
 ]
 
 export const footerColumns = [
@@ -75,9 +75,9 @@ export const footerColumns = [
 
 export const images = {
   about: '/images/about-traveler.png',
-  features: img('1544191696-102dbdaeeaa0', 900),
-  app: [img('1530789253388-582c481c54b0', 400), img('1533105079780-92b9be482077', 400)],
-  testimonial: img('1503220317375-aaad61436b1b', 900),
-  footer: img('1509316785289-025f5b846b35', 1920),
+  features: '/images/hostel/event1.jpg',
+  app: ['/images/hostel/sidibousaid.jpg', '/images/hostel/dougga.jpg'],
+  testimonial: '/images/hostel/hero.jpg',
+  footer: '/images/cities/ben-arous-2.jpg',
   avatars: [img('1500648767791-00dcc994a43e', 100), img('1494790108377-be9c29b29330', 100), img('1507003211169-0a1dd7228f2d', 100)],
 }

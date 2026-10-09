@@ -28,8 +28,8 @@ export default function Header() {
         </nav>
 
         <div className="header__actions">
-          <a href="#tours" className="btn btn--primary header__cta">
-            Book Now <ArrowRight size={16} />
+          <a href="#" className="btn btn--primary header__cta">
+            Sign In <ArrowRight size={16} />
           </a>
           <button className="menu-toggle" onClick={() => setOpen(!open)} aria-label="Toggle menu">
             {open ? <X /> : <Menu />}
