@@ -10,7 +10,6 @@ import Testimonials from './sections/Testimonials.jsx'
 import Cta from './sections/Cta.jsx'
 import Blog from './sections/Blog.jsx'
 import Footer from './sections/Footer.jsx'
-import Switcher from './components/Switcher.jsx'
 
 export default function App() {
   return (
@@ -29,7 +28,6 @@ export default function App() {
         <Blog />
       </main>
       <Footer />
-      <Switcher />
     </>
   )
 }

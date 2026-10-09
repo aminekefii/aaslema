@@ -478,21 +478,20 @@ html.dark .store-btn { background: var(--surface); border: 1px solid var(--borde
 html.dark .store-btn:hover { background: var(--primary); }
 html.dark .feature-card:hover { border-color: var(--border); }
 
-/* ---------- Theme switcher (fixed on the left edge) ---------- */
-.theme-switcher { position: fixed; top: 25%; left: -8px; z-index: 200; transform: rotate(90deg); }
+/* ---------- Theme switcher (header, right of Sign In) ---------- */
+.theme-switcher { position: relative; display: flex; flex-shrink: 0; }
 .theme-switcher__input { position: absolute; opacity: 0; pointer-events: none; }
 .theme-switcher__label {
   position: relative; display: flex; align-items: center; justify-content: space-between;
   width: 56px; height: 32px; padding: 4px; border-radius: 999px; cursor: pointer;
-  background: var(--heading); color: #eab308; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.25); color: #eab308;
   transition: background 0.3s;
 }
 .theme-switcher__ball {
-  position: absolute; top: 2px; left: 2px; width: 28px; height: 28px; border-radius: 50%;
+  position: absolute; top: 1px; left: 1px; width: 28px; height: 28px; border-radius: 50%;
   background: var(--white); transition: transform 0.2s linear, background 0.3s;
 }
-.theme-switcher__input:checked + .theme-switcher__label { background: var(--white); box-shadow: 0 1px 2px rgba(255, 255, 255, 0.15); }
-.theme-switcher__input:checked + .theme-switcher__label .theme-switcher__ball { background: var(--heading); transform: translateX(24px); }
+.theme-switcher__input:checked + .theme-switcher__label .theme-switcher__ball { transform: translateX(24px); }
 .theme-switcher__input:focus-visible + .theme-switcher__label { outline: 2px solid var(--primary); outline-offset: 2px; }
 
 /* ---------- Responsive ---------- */

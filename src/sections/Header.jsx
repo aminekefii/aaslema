@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ArrowRight, Menu, X, Compass } from 'lucide-react'
 import { brand, navLinks } from '../data.js'
+import Switcher from '../components/Switcher.jsx'
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false)
@@ -31,6 +32,7 @@ export default function Header() {
           <a href="#" className="btn btn--primary header__cta">
             Sign In <ArrowRight size={16} />
           </a>
+          <Switcher />
           <button className="menu-toggle" onClick={() => setOpen(!open)} aria-label="Toggle menu">
             {open ? <X /> : <Menu />}
           </button>

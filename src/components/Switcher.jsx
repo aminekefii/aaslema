@@ -11,7 +11,7 @@ function initialDark() {
   return document.documentElement.classList.contains('dark')
 }
 
-// Light/dark theme toggle pinned to the left edge, like travosy-react's Switcher
+// Light/dark theme toggle shown in the header, next to the Sign In button
 export default function Switcher() {
   const [dark, setDark] = useState(initialDark)
 
