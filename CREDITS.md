@@ -45,3 +45,9 @@ The exception is Tunis, whose second image is the owner s Sidi Bou Said photo.
 | Kebili | `kebili-2.jpg` | Faresbenrayana | CC BY-SA 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:Desert_dunes_in_Douz.jpg) |
 
 > Community moments and hidden-gem photos are uploaded by users at runtime.
+
+## Template-3 additions
+
+| Place | File | Author | License | Source |
+|---|---|---|---|---|
+| Djerba (Erriadh / Djerbahood) | `jerba.jpg` | Rahma026 | CC BY-SA 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:Sunset_in_Djerbahood.jpg) |

@@ -48,7 +48,8 @@ export const featuredCities = [
   { id: 'tunis', name: 'Tunis', vibe: 'Cosmopolitan & Historic', image: '/images/cities/tunis-1.jpg' },
   { id: 'sousse', name: 'Sousse', vibe: 'Energetic & Mediterranean', image: '/images/cities/sousse-1.jpg' },
   { id: 'tataouine', name: 'Tataouine', vibe: 'Sci-Fi & Ancient', image: '/images/cities/tataouine-1.jpg' },
-  { id: 'jendouba', name: 'Jendouba', vibe: 'Alpine & Coastal', image: '/images/cities/jendouba-1.jpg' },
+  // Djerba has no entry of its own in Aaslema's data, so it opens Medenine, its governorate
+  { id: 'medenine', name: 'Jerba', vibe: 'Island & Timeless', image: '/images/cities/jerba.jpg' },
   { id: 'kairouan', name: 'Kairouan', vibe: 'Spiritual & Ancient', image: '/images/cities/kairouan-1.jpg' },
 ]
 
