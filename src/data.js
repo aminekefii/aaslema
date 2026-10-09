@@ -80,5 +80,4 @@ export const images = {
   app: ['/images/hostel/sidibousaid.jpg', '/images/hostel/dougga.jpg'],
   testimonial: '/images/hostel/hero.jpg',
   footer: '/images/cities/ben-arous-2.jpg',
-  avatars: [img('1500648767791-00dcc994a43e', 100), img('1494790108377-be9c29b29330', 100), img('1507003211169-0a1dd7228f2d', 100)],
 }

@@ -276,27 +276,11 @@ button, input, select { font: inherit; }
 
 /* ---------- Features ---------- */
 .features__grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 60px; align-items: start; }
-.features__intro { display: grid; grid-template-columns: 1fr 180px; gap: 24px; }
-.features__intro .section-title { grid-column: 1 / -1; }
+.features__intro { display: grid; gap: 24px; }
 .features__media { position: relative; }
 .features__media > img { border-radius: 20px; width: 100%; height: 380px; object-fit: cover; }
-.happy-badge {
-  position: absolute; left: 20px; bottom: 20px; padding: 14px 20px; border-radius: 12px;
-  background: var(--surface); box-shadow: var(--shadow);
-}
-.happy-badge p { margin: 6px 0 0; font-weight: 600; color: var(--title); font-size: 15px; }
-.avatars { display: flex; align-items: center; }
-.avatars img, .avatars span {
   width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--surface); margin-left: -10px; object-fit: cover;
 }
-.avatars img:first-child { margin-left: 0; }
-.avatars span { display: grid; place-items: center; background: var(--primary); color: var(--white); font-size: 13px; font-weight: 600; }
-.years-box {
-  align-self: end; padding: 30px 22px; border-radius: 20px; background: var(--primary); color: var(--white);
-}
-.years-box strong { display: block; font-size: 64px; line-height: 1; }
-.years-box > span { font-size: 22px; font-weight: 600; }
-.years-box p { margin: 10px 0 0; font-size: 15px; }
 .features__list { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
 .feature-card {
   padding: 35px 30px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface);
@@ -541,7 +525,6 @@ html.dark .feature-card:hover { border-color: var(--border); }
   .tours__all-mobile { display: flex; }
   .grid--4, .popular__grid, .features__list, .checklist { grid-template-columns: 1fr; }
   .destination-card--wide { grid-column: auto; }
-  .features__intro { grid-template-columns: 1fr; }
   .hotel-card { grid-template-columns: 1fr; }
   .hotel-card__image { min-height: 220px; }
   .testimonial-card { flex-basis: 100%; }
