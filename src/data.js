@@ -15,7 +15,6 @@ export const brand = {
 export const navLinks = [
   ['Home', '/#home'],
   ['Destinations', '/destinations'],
-  ['Blog', '/#blog'],
   ['Contact', '/contact'],
   ['FAQ', '/faq'],
 ]
