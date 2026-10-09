@@ -154,31 +154,20 @@ button, input, select { font: inherit; }
 .search-filter__btn { margin-left: 24px; padding: 14px 38px; }
 
 /* ---------- Shared card bits ---------- */
-.location { display: inline-flex; align-items: center; gap: 6px; font-size: 15px; }
-.location svg { color: var(--secondary); }
-.price strong { color: var(--white); font-size: 22px; font-weight: 600; margin-right: 2px; }
 .heart {
   position: absolute; top: 15px; right: 15px; z-index: 2; width: 36px; height: 36px; border-radius: 50%;
   display: grid; place-items: center; border: 0; cursor: pointer;
   background: rgba(255, 255, 255, 0.85); color: var(--secondary); transition: 0.3s;
 }
 .heart:hover { background: var(--secondary); color: var(--white); }
-.ribbon {
-  position: absolute; left: 0; top: 0; z-index: 2; display: flex; align-items: center; gap: 4px;
-  padding: 30px 50px 8px; font-size: 15px; color: var(--white); background: var(--secondary);
-  transform: rotate(-45deg) translate(-32px, -38px);
-}
 
 /* ---------- Tour cards ---------- */
 .tours { padding-top: 150px; margin-top: -50px; }
-.city-card__image img, .hotel-card__image img, .destination-card img, .blog-card__image img {
+.city-card__image img, .destination-card img, .blog-card__image img {
   width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s;
 }
-.city-card:hover .city-card__image img, .hotel-card:hover .hotel-card__image img,
+.city-card:hover .city-card__image img,
 .destination-card:hover img, .blog-card:hover img { transform: scale(1.08); }
-.read-more { display: inline-flex; align-items: center; gap: 8px; font-weight: 500; color: var(--white); font-size: 15px; }
-.read-more svg { width: 18px; height: 18px; border-radius: 50%; padding: 2px; background: var(--primary); color: var(--white); transition: 0.3s; }
-.read-more:hover { color: var(--primary); }
 
 /* "Where to start" featured cities (mirrors aaslema-new's Home) */
 .tours__head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 30px; }
@@ -279,8 +268,6 @@ button, input, select { font: inherit; }
 .features__intro { display: grid; gap: 24px; }
 .features__media { position: relative; }
 .features__media > img { border-radius: 20px; width: 100%; height: 380px; object-fit: cover; }
-  width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--surface); margin-left: -10px; object-fit: cover;
-}
 .features__list { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
 .feature-card {
   padding: 35px 30px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface);
@@ -294,23 +281,6 @@ button, input, select { font: inherit; }
 .feature-card:hover .feature-card__icon { background: var(--primary); color: var(--white); }
 .feature-card h3 { font-size: 22px; }
 .feature-card p { margin: 0; font-size: 16px; }
-
-/* ---------- Hotels ---------- */
-.hotel-card {
-  display: grid; grid-template-columns: 45% 1fr; gap: 10px; padding: 10px;
-  background: var(--dark-card); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius);
-}
-.hotel-card__image { position: relative; overflow: hidden; border-radius: var(--radius); min-height: 280px; }
-.hotel-card__body { padding: 15px 15px 10px; display: flex; flex-direction: column; }
-.hotel-card__body h3 { font-size: 21px; margin: 6px 0 14px; }
-.amenities { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; font-size: 14px; margin-bottom: 18px; }
-.amenities li { display: flex; align-items: center; gap: 7px; }
-.amenities svg { color: var(--primary); }
-.hotel-card__footer {
-  margin-top: auto; padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.1);
-  display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-size: 14px;
-}
-.hotels .center { margin-top: 50px; }
 
 /* ---------- Mobile app ---------- */
 .mobile-app { overflow: hidden; }
@@ -349,38 +319,39 @@ button, input, select { font: inherit; }
   background: var(--secondary); color: var(--white);
 }
 
-/* ---------- Testimonials ---------- */
-.testimonials { background: var(--lighter); }
-.testimonials__grid { display: grid; grid-template-columns: 0.8fr 1.5fr; gap: 60px; align-items: center; }
-.testimonials__image img { border-radius: 20px; width: 100%; height: 520px; object-fit: cover; }
-.testimonials__content { min-width: 0; }
-.big-number {
-  display: block; font-size: 110px; font-weight: 700; line-height: 1; margin-bottom: 10px;
-  color: transparent; -webkit-text-stroke: 1.5px var(--primary);
+/* ---------- Reviews (ported from travosy-react's "What Our Users Say") ---------- */
+.reviews { background: var(--lighter); }
+.reviews__head { text-align: center; max-width: 620px; margin: 0 auto 40px; }
+.reviews__head h2 { font-size: 48px; letter-spacing: -1px; margin-bottom: 14px; }
+.reviews__head p { margin: 0; }
+.reviews__viewport { overflow: hidden; margin: 0 -6px; cursor: grab; touch-action: pan-y; user-select: none; }
+.reviews__viewport:active { cursor: grabbing; }
+.reviews__track { display: flex; transition: transform 0.4s ease; }
+.review { flex: 0 0 33.333%; margin: 0; padding: 0 6px; text-align: center; display: flex; flex-direction: column; }
+.review__bubble {
+  position: relative; flex: 1; display: flex; flex-direction: column; align-items: center;
+  margin: 8px; padding: 24px; border-radius: 8px;
+  background: var(--surface); box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
-.testimonials__viewport { overflow: hidden; }
-.testimonials__track { display: flex; transition: transform 0.7s ease; }
-.testimonial-card {
-  flex: 0 0 50%; margin: 0; padding: 0 15px;
+/* Little speech-bubble tail pointing at the avatar */
+.review__bubble::before {
+  content: ''; position: absolute; left: 50%; bottom: -8px; width: 16px; height: 16px;
+  background: inherit; transform: translateX(-50%) rotate(45deg); box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.05);
 }
-.testimonial-card__top { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
-.testimonial-card__top h4 { margin: 0; font-size: 20px; }
-.quote-icon { color: var(--primary); flex-shrink: 0; }
-.stars { display: inline-flex; gap: 2px; color: var(--secondary); }
-.testimonial-card blockquote {
-  margin: 0 0 24px; padding: 28px; border-radius: 16px; background: var(--surface); font-size: 17px;
-  box-shadow: var(--shadow); position: relative;
-}
-.testimonial-card figcaption { display: flex; align-items: center; gap: 14px; }
-.testimonial-card figcaption img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; }
-.testimonial-card figcaption strong { display: block; color: var(--title); font-size: 18px; }
-.testimonial-card figcaption span { font-size: 15px; }
-.dots { display: flex; gap: 10px; margin-top: 35px; padding-left: 15px; }
-.dots button {
-  width: 12px; height: 12px; border-radius: 50%; border: 0; padding: 0; cursor: pointer;
+.review__quote { color: var(--primary); }
+.review blockquote { margin: 6px 0 12px; font-size: 16px; }
+.review .stars { color: #fbbf24; margin-top: auto; } /* pin stars to the bottom of equal-height bubbles */
+.review figcaption { margin-top: 22px; display: flex; flex-direction: column; align-items: center; }
+.review figcaption img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); }
+.review figcaption strong { margin-top: 8px; color: var(--title); font-size: 17px; font-weight: 600; }
+.review figcaption span { font-size: 14px; }
+.reviews__dots { display: flex; justify-content: center; gap: 8px; margin-top: 30px; }
+.reviews__dots button {
+  width: 10px; height: 10px; border-radius: 50%; border: 0; padding: 0; cursor: pointer;
   background: var(--dot); transition: 0.3s;
 }
-.dots button.active { background: var(--primary); width: 32px; border-radius: 6px; }
+.reviews__dots button.active { background: var(--primary); width: 26px; border-radius: 5px; }
+.stars { display: inline-flex; gap: 2px; color: var(--secondary); }
 
 /* ---------- CTA ---------- */
 .cta { padding-top: 100px; }
@@ -490,8 +461,8 @@ html.dark .feature-card:hover { border-color: var(--border); }
   .nav { gap: 24px; }
   .hero__banner { height: 555px; }
   .section-title h2 { font-size: 40px; }
-  .features__grid, .testimonials__grid { grid-template-columns: 1fr; }
-  .testimonials__image { display: none; }
+  .features__grid { grid-template-columns: 1fr; }
+  .reviews__head h2 { font-size: 40px; }
   .footer__links { grid-template-columns: repeat(2, 1fr); }
 }
 
@@ -525,10 +496,7 @@ html.dark .feature-card:hover { border-color: var(--border); }
   .tours__all-mobile { display: flex; }
   .grid--4, .popular__grid, .features__list, .checklist { grid-template-columns: 1fr; }
   .destination-card--wide { grid-column: auto; }
-  .hotel-card { grid-template-columns: 1fr; }
-  .hotel-card__image { min-height: 220px; }
-  .testimonial-card { flex-basis: 100%; }
-  .big-number { font-size: 72px; }
+  .reviews__head h2 { font-size: 32px; }
   .hero__banner { height: 400px; }
   .container-fluid { padding: 0 16px; }
   .about-orbit__shape { width: 45px; height: 45px; }

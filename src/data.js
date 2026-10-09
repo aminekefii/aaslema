@@ -12,7 +12,7 @@ export const brand = {
   hours: 'Mon - Fri, 08am - 05pm',
 }
 
-export const navLinks = ['Home', 'Tours', 'Destinations', 'Hotels', 'Blog', 'Contact']
+export const navLinks = ['Home', 'Tours', 'Destinations', 'Blog', 'Contact']
 
 export const heroImage = '/images/cities/tunis-1.jpg'
 
@@ -40,20 +40,13 @@ export const features = [
   { icon: 'fish', title: 'Fishing & Boat', text: 'Slow days on the water with a local skipper.' },
 ]
 
-export const hotels = [
-  { image: '/images/hostel/common1.jpg', location: 'Ao Nang, Thailand', title: 'Brown Bench Poolside Resort & Spa', price: 85, rating: 4.8 },
-  { image: '/images/hostel/common2.jpg', location: 'Kigali, Rwanda', title: 'Green Gardens Lakeview Hotel', price: 92, rating: 4.7 },
-  { image: '/images/hostel/common3.jpg', location: 'Phuket, Thailand', title: 'Sunset Deck Beach Villas', price: 110, rating: 4.9 },
-  { image: '/images/hostel/outdoors.jpg', location: 'Marrakech, Morocco', title: 'Palm Courtyard Boutique Riad', price: 78, rating: 4.8 },
-]
-
 export const appPerks = ['Experienced Agency', 'Professional Team', 'Low Cost Travel', 'Online Support 24/7']
 
 export const testimonials = [
-  { quote: 'Our trip was perfect from start to finish. They handled every transfer and booking, and even suggested experiences we never would have found ourselves.', name: 'Randall Vasquez', role: 'Graphic Designer', avatar: img('1500648767791-00dcc994a43e', 120) },
-  { quote: 'The itinerary was paced just right. Local guides were friendly and knowledgeable, and support answered within minutes when our flight changed.', name: 'Sarah Mitchell', role: 'Product Manager', avatar: img('1494790108377-be9c29b29330', 120) },
-  { quote: 'Best value we have ever had on a family holiday. The hotel picks were spot on and the kids still talk about the boat day.', name: 'James Carter', role: 'Architect', avatar: img('1507003211169-0a1dd7228f2d', 120) },
-  { quote: 'I travel solo a lot and rarely feel this looked after. Clear plans, no surprises, and a few lovely ones.', name: 'Emma Laurent', role: 'Photographer', avatar: img('1438761681033-6461ffad8d80', 120) },
+  { quote: 'I rode from Tunis down to Tozeur with the bikepacking route from the trip planner. The city guides told me where to sleep and where the water stops were, and the gravel tracks into the Sahara were unreal.', name: 'Randall Vasquez', role: 'Bikepacker', avatar: img('1500648767791-00dcc994a43e', 120) },
+  { quote: 'Louages scared me at first, but the guide explained exactly how they work. Two weeks of medinas, guesthouses and street food on a backpacker budget, and I never felt lost.', name: 'Sarah Mitchell', role: 'Backpacker', avatar: img('1494790108377-be9c29b29330', 120) },
+  { quote: 'We followed the history itinerary: Carthage, El Jem, the Great Mosque of Kairouan and Matmata. Everything was paced well, and the community tips on where to eat were spot on.', name: 'James Carter', role: 'History Traveler', avatar: img('1507003211169-0a1dd7228f2d', 120) },
+  { quote: 'I travel solo a lot and rarely feel this looked after. I met other travelers through the community, shared a louage to Tataouine, and slept in a ksar under the stars.', name: 'Emma Laurent', role: 'Solo Traveler', avatar: img('1438761681033-6461ffad8d80', 120) },
 ]
 
 export const ctas = [
@@ -78,6 +71,5 @@ export const images = {
   about: '/images/about-traveler.png',
   features: '/images/hostel/event1.jpg',
   app: ['/images/hostel/sidibousaid.jpg', '/images/hostel/dougga.jpg'],
-  testimonial: '/images/hostel/hero.jpg',
   footer: '/images/cities/ben-arous-2.jpg',
 }
