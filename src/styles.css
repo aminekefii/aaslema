@@ -282,42 +282,18 @@ button, input, select { font: inherit; }
 .feature-card h3 { font-size: 22px; }
 .feature-card p { margin: 0; font-size: 16px; }
 
-/* ---------- Mobile app ---------- */
-.mobile-app { overflow: hidden; }
-.mobile-app__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
-.checklist { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 25px 0 35px; }
-.checklist li { display: flex; align-items: center; gap: 10px; font-weight: 500; color: var(--title); }
-.checklist svg { color: var(--primary); flex-shrink: 0; }
-.store-buttons { display: flex; gap: 16px; flex-wrap: wrap; }
-.store-btn {
-  display: inline-flex; align-items: center; gap: 12px; padding: 10px 24px; border-radius: 10px;
-  background: var(--heading); color: var(--white); transition: 0.3s;
+/* ---------- Travel styles (mirrors aaslema-new's Home band) ---------- */
+.travel-styles__grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px;
+  padding: 50px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
 }
-.store-btn:hover { background: var(--primary); }
-.store-btn span { display: flex; flex-direction: column; line-height: 1.15; font-weight: 600; font-size: 18px; }
-.store-btn small { font-weight: 400; font-size: 11px; text-transform: uppercase; opacity: 0.8; }
-.mobile-app__phones { position: relative; height: 560px; }
-.mobile-app__circle {
-  position: absolute; width: 480px; height: 480px; border-radius: 50%; left: 50%; top: 50%;
-  transform: translate(-50%, -50%); background: var(--tint);
+.travel-style { display: flex; gap: 18px; }
+.travel-style__icon {
+  width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0; display: grid; place-items: center;
+  background: var(--tint); color: var(--primary);
 }
-.phone {
-  position: absolute; width: 230px; height: 470px; border-radius: 36px; overflow: hidden;
-  border: 9px solid var(--heading); background: var(--heading); box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25);
-}
-.phone img { width: 100%; height: 100%; object-fit: cover; }
-.phone--1 { left: 12%; top: 0; transform: rotate(-6deg); }
-.phone--2 { right: 12%; bottom: 0; transform: rotate(6deg); }
-.phone__ui {
-  position: absolute; left: 12px; right: 12px; bottom: 12px; padding: 12px 14px; border-radius: 16px;
-  background: rgba(255, 255, 255, 0.92); display: flex; flex-direction: column; line-height: 1.3;
-}
-.phone__ui strong { color: var(--heading); font-size: 17px; }
-.phone__ui small { color: var(--primary); font-weight: 600; }
-.phone__chip {
-  align-self: flex-start; font-size: 11px; padding: 2px 10px; border-radius: 20px; margin-bottom: 4px;
-  background: var(--secondary); color: var(--white);
-}
+.travel-style h3 { font-size: 20px; margin-bottom: 6px; }
+.travel-style p { margin: 0; font-size: 16px; }
 
 /* ---------- Reviews (ported from travosy-react's "What Our Users Say") ---------- */
 .reviews { background: var(--lighter); }
@@ -465,8 +441,6 @@ button, input, select { font: inherit; }
 /* ---------- Dark mode tweaks ---------- */
 /* Hover/fill colors that would vanish against the dark page */
 html.dark .btn--primary:hover { background: var(--secondary); }
-html.dark .store-btn { background: var(--surface); border: 1px solid var(--border); }
-html.dark .store-btn:hover { background: var(--primary); }
 html.dark .feature-card:hover { border-color: var(--border); }
 
 /* ---------- Theme switcher (header, right of Sign In) ---------- */
@@ -512,7 +486,7 @@ html.dark .feature-card:hover { border-color: var(--border); }
   .nav--open { display: flex; }
   .nav a { padding: 12px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
   .nav a:last-child { border-bottom: 0; }
-  .grid--2, .grid--3, .about__grid, .mobile-app__grid, .faq__grid { grid-template-columns: 1fr; }
+  .grid--2, .grid--3, .about__grid, .travel-styles__grid, .faq__grid { grid-template-columns: 1fr; }
   .faq__grid { gap: 20px; }
   .page-banner h1 { font-size: 40px; }
   .search-filter { margin: -50px 0 0; padding: 20px; gap: 14px; }
@@ -521,7 +495,6 @@ html.dark .feature-card:hover { border-color: var(--border); }
   .hero__banner { height: 450px; }
   .about-orbit { margin: 30px auto; }
   .popular__grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 280px; }
-  .mobile-app__phones { height: 500px; max-width: 520px; width: 100%; margin: 0 auto; }
 }
 
 @media (max-width: 767px) {
@@ -530,7 +503,7 @@ html.dark .feature-card:hover { border-color: var(--border); }
   .city-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
   .all-link { display: none; }
   .tours__all-mobile { display: flex; }
-  .grid--4, .popular__grid, .features__list, .checklist { grid-template-columns: 1fr; }
+  .grid--4, .popular__grid, .features__list { grid-template-columns: 1fr; }
   .destination-card--wide { grid-column: auto; }
   .reviews__head h2 { font-size: 32px; }
   .hero__banner { height: 400px; }
@@ -541,11 +514,6 @@ html.dark .feature-card:hover { border-color: var(--border); }
   .about-orbit__shape:nth-child(7) { left: -10px; }
   .counter strong { font-size: 42px; }
   .search-filter__item { flex-basis: 100%; }
-  .phone { width: 180px; height: 370px; }
-  .phone--1 { left: 0; }
-  .phone--2 { right: 0; }
-  .mobile-app__phones { height: 430px; }
-  .mobile-app__circle { width: 320px; height: 320px; }
   .footer__links { grid-template-columns: 1fr 1fr; padding-top: 50px; }
   .contact__row { grid-template-columns: 1fr; }
   .contact__form { padding: 26px 20px; }

@@ -70,7 +70,11 @@ export const features = [
   { icon: 'fish', title: 'Fishing & Boat', text: 'Slow days on the water with a local skipper.' },
 ]
 
-export const appPerks = ['Experienced Agency', 'Professional Team', 'Low Cost Travel', 'Online Support 24/7']
+export const travelStyles = [
+  { icon: 'backpack', title: 'Backpacking', text: 'Louages between towns, guesthouses in the medina, and the cheapest way to eat well.' },
+  { icon: 'bike', title: 'Bikepacking', text: 'Coastal roads, mountain passes in the north-west and gravel tracks into the Sahara.' },
+  { icon: 'landmark', title: 'History', text: 'Carthage, El Jem, the Kairouan mosque and the troglodyte homes of Matmata.' },
+]
 
 export const testimonials = [
   { quote: 'I rode from Tunis down to Tozeur with the bikepacking route from the trip planner. The city guides told me where to sleep and where the water stops were, and the gravel tracks into the Sahara were unreal.', name: 'Randall Vasquez', role: 'Bikepacker', avatar: img('1500648767791-00dcc994a43e', 120) },
@@ -101,6 +105,5 @@ export const footerColumns = [
 export const images = {
   about: '/images/about-traveler.png',
   features: '/images/hostel/event1.jpg',
-  app: ['/images/hostel/sidibousaid.jpg', '/images/hostel/dougga.jpg'],
   footer: '/images/cities/ben-arous-2.jpg',
 }
