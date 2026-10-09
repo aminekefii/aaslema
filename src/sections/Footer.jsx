@@ -13,7 +13,7 @@ export default function Footer() {
       <div className="container">
         <div className="footer__top">
           <div className="footer__about">
-            <a href="#" className="logo"><Compass size={30} strokeWidth={2.2} /><span>{brand.name}</span></a>
+            <a href="/" className="logo"><Compass size={30} strokeWidth={2.2} /><span>{brand.name}</span></a>
             <p>A travel guide for backpackers and bikepackers exploring Tunisia, from the medinas to the Sahara.</p>
             <div className="socials">
               {socials.map(({ icon: Icon, label, href }) => (

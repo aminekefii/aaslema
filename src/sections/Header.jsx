@@ -6,6 +6,7 @@ import Switcher from '../components/Switcher.jsx'
 export default function Header() {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
+  const onFaq = window.location.pathname.replace(/\/+$/, '') === '/faq'
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 80)
@@ -17,15 +18,16 @@ export default function Header() {
   return (
     <header className={`header ${scrolled ? 'header--fixed' : ''}`}>
       <div className="container header__inner">
-        <a href="#" className="logo">
+        <a href="/" className="logo">
           <Compass size={30} strokeWidth={2.2} />
           <span>{brand.name}</span>
         </a>
 
         <nav className={`nav ${open ? 'nav--open' : ''}`}>
           {navLinks.map((link) => (
-            <a key={link} href={`#${link.toLowerCase()}`} onClick={() => setOpen(false)}>{link}</a>
+            <a key={link} href={`/#${link.toLowerCase()}`} onClick={() => setOpen(false)}>{link}</a>
           ))}
+          <a href="/faq" className={onFaq ? 'active' : ''} onClick={() => setOpen(false)}>FAQ</a>
         </nav>
 
         <div className="header__actions">

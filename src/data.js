@@ -14,6 +14,29 @@ export const brand = {
 
 export const navLinks = ['Home', 'Tours', 'Destinations', 'Blog', 'Contact']
 
+export const faqs = [
+  {
+    q: 'When is the best time to visit Tunisia?',
+    a: 'Spring (March to May) and autumn (September to November) are the most pleasant for cities and ruins. Winter is best for the Sahara, and summer for the beaches of the north.',
+  },
+  {
+    q: 'Is Tunisia safe for solo travelers?',
+    a: 'Yes, Tunisia is generally safe and welcoming. As anywhere, stay aware of your surroundings in crowded markets and respect local customs in more conservative rural areas.',
+  },
+  {
+    q: 'Do I need a visa to enter?',
+    a: 'Many nationalities, including EU, US, Canadian and UK citizens, can enter visa-free for up to 90 days. Requirements change, so check with the nearest Tunisian consulate before you travel.',
+  },
+  {
+    q: "What's the best way to travel between cities?",
+    a: 'Louages (shared taxis) are the fastest and most local option. Trains connect Tunis, Sousse, Sfax and Gabès. Cycling is the slowest and the most rewarding.',
+  },
+  {
+    q: 'What languages are spoken?',
+    a: 'Tunisian Arabic (Derja) is the main language. French is widely spoken, and English is increasingly common in tourist areas and among younger people.',
+  },
+]
+
 export const heroImage = '/images/cities/tunis-1.jpg'
 
 export const featuredCities = [
@@ -63,9 +86,9 @@ export const posts = [
 
 // [label, href] pairs, mirroring the footer of aaslema-new
 export const footerColumns = [
-  { title: 'Explore', links: [['Destinations', '#destinations'], ['Trip planner', '#'], ['Community', '#blog']] },
+  { title: 'Explore', links: [['Destinations', '/#destinations'], ['Trip planner', '#'], ['Community', '/#blog']] },
   { title: 'Travel Styles', links: [['Backpacking', '#'], ['Bikepacking', '#'], ['History', '#']] },
-  { title: 'About', links: [['Legal notice', '#'], ['Privacy', '#']] },
+  { title: 'About', links: [['FAQ', '/faq'], ['Legal notice', '#'], ['Privacy', '#']] },
 ]
 
 export const images = {
