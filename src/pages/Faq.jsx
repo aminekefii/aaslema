@@ -22,7 +22,7 @@ export default function Faq() {
           <div>
             <h2>Before you go</h2>
             <p>
-              Can’t find your answer? <a href="/#blog" className="faq__link">Ask the community</a>
+              Can’t find your answer? <a href="/community" className="faq__link">Ask the community</a>
             </p>
           </div>
 

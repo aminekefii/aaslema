@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import {
   Heart, MapPin, ArrowLeft, Utensils, History, Sparkles, Calendar, Share2,
-  Navigation, Star, CheckCircle2, Map as MapIcon, Camera, Facebook, Twitter, X,
+  Navigation, Star, CheckCircle2, Map as MapIcon, Camera, Facebook, Twitter,
 } from 'lucide-react'
 import { cities } from '../cities.js'
+import Modal from '../components/Modal.jsx'
 
 // Port of aaslema-new's CityDetail page. Aaslema keeps likes, visits and moments in
 // Supabase; this template has no backend, so they live in the viewer's browser.
@@ -28,25 +29,6 @@ const TABS = [
 ]
 
 const EMPTY_MOMENT = { url: '', location: '', description: '' }
-
-function Modal({ title, labelId, onClose, children, wide = false }) {
-  useEffect(() => {
-    const onKey = (e) => e.key === 'Escape' && onClose()
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [onClose])
-
-  return (
-    <div className="modal">
-      <div className="modal__backdrop" onClick={onClose} />
-      <div className={`modal__panel ${wide ? 'modal__panel--wide' : ''}`} role="dialog" aria-modal="true" aria-labelledby={labelId}>
-        <button className="modal__close" onClick={onClose} aria-label="Close"><X size={18} /></button>
-        <h2 id={labelId}>{title}</h2>
-        {children}
-      </div>
-    </div>
-  )
-}
 
 export default function CityDetail({ id }) {
   const city = cities.find((c) => c.id === id)
