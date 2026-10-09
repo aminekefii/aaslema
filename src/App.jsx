@@ -13,11 +13,12 @@ import Faq from './pages/Faq.jsx'
 import Contact from './pages/Contact.jsx'
 import Destinations from './pages/Destinations.jsx'
 import CityDetail from './pages/CityDetail.jsx'
+import { SignIn, SignUp } from './pages/Auth.jsx'
 import { useEffect } from 'react'
 import { currentPath } from './route.js'
 
 // Tiny path-based page switch; any other path shows the landing page.
-const pages = { '/faq': Faq, '/contact': Contact, '/destinations': Destinations }
+const pages = { '/faq': Faq, '/contact': Contact, '/destinations': Destinations, '/signin': SignIn, '/signup': SignUp }
 const cityId = currentPath.match(/^\/destinations\/([^/]+)$/)?.[1]
 const Page = cityId ? () => <CityDetail id={cityId} /> : pages[currentPath]
 

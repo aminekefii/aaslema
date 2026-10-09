@@ -7,6 +7,8 @@ import { currentPath } from '../route.js'
 export default function Header() {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
+  // Light pages have no dark banner behind the header, so it gets its own background
+  const solid = ['/signin', '/signup'].includes(currentPath)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 80)
@@ -16,7 +18,7 @@ export default function Header() {
   }, [])
 
   return (
-    <header className={`header ${scrolled ? 'header--fixed' : ''}`}>
+    <header className={`header ${scrolled ? 'header--fixed' : ''} ${solid ? 'header--solid' : ''}`}>
       <div className="container header__inner">
         <a href="/" className="logo">
           <Compass size={30} strokeWidth={2.2} />
@@ -30,7 +32,7 @@ export default function Header() {
         </nav>
 
         <div className="header__actions">
-          <a href="#" className="btn btn--primary header__cta">
+          <a href="/signin" className="btn btn--primary header__cta">
             Sign In <ArrowRight size={16} />
           </a>
           <Switcher />
