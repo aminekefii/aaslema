@@ -82,9 +82,10 @@ export const testimonials = [
 ]
 
 export const ctas = [
-  { image: '/images/cities/tozeur-2.jpg', tag: 'Palm Groves', title: 'Date harvest in the palmeraie of Tozeur' },
-  { image: '/images/cities/gabes-2.jpg', tag: 'Seaside Oasis', title: 'Where the palms meet the sea in Gabès' },
-  { image: '/images/cities/zaghouan-2.jpg', tag: 'Roman Heritage', title: 'The Water Temple of Zaghouan' },
+  // Festivals from each city's events in cities.js
+  { id: 'tozeur', image: '/images/cities/tozeur-2.jpg', tag: 'Tozeur', title: 'International Oasis Festival' },
+  { id: 'gabes', image: '/images/cities/gabes-2.jpg', tag: 'Gabès', title: 'Gabès International Film Festival' },
+  { id: 'zaghouan', image: '/images/cities/zaghouan-2.jpg', tag: 'Zaghouan', title: 'Rose and Eglantine Festival' },
 ]
 
 export const posts = [
