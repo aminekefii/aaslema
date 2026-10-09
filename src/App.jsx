@@ -11,11 +11,12 @@ import Blog from './sections/Blog.jsx'
 import Footer from './sections/Footer.jsx'
 import Faq from './pages/Faq.jsx'
 import Contact from './pages/Contact.jsx'
+import Destinations from './pages/Destinations.jsx'
 import { useEffect } from 'react'
 import { currentPath } from './route.js'
 
 // Tiny path-based page switch; any other path shows the landing page.
-const pages = { '/faq': Faq, '/contact': Contact }
+const pages = { '/faq': Faq, '/contact': Contact, '/destinations': Destinations }
 const Page = pages[currentPath]
 
 export default function App() {

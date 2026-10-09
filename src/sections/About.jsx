@@ -38,7 +38,7 @@ export default function About() {
             </div>
           </div>
 
-          <a href="#destinations" className="btn btn--primary">Browse Destinations <ArrowRight size={16} /></a>
+          <a href="/destinations" className="btn btn--primary">Browse Destinations <ArrowRight size={16} /></a>
         </div>
 
         <div data-aos="fade-right">

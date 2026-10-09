@@ -380,6 +380,44 @@ button, input, select { font: inherit; }
 .faq__item[open] .faq__icon { transform: rotate(45deg); color: var(--primary); }
 .faq__item p { margin: -6px 0 0; padding-bottom: 22px; max-width: 65ch; }
 
+/* ---------- Destinations page (port of aaslema-new's Guide) ---------- */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+.guide__toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 30px; }
+.guide__toolbar > p { margin: 0; font-size: 16px; }
+.guide__search { position: relative; width: 100%; max-width: 300px; }
+.guide__search svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text); pointer-events: none; }
+.guide__search input {
+  width: 100%; padding: 11px 18px 11px 42px; border-radius: 30px; font-size: 16px; outline: 0;
+  border: 1px solid var(--border); background: var(--surface); color: var(--text);
+}
+.guide__search input:focus { border-color: var(--primary); }
+.guide__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px 24px; }
+.guide-card__image { aspect-ratio: 3 / 2; overflow: hidden; border-radius: 14px; background: var(--lighter); }
+.guide-card__image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+.guide-card:hover .guide-card__image img { transform: scale(1.03); }
+.guide-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-top: 14px; }
+.guide-card__head > div { min-width: 0; }
+.guide-card h2 { font-size: 20px; margin: 0; transition: color 0.3s; }
+.guide-card:hover h2 { color: var(--primary); }
+.guide-card__head p { margin: 2px 0 0; font-size: 15px; }
+.guide-card__likes { display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0; margin-top: 4px; font-size: 14px; }
+.guide-card__likes.is-liked { color: var(--primary); }
+.guide-card__likes.is-liked svg { fill: currentColor; }
+.guide-card__chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 4px; padding: 3px 12px; border-radius: 20px;
+  font-size: 13px; font-weight: 500; background: var(--tint); color: var(--primary);
+}
+.guide__empty {
+  padding: 50px 24px; text-align: center; border-radius: 20px;
+  border: 1px solid var(--border); background: var(--surface);
+}
+.guide__empty-title { margin: 0 0 4px; font-weight: 600; color: var(--title); }
+.guide__empty .btn { margin-top: 14px; }
+
 /* ---------- Contact page ---------- */
 .contact__grid { display: grid; grid-template-columns: 1fr 1.6fr; gap: 40px; align-items: start; }
 .contact__details { display: grid; gap: 20px; }
@@ -472,6 +510,7 @@ html.dark .feature-card:hover { border-color: var(--border); }
   .footer__links { grid-template-columns: repeat(3, 1fr); }
   .footer__about { grid-column: 1 / -1; }
   .contact__grid { grid-template-columns: 1fr; }
+  .guide__grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 991px) {
@@ -516,6 +555,8 @@ html.dark .feature-card:hover { border-color: var(--border); }
   .search-filter__item { flex-basis: 100%; }
   .footer__links { grid-template-columns: 1fr 1fr; padding-top: 50px; }
   .contact__row { grid-template-columns: 1fr; }
+  .guide__grid { grid-template-columns: 1fr; }
+  .guide__search { max-width: none; }
   .contact__form { padding: 26px 20px; }
   .cta-card { min-height: 320px; padding: 30px; }
   .scroll-top { right: 16px; }
