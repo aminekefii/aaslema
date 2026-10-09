@@ -1,12 +1,14 @@
 import { ArrowRight } from 'lucide-react'
-import SectionTitle from '../components/SectionTitle.jsx'
 import { ctas } from '../data.js'
 
 export default function Cta() {
   return (
     <section className="cta">
-      <div className="container">
-        <SectionTitle title="Festivals" />
+      <div className="container tours__head">
+        <h2>Festivals</h2>
+        <a href="/festivals" className="all-link">
+          See all <ArrowRight size={16} />
+        </a>
       </div>
       <div className="container grid grid--3">
         {ctas.map((c) => (
@@ -16,6 +18,9 @@ export default function Cta() {
             <a href={`/destinations/${c.id}`} className="btn btn--primary btn--sm">Discover {c.tag} <ArrowRight size={14} /></a>
           </article>
         ))}
+      </div>
+      <div className="container">
+        <a href="/festivals" className="btn btn--primary tours__all-mobile">See all festivals</a>
       </div>
     </section>
   )

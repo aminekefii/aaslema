@@ -171,6 +171,9 @@ button, input, select { font: inherit; }
 .all-link svg { transition: transform 0.3s; }
 .all-link:hover { color: var(--primary); }
 .all-link:hover svg { transform: translateX(4px); }
+/* On a light background (Festivals) */
+.cta .all-link { color: var(--title); }
+.cta .all-link:hover { color: var(--primary); }
 .city-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
 .city-card { display: block; }
 .city-card__image { aspect-ratio: 4 / 5; overflow: hidden; border-radius: 14px; background: var(--dark-card); }
