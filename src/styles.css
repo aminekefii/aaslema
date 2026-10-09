@@ -639,6 +639,30 @@ button, input, select { font: inherit; }
 .auth__switch a:hover { text-decoration: underline; }
 .auth button:focus-visible, .auth a:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 
+/* ---------- Festivals page ---------- */
+.fest { max-width: 980px; }
+.fest__regions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 50px; }
+.fest__regions a {
+  padding: 6px 16px; border-radius: 30px; font-size: 15px; font-weight: 500;
+  border: 1px solid var(--border); color: var(--title); transition: border-color 0.2s, color 0.2s;
+}
+.fest__regions a:hover { border-color: var(--primary); color: var(--primary); }
+.fest__regions a:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.fest-region { scroll-margin-top: 100px; margin-bottom: 56px; }
+.fest-region__head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px 24px; flex-wrap: wrap; margin-bottom: 14px; }
+.fest-region__head h2 { font-size: 32px; margin: 0; }
+.fest-region__head p { margin: 0; font-size: 15px; }
+.fest-list { border-top: 2px solid var(--title); }
+.fest-item {
+  display: grid; grid-template-columns: 1fr 280px; gap: 6px 30px; align-items: baseline;
+  padding: 16px 0; border-bottom: 1px solid var(--border);
+}
+.fest-item h3 { font-size: 18px; margin: 0; }
+.fest-item__when span { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--title); font-size: 16px; }
+.fest-item__when svg { flex-shrink: 0; color: var(--primary); }
+.fest-item__when small { display: block; margin: 2px 0 0 23px; font-size: 14px; }
+.fest__note { margin: 0; font-size: 15px; }
+
 /* ---------- Contact page ---------- */
 .contact__grid { display: grid; grid-template-columns: 1fr 1.6fr; gap: 40px; align-items: start; }
 .contact__details { display: grid; gap: 20px; }
@@ -783,6 +807,8 @@ html.dark .feature-card:hover { border-color: var(--border); }
   .search-filter__item { flex-basis: 100%; }
   .footer__links { grid-template-columns: 1fr 1fr; padding-top: 50px; }
   .contact__row { grid-template-columns: 1fr; }
+  .fest-item { grid-template-columns: 1fr; }
+  .fest-region__head h2 { font-size: 26px; }
   .auth { padding: 100px 0 40px; }
   .auth__card { padding: 22px 18px; }
   .auth__card h1 { font-size: 26px; }
