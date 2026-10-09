@@ -61,10 +61,11 @@ export const posts = [
   { image: '/images/cities/gafsa-2.jpg', tag: 'Bikepacking', title: 'Gafsa to Tozeur by Bike: Roman Pools, Oases and Gorges', date: '02 April 2026', comments: 3 },
 ]
 
+// [label, href] pairs, mirroring the footer of aaslema-new
 export const footerColumns = [
-  { title: 'Services', links: ['Best Tour Guide', 'Tour Booking', 'Hotel Booking', 'Ticket Booking', 'Rental Services'] },
-  { title: 'Company', links: ['About Company', 'Community Blog', 'Jobs and Careers', 'Latest News', 'Contact Us'] },
-  { title: 'Destinations', links: ['African Safaris', 'Alaska & Canada', 'South America', 'Middle East', 'Southeast Asia'] },
+  { title: 'Explore', links: [['Destinations', '#destinations'], ['Trip planner', '#'], ['Community', '#blog']] },
+  { title: 'Travel Styles', links: [['Backpacking', '#'], ['Bikepacking', '#'], ['History', '#']] },
+  { title: 'About', links: [['Legal notice', '#'], ['Privacy', '#']] },
 ]
 
 export const images = {
