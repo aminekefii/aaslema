@@ -69,6 +69,26 @@ export const features = [
   { icon: 'bus', title: 'Local Transport', text: 'How louages, trains and buses work, so getting between towns is the easy part.' },
 ]
 
+// Example route shown in the trip planner card (stops from aaslema-new's Home page).
+// `leg` is how you reach that stop, depending on the On foot / By bike switch.
+export const sampleItinerary = [
+  { day: 'Day 1', place: 'Tunis', note: 'Medina walk and the Bardo Museum' },
+  {
+    day: 'Day 2', place: 'Sidi Bou Said', note: 'Train along the coast, sunset over the gulf',
+    leg: {
+      foot: { icon: 'train', text: 'TGM train from Tunis Marine, about 35 min' },
+      bike: { icon: 'bike', text: 'Coast road through La Goulette, 20 km' },
+    },
+  },
+  {
+    day: 'Day 3', place: 'Kairouan', note: 'Louage south, Great Mosque and makroudh',
+    leg: {
+      foot: { icon: 'bus', text: 'Louage from Tunis, about 2 h 30' },
+      bike: { icon: 'bike', text: 'Inland via Zaghouan, 160 km, a long day in the saddle' },
+    },
+  },
+]
+
 export const travelStyles = [
   { icon: 'backpack', title: 'Backpacking', text: 'Louages between towns, guesthouses in the medina, and the cheapest way to eat well.' },
   { icon: 'bike', title: 'Bikepacking', text: 'Coastal roads, mountain passes in the north-west and gravel tracks into the Sahara.' },
@@ -104,6 +124,5 @@ export const footerColumns = [
 
 export const images = {
   about: '/images/about-traveler.png',
-  features: '/images/hostel/event1.jpg',
   footer: '/images/cities/ben-arous-2.jpg',
 }
