@@ -104,10 +104,10 @@ export const testimonials = [
 ]
 
 export const ctas = [
-  // Festivals from each city's events in cities.js
-  { id: 'tozeur', image: '/images/cities/tozeur-2.jpg', tag: 'Tozeur', title: 'International Oasis Festival' },
-  { id: 'gabes', image: '/images/cities/gabes-2.jpg', tag: 'Gabès', title: 'Gabès International Film Festival' },
-  { id: 'zaghouan', image: '/images/cities/zaghouan-2.jpg', tag: 'Zaghouan', title: 'Rose and Eglantine Festival' },
+  // Festivals from the Festivals page (src/festivals.js); `region` is the section they link to
+  { region: 'south', image: '/images/cities/tozeur-2.jpg', tag: 'Tozeur, late Nov to Dec', title: 'Festival of the Oases' },
+  { region: 'south', image: '/images/cities/kebili-2.jpg', tag: 'Douz, December', title: 'International Festival of the Sahara' },
+  { region: 'cap-bon', image: '/images/cities/nabeul-2.jpg', tag: 'Hammamet, July to August', title: 'International Festival of Hammamet' },
 ]
 
 export const posts = [
