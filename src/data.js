@@ -56,9 +56,9 @@ export const ctas = [
 ]
 
 export const posts = [
-  { image: '/images/cities/jendouba-2.jpg', tag: 'Travel', title: 'The Ultimate Guide to Planning Your Dream Vacation', date: '25 February 2026', comments: 5 },
-  { image: '/images/cities/medenine-2.jpg', tag: 'Adventure', title: 'Unforgettable Adventures for Your Travel Bucket List', date: '18 March 2026', comments: 8 },
-  { image: '/images/cities/gafsa-2.jpg', tag: 'Tips', title: 'Packing Light: What Actually Belongs in Your Bag', date: '02 April 2026', comments: 3 },
+  { image: '/images/cities/jendouba-2.jpg', tag: 'History', title: 'Bulla Regia: The Roman Villas Built Underground in Jendouba', date: '25 February 2026', comments: 5 },
+  { image: '/images/cities/medenine-2.jpg', tag: 'Backpacking', title: 'Sleeping in a Ksar: A Backpacker’s Guide to Medenine', date: '18 March 2026', comments: 8 },
+  { image: '/images/cities/gafsa-2.jpg', tag: 'Bikepacking', title: 'Gafsa to Tozeur by Bike: Roman Pools, Oases and Gorges', date: '02 April 2026', comments: 3 },
 ]
 
 export const footerColumns = [

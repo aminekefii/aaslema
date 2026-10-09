@@ -6,7 +6,7 @@ export default function Blog() {
   return (
     <section className="section blog" id="blog">
       <div className="container">
-        <SectionTitle title="Read Latest News & Blog" count={34500} />
+        <SectionTitle title="Stories &amp; Tips from the Road" />
         <div className="grid grid--3">
           {posts.map((p) => (
             <article key={p.title} className="blog-card">
