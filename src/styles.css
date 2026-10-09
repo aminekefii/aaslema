@@ -125,7 +125,7 @@ button, input, select { font: inherit; }
 }
 .hero__title {
   position: relative; z-index: 2; margin: 0; text-align: center; text-transform: uppercase;
-  color: var(--white); font-weight: 700; font-size: clamp(35px, 10.4vw, 200px); line-height: 1.23; letter-spacing: -2px;
+  color: var(--white); font-weight: 700; font-size: clamp(28px, 5.5vw, 110px); line-height: 1.1; letter-spacing: -2px;
 }
 .hero__banner {
   position: relative; height: 790px; margin-top: -8%; border-radius: 20px;
