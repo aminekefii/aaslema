@@ -16,11 +16,12 @@ export const navLinks = ['Home', 'Tours', 'Destinations', 'Hotels', 'Blog', 'Con
 
 export const heroImage = '/images/cities/tunis-1.jpg'
 
-export const tours = [
-  { image: '/images/cities/kairouan-2.jpg', location: 'Rome, Italy', title: 'Ancient Rome & the Colosseum Walking Tour', meta: '3 days 2 nights - Couple', price: 58, rating: 4.8 },
-  { image: '/images/cities/tataouine-2.jpg', location: 'Santorini, Greece', title: 'Whitewashed Cliffs and Caldera Sunset Cruise', meta: '4 days 3 nights - Couple', price: 63, rating: 4.9 },
-  { image: '/images/cities/kebili-2.jpg', location: 'Cappadocia, Turkey', title: 'Hot Air Balloons Over the Fairy Chimneys', meta: '3 days 2 nights - Family', price: 42, rating: 4.7 },
-  { image: '/images/cities/beja-2.jpg', location: 'Giza, Egypt', title: 'Pyramids, Sphinx and the Nile by Felucca', meta: '5 days 4 nights - Group', price: 52, rating: 4.8 },
+export const featuredCities = [
+  { name: 'Tunis', vibe: 'Cosmopolitan & Historic', image: '/images/cities/tunis-1.jpg' },
+  { name: 'Sousse', vibe: 'Energetic & Mediterranean', image: '/images/cities/sousse-1.jpg' },
+  { name: 'Tataouine', vibe: 'Sci-Fi & Ancient', image: '/images/cities/tataouine-1.jpg' },
+  { name: 'Jendouba', vibe: 'Alpine & Coastal', image: '/images/cities/jendouba-1.jpg' },
+  { name: 'Kairouan', vibe: 'Spiritual & Ancient', image: '/images/cities/kairouan-1.jpg' },
 ]
 
 export const popularDestinations = [
