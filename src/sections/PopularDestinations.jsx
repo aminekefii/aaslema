@@ -6,7 +6,7 @@ export default function PopularDestinations() {
   return (
     <section className="section popular" id="destinations">
       <div className="container">
-        <SectionTitle title="Explore Popular Destinations" count={34500} />
+        <SectionTitle title="Along the Coast and Into the Hills" />
         <div className="popular__grid">
           {popularDestinations.map((d, i) => (
             <article key={d.name} className={`destination-card ${i === 0 || i === 5 ? 'destination-card--wide' : ''}`}>

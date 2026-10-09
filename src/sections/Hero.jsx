@@ -2,10 +2,10 @@ import { MapPin, Flag, CalendarDays, Users, Search } from 'lucide-react'
 import { heroImage } from '../data.js'
 
 const fields = [
-  { icon: MapPin, label: 'Destinations', options: ['City or Region', 'Europe', 'Asia', 'Africa', 'Americas'] },
-  { icon: Flag, label: 'All Activity', options: ['Choose Activity', 'Hiking', 'Beach', 'City Tour', 'Safari'] },
-  { icon: CalendarDays, label: 'Departure Date', type: 'date' },
-  { icon: Users, label: 'Guests', options: ['1 Guest', '2 Guests', '3 Guests', '4+ Guests'] },
+  { icon: MapPin, label: 'Region', options: ['Anywhere in Tunisia', 'Tunis & the North', 'The North-West', 'Cap Bon & the Sahel', 'The South & Sahara'] },
+  { icon: Flag, label: 'Travel Style', options: ['Any Style', 'Backpacking', 'Bikepacking', 'History'] },
+  { icon: CalendarDays, label: 'Start Date', type: 'date' },
+  { icon: Users, label: 'Travelers', options: ['Solo', '2 Travelers', '3 Travelers', '4+ Travelers'] },
 ]
 
 export default function Hero() {

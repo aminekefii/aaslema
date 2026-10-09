@@ -54,19 +54,19 @@ export const featuredCities = [
 ]
 
 export const popularDestinations = [
-  { image: '/images/cities/mahdia-2.jpg', name: 'Maldives Islands', info: '5352+ tours & 856+ activities' },
-  { image: '/images/cities/sousse-2.jpg', name: 'Paris, France', info: '4120+ tours & 612+ activities' },
-  { image: '/images/cities/monastir-2.jpg', name: 'Bali, Indonesia', info: '3870+ tours & 540+ activities' },
-  { image: '/images/cities/kef-2.jpg', name: 'Mount Everest, Nepal', info: '980+ tours & 210+ activities' },
-  { image: '/images/cities/sfax-2.jpg', name: 'Dubai, UAE', info: '2950+ tours & 430+ activities' },
-  { image: '/images/cities/bizerte-2.jpg', name: 'Tanah Lot, Bali', info: '1640+ tours & 305+ activities' },
+  { image: '/images/cities/mahdia-2.jpg', name: 'Mahdia', info: 'Poetic & Nautical' },
+  { image: '/images/cities/sousse-2.jpg', name: 'Sousse', info: 'Energetic & Mediterranean' },
+  { image: '/images/cities/monastir-2.jpg', name: 'Monastir', info: 'Regal & Coastal' },
+  { image: '/images/cities/kef-2.jpg', name: 'Le Kef', info: 'Highland & Resolute' },
+  { image: '/images/cities/sfax-2.jpg', name: 'Sfax', info: 'Authentic & Industrious' },
+  { image: '/images/cities/bizerte-2.jpg', name: 'Bizerte', info: 'Maritime & Nautical' },
 ]
 
 export const features = [
-  { icon: 'tent', title: 'Tent Camping', text: 'Sleep under the stars and wake up surrounded by nature.' },
-  { icon: 'sailboat', title: 'Kayaking', text: 'Paddle hidden coves and calm lakes at your own pace.' },
-  { icon: 'bike', title: 'Mountain Biking', text: 'Ride trails that test your legs and reward your eyes.' },
-  { icon: 'fish', title: 'Fishing & Boat', text: 'Slow days on the water with a local skipper.' },
+  { icon: 'map', title: 'City Guides', text: 'Guides for all 24 governorates, from the medinas of the north to the ksour of the south.' },
+  { icon: 'route', title: 'AI Trip Planner', text: 'Pick your cities and days, on foot or by bike, and get a route you can save as a PDF.' },
+  { icon: 'users', title: 'Community', text: 'Travelers who have ridden the route before you, sharing tips and hidden gems.' },
+  { icon: 'bus', title: 'Local Transport', text: 'How louages, trains and buses work, so getting between towns is the easy part.' },
 ]
 
 export const travelStyles = [
@@ -83,9 +83,9 @@ export const testimonials = [
 ]
 
 export const ctas = [
-  { image: '/images/cities/tozeur-2.jpg', tag: 'Tent Camping', title: 'Explore the world’s best campsites' },
-  { image: '/images/cities/gabes-2.jpg', tag: 'Sea Beach', title: 'The clearest beaches in Thailand' },
-  { image: '/images/cities/zaghouan-2.jpg', tag: 'Water Falls', title: 'Hidden waterfalls of Bali, Indonesia' },
+  { image: '/images/cities/tozeur-2.jpg', tag: 'Palm Groves', title: 'Date harvest in the palmeraie of Tozeur' },
+  { image: '/images/cities/gabes-2.jpg', tag: 'Seaside Oasis', title: 'Where the palms meet the sea in Gabès' },
+  { image: '/images/cities/zaghouan-2.jpg', tag: 'Roman Heritage', title: 'The Water Temple of Zaghouan' },
 ]
 
 export const posts = [

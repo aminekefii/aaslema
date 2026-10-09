@@ -1,7 +1,7 @@
-import { Tent, Sailboat, Bike, Fish } from 'lucide-react'
+import { Map, Route, Users, Bus } from 'lucide-react'
 import { features, images } from '../data.js'
 
-const icons = { tent: Tent, sailboat: Sailboat, bike: Bike, fish: Fish }
+const icons = { map: Map, route: Route, users: Users, bus: Bus }
 
 export default function Features() {
   return (
@@ -12,7 +12,7 @@ export default function Features() {
             <h2>Everything You Need to Explore Tunisia: Guides, Planner &amp; Community</h2>
           </div>
           <div className="features__media">
-            <img src={images.features} alt="Mountain biker on a forest trail" loading="lazy" />
+            <img src={images.features} alt="Travelers sharing a Tunisian dinner at the hostel" loading="lazy" />
           </div>
         </div>
 

@@ -9,7 +9,7 @@ export default function Cta() {
           <article key={c.tag} className="cta-card" style={{ backgroundImage: `url(${c.image})` }}>
             <span className="cta-card__tag">{c.tag}</span>
             <h3>{c.title}</h3>
-            <a href="#tours" className="btn btn--primary btn--sm">Explore Tours <ArrowRight size={14} /></a>
+            <a href="#tours" className="btn btn--primary btn--sm">Start Exploring <ArrowRight size={14} /></a>
           </article>
         ))}
       </div>
