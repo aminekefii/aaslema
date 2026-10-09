@@ -10,13 +10,16 @@ import Cta from './sections/Cta.jsx'
 import Blog from './sections/Blog.jsx'
 import Footer from './sections/Footer.jsx'
 import Faq from './pages/Faq.jsx'
+import Contact from './pages/Contact.jsx'
 import { useEffect } from 'react'
+import { currentPath } from './route.js'
 
-// Tiny path-based page switch: "/faq" is the FAQ page, everything else is the landing page.
-const isFaq = window.location.pathname.replace(/\/+$/, '') === '/faq'
+// Tiny path-based page switch; any other path shows the landing page.
+const pages = { '/faq': Faq, '/contact': Contact }
+const Page = pages[currentPath]
 
 export default function App() {
-  // Coming from /faq via a "/#section" link: scroll once the sections exist.
+  // Coming from another page via a "/#section" link: scroll once the sections exist.
   useEffect(() => {
     const id = window.location.hash.slice(1)
     if (id) document.getElementById(id)?.scrollIntoView()
@@ -25,7 +28,7 @@ export default function App() {
   return (
     <>
       <Header />
-      {isFaq ? <main><Faq /></main> : <main>
+      {Page ? <main><Page /></main> : <main>
         <Hero />
         <Tours />
         <About />

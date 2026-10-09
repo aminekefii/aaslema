@@ -12,7 +12,14 @@ export const brand = {
   hours: 'Mon - Fri, 08am - 05pm',
 }
 
-export const navLinks = ['Home', 'Tours', 'Destinations', 'Blog', 'Contact']
+export const navLinks = [
+  ['Home', '/#home'],
+  ['Tours', '/#tours'],
+  ['Destinations', '/#destinations'],
+  ['Blog', '/#blog'],
+  ['Contact', '/contact'],
+  ['FAQ', '/faq'],
+]
 
 export const faqs = [
   {
@@ -88,7 +95,7 @@ export const posts = [
 export const footerColumns = [
   { title: 'Explore', links: [['Destinations', '/#destinations'], ['Trip planner', '#'], ['Community', '/#blog']] },
   { title: 'Travel Styles', links: [['Backpacking', '#'], ['Bikepacking', '#'], ['History', '#']] },
-  { title: 'About', links: [['FAQ', '/faq'], ['Legal notice', '#'], ['Privacy', '#']] },
+  { title: 'About', links: [['Contact', '/contact'], ['FAQ', '/faq'], ['Legal notice', '#'], ['Privacy', '#']] },
 ]
 
 export const images = {

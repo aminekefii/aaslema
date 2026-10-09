@@ -1,4 +1,4 @@
-import { ArrowRight, ArrowUp, Compass, MapPin, Mail, Clock, Phone, Facebook, Instagram, Twitter } from 'lucide-react'
+import { ArrowRight, ArrowUp, Compass, Facebook, Instagram, Twitter } from 'lucide-react'
 import { brand, footerColumns, images } from '../data.js'
 
 const socials = [
@@ -9,7 +9,7 @@ const socials = [
 
 export default function Footer() {
   return (
-    <footer className="footer" id="contact" style={{ backgroundImage: `url(${images.footer})` }}>
+    <footer className="footer" style={{ backgroundImage: `url(${images.footer})` }}>
       <div className="container">
         <div className="footer__top">
           <div className="footer__about">
@@ -38,15 +38,6 @@ export default function Footer() {
               <ul>{col.links.map(([label, href]) => <li key={label}><a href={href}>{label}</a></li>)}</ul>
             </div>
           ))}
-          <div>
-            <h4>Get In Touch</h4>
-            <ul className="contact-list">
-              <li><MapPin size={16} /> {brand.address}</li>
-              <li><Mail size={16} /> <a href={`mailto:${brand.email}`}>{brand.email}</a></li>
-              <li><Clock size={16} /> {brand.hours}</li>
-              <li><Phone size={16} /> <a href={`tel:${brand.phone.replace(/\s/g, '')}`}>{brand.phone}</a></li>
-            </ul>
-          </div>
         </div>
 
         <div className="footer__bottom">

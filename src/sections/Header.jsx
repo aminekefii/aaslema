@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react'
 import { ArrowRight, Menu, X, Compass } from 'lucide-react'
 import { brand, navLinks } from '../data.js'
 import Switcher from '../components/Switcher.jsx'
+import { currentPath } from '../route.js'
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
-  const onFaq = window.location.pathname.replace(/\/+$/, '') === '/faq'
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 80)
@@ -24,10 +24,9 @@ export default function Header() {
         </a>
 
         <nav className={`nav ${open ? 'nav--open' : ''}`}>
-          {navLinks.map((link) => (
-            <a key={link} href={`/#${link.toLowerCase()}`} onClick={() => setOpen(false)}>{link}</a>
+          {navLinks.map(([label, href]) => (
+            <a key={label} href={href} className={href === currentPath ? 'active' : ''} onClick={() => setOpen(false)}>{label}</a>
           ))}
-          <a href="/faq" className={onFaq ? 'active' : ''} onClick={() => setOpen(false)}>FAQ</a>
         </nav>
 
         <div className="header__actions">
