@@ -12,12 +12,14 @@ import Footer from './sections/Footer.jsx'
 import Faq from './pages/Faq.jsx'
 import Contact from './pages/Contact.jsx'
 import Destinations from './pages/Destinations.jsx'
+import CityDetail from './pages/CityDetail.jsx'
 import { useEffect } from 'react'
 import { currentPath } from './route.js'
 
 // Tiny path-based page switch; any other path shows the landing page.
 const pages = { '/faq': Faq, '/contact': Contact, '/destinations': Destinations }
-const Page = pages[currentPath]
+const cityId = currentPath.match(/^\/destinations\/([^/]+)$/)?.[1]
+const Page = cityId ? () => <CityDetail id={cityId} /> : pages[currentPath]
 
 export default function App() {
   // Coming from another page via a "/#section" link: scroll once the sections exist.

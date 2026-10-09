@@ -46,7 +46,7 @@ export default function Destinations() {
           {filtered.length > 0 ? (
             <div className="guide__grid">
               {filtered.map((city) => (
-                <article key={city.id} className="guide-card">
+                <a key={city.id} href={`/destinations/${city.id}`} className="guide-card">
                   <div className="guide-card__image">
                     <img src={city.image} alt={city.name} loading="lazy" />
                   </div>
@@ -63,7 +63,7 @@ export default function Destinations() {
                     <span className="chip">{city.vibe}</span>
                     <span className="chip"><Users size={12} /> {city.population}</span>
                   </div>
-                </article>
+                </a>
               ))}
             </div>
           ) : (

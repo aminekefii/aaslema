@@ -17,7 +17,7 @@ export default function PopularDestinations() {
                   <h3>{d.name}</h3>
                   <span>{d.info}</span>
                 </div>
-                <a href="#" className="circle-btn" aria-label={`Explore ${d.name}`}><ChevronRight size={18} /></a>
+                <a href={`/destinations/${d.id}`} className="circle-btn" aria-label={`Explore ${d.name}`}><ChevronRight size={18} /></a>
               </div>
             </article>
           ))}

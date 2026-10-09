@@ -17,7 +17,7 @@ export default function Tours() {
 
         <div className="city-grid">
           {featuredCities.map((c, i) => (
-            <a key={c.name} href="/destinations" className="city-card" data-aos="fade-up" data-aos-delay={i * 100}>
+            <a key={c.id} href={`/destinations/${c.id}`} className="city-card" data-aos="fade-up" data-aos-delay={i * 100}>
               <div className="city-card__image">
                 <img src={c.image} alt={c.name} loading="lazy" />
               </div>

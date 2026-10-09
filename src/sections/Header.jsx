@@ -25,7 +25,7 @@ export default function Header() {
 
         <nav className={`nav ${open ? 'nav--open' : ''}`}>
           {navLinks.map(([label, href]) => (
-            <a key={label} href={href} className={href === currentPath ? 'active' : ''} onClick={() => setOpen(false)}>{label}</a>
+            <a key={label} href={href} className={href === currentPath || currentPath.startsWith(`${href}/`) ? 'active' : ''} onClick={() => setOpen(false)}>{label}</a>
           ))}
         </nav>
 

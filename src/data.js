@@ -46,20 +46,20 @@ export const faqs = [
 export const heroImage = '/images/cities/tunis-1.jpg'
 
 export const featuredCities = [
-  { name: 'Tunis', vibe: 'Cosmopolitan & Historic', image: '/images/cities/tunis-1.jpg' },
-  { name: 'Sousse', vibe: 'Energetic & Mediterranean', image: '/images/cities/sousse-1.jpg' },
-  { name: 'Tataouine', vibe: 'Sci-Fi & Ancient', image: '/images/cities/tataouine-1.jpg' },
-  { name: 'Jendouba', vibe: 'Alpine & Coastal', image: '/images/cities/jendouba-1.jpg' },
-  { name: 'Kairouan', vibe: 'Spiritual & Ancient', image: '/images/cities/kairouan-1.jpg' },
+  { id: 'tunis', name: 'Tunis', vibe: 'Cosmopolitan & Historic', image: '/images/cities/tunis-1.jpg' },
+  { id: 'sousse', name: 'Sousse', vibe: 'Energetic & Mediterranean', image: '/images/cities/sousse-1.jpg' },
+  { id: 'tataouine', name: 'Tataouine', vibe: 'Sci-Fi & Ancient', image: '/images/cities/tataouine-1.jpg' },
+  { id: 'jendouba', name: 'Jendouba', vibe: 'Alpine & Coastal', image: '/images/cities/jendouba-1.jpg' },
+  { id: 'kairouan', name: 'Kairouan', vibe: 'Spiritual & Ancient', image: '/images/cities/kairouan-1.jpg' },
 ]
 
 export const popularDestinations = [
-  { image: '/images/cities/mahdia-2.jpg', name: 'Mahdia', info: 'Poetic & Nautical' },
-  { image: '/images/cities/sousse-2.jpg', name: 'Sousse', info: 'Energetic & Mediterranean' },
-  { image: '/images/cities/monastir-2.jpg', name: 'Monastir', info: 'Regal & Coastal' },
-  { image: '/images/cities/kef-2.jpg', name: 'Le Kef', info: 'Highland & Resolute' },
-  { image: '/images/cities/sfax-2.jpg', name: 'Sfax', info: 'Authentic & Industrious' },
-  { image: '/images/cities/bizerte-2.jpg', name: 'Bizerte', info: 'Maritime & Nautical' },
+  { id: 'mahdia', image: '/images/cities/mahdia-2.jpg', name: 'Mahdia', info: 'Poetic & Nautical' },
+  { id: 'sousse', image: '/images/cities/sousse-2.jpg', name: 'Sousse', info: 'Energetic & Mediterranean' },
+  { id: 'monastir', image: '/images/cities/monastir-2.jpg', name: 'Monastir', info: 'Regal & Coastal' },
+  { id: 'kef', image: '/images/cities/kef-2.jpg', name: 'Le Kef', info: 'Highland & Resolute' },
+  { id: 'sfax', image: '/images/cities/sfax-2.jpg', name: 'Sfax', info: 'Authentic & Industrious' },
+  { id: 'bizerte', image: '/images/cities/bizerte-2.jpg', name: 'Bizerte', info: 'Maritime & Nautical' },
 ]
 
 export const features = [
