@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Eye, EyeOff, Info } from 'lucide-react'
+import { supabase, useUser } from '../supabase.js'
 
-// Sign in / Sign up pages. Aaslema signs people in through Supabase; this template has
-// no backend, so the forms validate in the browser and say that accounts aren't connected.
+// Sign in / Sign up / Reset password pages, backed by Supabase Auth (email + password).
 
 function GoogleIcon() {
   return (
@@ -31,16 +31,26 @@ function PasswordField({ label, autoComplete, minLength, hint }) {
   )
 }
 
-function AuthShell({ title, lead, children, footer }) {
-  const [notice, setNotice] = useState(false)
+// `onSubmit(formData)` talks to Supabase and returns the notice to show: { text, error? }.
+function AuthShell({ title, lead, children, footer, onSubmit, google = true }) {
+  const [notice, setNotice] = useState(null)
+  const [busy, setBusy] = useState(false)
 
   useEffect(() => {
     document.title = `${title} - Aaslema`
   }, [title])
 
-  const onSubmit = (e) => {
+  const submit = async (e) => {
     e.preventDefault()
-    setNotice(true)
+    if (!supabase) return setNotice({ text: "Accounts aren't connected yet. Add the Supabase values to .env.local." })
+    setBusy(true)
+    setNotice(null)
+    try {
+      setNotice(await onSubmit(new FormData(e.target)))
+    } catch {
+      setNotice({ text: 'Something went wrong. Check your connection and try again.', error: true })
+    }
+    setBusy(false)
   }
 
   return (
@@ -50,24 +60,29 @@ function AuthShell({ title, lead, children, footer }) {
           <h1>{title}</h1>
           <p className="auth__lead">{lead}</p>
 
-          <button type="button" className="auth-google" onClick={() => setNotice(true)}>
-            <GoogleIcon /> Continue with Google
-          </button>
+          {google && (
+            <>
+              <button type="button" className="auth-google" onClick={() => setNotice({ text: "Google sign-in isn't available yet. Use your email below." })}>
+                <GoogleIcon /> Continue with Google
+              </button>
+              <div className="auth-divider"><span>or use email</span></div>
+            </>
+          )}
 
-          <div className="auth-divider"><span>or use email</span></div>
-
-          <form className="auth-form" onSubmit={onSubmit}>
-            {children}
+          <form onSubmit={submit}>
+            <fieldset className="auth-form" disabled={busy}>
+              {children}
+            </fieldset>
           </form>
 
           {notice && (
-            <p className="auth-notice" role="status">
+            <p className={`auth-notice ${notice.error ? 'auth-notice--error' : ''}`} role="status">
               <Info size={18} />
-              Accounts aren't connected yet. Once a sign-in service is added, this form will work as-is.
+              {notice.text}
             </p>
           )}
 
-          <p className="auth__switch">{footer}</p>
+          {footer && <p className="auth__switch">{footer}</p>}
           <p className="auth__terms">
             By continuing, you agree to our <a href="#" className="auth-link">terms of service</a>.
           </p>
@@ -78,29 +93,54 @@ function AuthShell({ title, lead, children, footer }) {
 }
 
 export function SignIn() {
+  const signIn = async (form) => {
+    const { error } = await supabase.auth.signInWithPassword({ email: form.get('email'), password: form.get('password') })
+    if (error) return { text: error.message, error: true }
+    window.location.assign('/')
+    return { text: 'Signed in. Taking you home…' }
+  }
+
   return (
     <AuthShell
       title="Sign in to Aaslema"
       lead="Save AI itineraries, post in the forum and share your trips with other travellers."
       footer={<>New to Aaslema? <a href="/signup">Create an account</a></>}
+      onSubmit={signIn}
     >
       <label className="auth-field">
         Email
         <input type="email" name="email" autoComplete="email" placeholder="you@example.com" required />
       </label>
       <PasswordField label="Password" autoComplete="current-password" />
-      <a href="#" className="auth-link auth-forgot">Forgot password?</a>
+      <a href="/reset-password" className="auth-link auth-forgot">Forgot password?</a>
       <button type="submit" className="btn btn--primary auth-submit">Sign in</button>
     </AuthShell>
   )
 }
 
 export function SignUp() {
+  const signUp = async (form) => {
+    const { data, error } = await supabase.auth.signUp({
+      email: form.get('email'),
+      password: form.get('password'),
+      options: { data: { full_name: form.get('name') }, emailRedirectTo: window.location.origin },
+    })
+    if (error) return { text: error.message, error: true }
+    // Supabase hides whether an email is taken; an existing account comes back with no identities
+    if (data.user?.identities?.length === 0) return { text: 'An account with this email already exists. Sign in instead.', error: true }
+    if (data.session) {
+      window.location.assign('/')
+      return { text: 'Account created. Taking you home…' }
+    }
+    return { text: 'Almost there: check your email and click the link to confirm your account.' }
+  }
+
   return (
     <AuthShell
       title="Join Aaslema"
       lead="Save AI itineraries, post in the forum and share your trips with other travellers."
       footer={<>Already have an account? <a href="/signin">Sign in</a></>}
+      onSubmit={signUp}
     >
       <label className="auth-field">
         Name
@@ -112,6 +152,49 @@ export function SignUp() {
       </label>
       <PasswordField label="Password" autoComplete="new-password" minLength={8} hint="At least 8 characters." />
       <button type="submit" className="btn btn--primary auth-submit">Create account</button>
+    </AuthShell>
+  )
+}
+
+// Two steps on one page: ask for the reset email, then (arriving from that email's
+// link, which signs the user in) set the new password.
+export function ResetPassword() {
+  const user = useUser()
+  const linkError = new URLSearchParams(window.location.hash.slice(1)).get('error_description')
+
+  const sendLink = async (form) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(form.get('email'), { redirectTo: `${window.location.origin}/reset-password` })
+    if (error) return { text: error.message, error: true }
+    return { text: 'If an account uses that email, a reset link is on its way.' }
+  }
+
+  const savePassword = async (form) => {
+    const { error } = await supabase.auth.updateUser({ password: form.get('password') })
+    if (error) return { text: error.message, error: true }
+    window.location.assign('/')
+    return { text: 'Password updated. Taking you home…' }
+  }
+
+  if (user === undefined) return <section className="auth" />
+
+  return user ? (
+    <AuthShell title="Choose a new password" lead={`For ${user.email}.`} onSubmit={savePassword} google={false}>
+      <PasswordField label="New password" autoComplete="new-password" minLength={8} hint="At least 8 characters." />
+      <button type="submit" className="btn btn--primary auth-submit">Save password</button>
+    </AuthShell>
+  ) : (
+    <AuthShell
+      title="Reset your password"
+      lead={linkError ? `${linkError}. Request a new link below.` : "Enter your email and we'll send you a link to set a new password."}
+      footer={<a href="/signin">Back to sign in</a>}
+      onSubmit={sendLink}
+      google={false}
+    >
+      <label className="auth-field">
+        Email
+        <input type="email" name="email" autoComplete="email" placeholder="you@example.com" required />
+      </label>
+      <button type="submit" className="btn btn--primary auth-submit">Send reset link</button>
     </AuthShell>
   )
 }

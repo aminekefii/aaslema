@@ -117,6 +117,7 @@ button, input, select { font: inherit; }
 .nav a { color: var(--white); font-weight: 500; font-size: 17px; }
 .nav a:hover, .nav a.active { color: var(--primary); }
 .header__actions { display: flex; align-items: center; gap: 14px; }
+.header__user { color: var(--white); font-weight: 500; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .menu-toggle { display: none; background: none; border: 0; color: var(--white); cursor: pointer; }
 
 /* ---------- Hero ---------- */
@@ -596,7 +597,8 @@ button, input, select { font: inherit; }
 .auth-google:hover { border-color: var(--primary); }
 .auth-divider { display: flex; align-items: center; gap: 14px; margin: 14px 0; font-size: 14px; }
 .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-.auth-form { display: grid; gap: 12px; }
+.auth-form { display: grid; gap: 12px; margin: 0; padding: 0; border: 0; min-width: 0; }
+.auth-form:disabled { opacity: 0.6; }
 .auth-field { display: grid; gap: 4px; font-size: 15px; font-weight: 500; color: var(--title); }
 .auth-field small { font-size: 13px; font-weight: 400; color: var(--text); }
 .auth-field input, .auth-field select {
@@ -620,6 +622,8 @@ button, input, select { font: inherit; }
   background: var(--tint); color: var(--title); font-size: 14px; line-height: 1.5;
 }
 .auth-notice svg { flex-shrink: 0; margin-top: 1px; color: var(--primary); }
+.auth-notice--error { background: #fdecec; color: #8f1d1d; }
+.auth-notice--error svg { color: #c62828; }
 .auth__switch { margin: 16px 0 0; font-size: 15px; text-align: center; }
 .auth__terms { margin: 6px 0 0; font-size: 13px; text-align: center; }
 .auth__switch a { color: var(--primary); font-weight: 600; }
@@ -847,7 +851,7 @@ html.dark .feature-card:hover { border-color: var(--border); }
 @media (max-width: 991px) {
   .section { padding: 80px 0; }
   .menu-toggle { display: block; }
-  .header__cta { display: none; }
+  .header__cta, .header__user { display: none; }
   .nav {
     position: absolute; top: 100%; left: 16px; right: 16px; flex-direction: column; gap: 0;
     background: var(--heading); border-radius: 12px; padding: 10px 24px; display: none;
