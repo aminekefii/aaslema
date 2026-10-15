@@ -39,9 +39,8 @@ export default function AppHeader({ user, onSignOut }) {
         </nav>
 
         <div className="header__actions">
-          <a href="/app/profile" className={`app-user ${currentPath === '/app/profile' ? 'app-user--active' : ''}`} title="Profile">
+          <a href="/app/profile" className={`app-user ${currentPath === '/app/profile' ? 'app-user--active' : ''}`} title={name} aria-label={`Profile (${name})`}>
             <span className="app-user__avatar" aria-hidden="true">{initials(name)}</span>
-            <span className="app-user__name">{name}</span>
           </a>
           <button type="button" className="btn btn--primary header__cta" onClick={onSignOut}>
             Sign Out <LogOut size={16} />
