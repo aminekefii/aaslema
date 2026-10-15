@@ -19,7 +19,15 @@ export default function Destinations({ user }) {
 
   useEffect(() => {
     fetchLikeCounts().then(setCounts)
-    if (userId) fetchMyCityIds('city_visits').then(setVisited)
+  }, [])
+
+  // Visits belong to one user: clear them when the user changes and ignore late answers
+  useEffect(() => {
+    setVisited([])
+    if (!userId) return
+    let current = true
+    fetchMyCityIds('city_visits').then((ids) => { if (current) setVisited(ids) })
+    return () => { current = false }
   }, [userId])
 
   const filtered = useMemo(() => {
