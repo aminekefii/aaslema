@@ -55,8 +55,8 @@ From the specs' "Future work" sections:
 3. **Profile:** edit name and avatar, list own posts, "Places I've visited".
 4. **AI Planner:** needs an AI provider and a backend endpoint; "Add to plan" moves to Supabase with it.
 5. **Moments: iPhone photos upload partly green (open bug, to fix later).** HEIC photos are converted with
-   `heic-to` 1.6.5 (commit `8f9ac1a`). An uncommitted change also spots HEIC content in files named `.JPG`
-   (`hasHeicHeader` in `frontend/src/moments.js`, used in `frontend/src/imageResize.js`); it isn't committed yet.
+   `heic-to` 1.6.5 (commit `8f9ac1a`). HEIC content in files named `.JPG` is also spotted (commit `4cb490c`:
+   `hasHeicHeader` in `frontend/src/moments.js`, used in `frontend/src/imageResize.js`).
    With it, `C:\Users\amine\Pictures\14\IMG_0823.JPG` uploads, but about 40% of it is green (whole 512px blocks).
    Found so far: that file looks incomplete (libheif-js 1.19.8 says "Extent in iloc box references data outside of
    file bounds"); heic-to's libheif 1.23.5 decodes what is there and leaves the rest green. The owner reports the
