@@ -61,7 +61,7 @@ function PlannerCard() {
         })}
       </ol>
 
-      <a href="#" className="btn btn--primary">Open the trip planner</a>
+      <a href="/signin" className="btn btn--primary">Open the trip planner</a>
     </div>
   )
 }
