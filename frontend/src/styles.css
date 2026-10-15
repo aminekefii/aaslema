@@ -431,9 +431,16 @@ button, input, select { font: inherit; }
 }
 .guide__search input:focus { border-color: var(--primary); }
 .guide__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px 24px; }
-.guide-card__image { aspect-ratio: 3 / 2; overflow: hidden; border-radius: 14px; background: var(--lighter); }
+.guide-card__image { position: relative; aspect-ratio: 3 / 2; overflow: hidden; border-radius: 14px; background: var(--lighter); }
 .guide-card__image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
 .guide-card:hover .guide-card__image img { transform: scale(1.03); }
+/* Scaled up a little so the blur doesn't show soft edges inside the frame */
+.guide-card--visited .guide-card__image img { filter: blur(3px) brightness(0.75); transform: scale(1.08); }
+.guide-card--visited:hover .guide-card__image img { transform: scale(1.1); }
+.guide-card__visited {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 8px;
+  color: var(--white); font-size: 20px; font-weight: 700; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+}
 .guide-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-top: 14px; }
 .guide-card__head > div { min-width: 0; }
 .guide-card h2 { font-size: 20px; margin: 0; transition: color 0.3s; }

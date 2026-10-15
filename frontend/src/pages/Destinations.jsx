@@ -1,15 +1,26 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Heart, Search, Users } from 'lucide-react'
+import { CheckCircle2, Heart, Search, Users } from 'lucide-react'
 import { cities } from '../cities.js'
 import { base } from '../route.js'
+import { likeCount } from '../cityCounts.js'
+import { fetchLikeCounts, fetchMyCityIds } from '../cityActivity.js'
 
 // Port of aaslema-new's Guide page: searchable grid of all 24 governorates.
-export default function Destinations() {
+export default function Destinations({ user }) {
   const [query, setQuery] = useState('')
+  // Like counts for everyone; null until loaded (or if loading failed)
+  const [counts, setCounts] = useState(null)
+  const [visited, setVisited] = useState([])
+  const userId = user?.id
 
   useEffect(() => {
     document.title = 'Destinations - Aaslema'
   }, [])
+
+  useEffect(() => {
+    fetchLikeCounts().then(setCounts)
+    if (userId) fetchMyCityIds('city_visits').then(setVisited)
+  }, [userId])
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -46,26 +57,31 @@ export default function Destinations() {
 
           {filtered.length > 0 ? (
             <div className="guide__grid">
-              {filtered.map((city) => (
-                <a key={city.id} href={`${base}/destinations/${city.id}`} className="guide-card">
-                  <div className="guide-card__image">
-                    <img src={city.image} alt={city.name} loading="lazy" />
-                  </div>
-                  <div className="guide-card__head">
-                    <div>
-                      <h2>{city.name}</h2>
-                      <p>{city.title}</p>
+              {filtered.map((city) => {
+                const isVisited = visited.includes(city.id)
+                const likes = likeCount(counts, city.id)
+                return (
+                  <a key={city.id} href={`${base}/destinations/${city.id}`} className={`guide-card ${isVisited ? 'guide-card--visited' : ''}`}>
+                    <div className="guide-card__image">
+                      <img src={city.image} alt={city.name} loading="lazy" />
+                      {isVisited && <span className="guide-card__visited"><CheckCircle2 size={20} /> Visited</span>}
                     </div>
-                    <span className={`guide-card__likes ${city.likes > 0 ? 'is-liked' : ''}`} title="Likes">
-                      <Heart size={14} /> {city.likes}
-                    </span>
-                  </div>
-                  <div className="guide-card__chips">
-                    <span className="chip">{city.vibe}</span>
-                    <span className="chip"><Users size={12} /> {city.population}</span>
-                  </div>
-                </a>
-              ))}
+                    <div className="guide-card__head">
+                      <div>
+                        <h2>{city.name}</h2>
+                        <p>{city.title}</p>
+                      </div>
+                      <span className={`guide-card__likes ${likes > 0 ? 'is-liked' : ''}`} title="Likes">
+                        <Heart size={14} /> {counts && likes}
+                      </span>
+                    </div>
+                    <div className="guide-card__chips">
+                      <span className="chip">{city.vibe}</span>
+                      <span className="chip"><Users size={12} /> {city.population}</span>
+                    </div>
+                  </a>
+                )
+              })}
             </div>
           ) : (
             <div className="guide__empty">
