@@ -12,13 +12,16 @@ function useNewMessageCount() {
   const [count, setCount] = useState(0)
 
   useEffect(() => {
+    let latest = 0
     const load = async () => {
+      const request = ++latest
       try {
         const { count, error } = await supabase
           .from('contact_messages')
           .select('id', { count: 'exact', head: true })
           .is('handled_at', null)
-        if (!error) setCount(count ?? 0)
+        // Two quick changes can answer out of order; keep only the newest answer
+        if (!error && request === latest) setCount(count ?? 0)
       } catch {
         // No badge if the count can't be loaded
       }

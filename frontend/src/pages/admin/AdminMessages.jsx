@@ -104,8 +104,9 @@ function MessageItem({ message, open, onToggle, onChange }) {
     setFailed(false)
     const handled_at = handled ? null : new Date().toISOString()
     try {
-      const { error } = await supabase.from('contact_messages').update({ handled_at }).eq('id', message.id)
-      if (error) throw error
+      // An update that matches no row (deleted, or no admin rights) returns no error, so check it hit one
+      const { data, error } = await supabase.from('contact_messages').update({ handled_at }).eq('id', message.id).select('id')
+      if (error || !data?.length) throw error ?? new Error('Message not updated')
       onChange({ ...message, handled_at })
       notifyChanged()
     } catch {

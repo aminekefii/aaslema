@@ -30,17 +30,18 @@ Supabase SQL Editor after 001 and 002; safe to re-run.
 
 ```sql
 -- Contact form messages. Anyone can send; only admins can read or mark them.
--- Run after 001_admin_users.sql (uses public.is_admin()). Safe to re-run.
+-- Run after 001_admin_users.sql (uses public.is_admin()). Safe to re-run, but re-running
+-- does not change an existing table: alter its constraints by hand if they change later.
 
 create table if not exists public.contact_messages (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),
-  name text not null check (char_length(btrim(name)) between 1 and 100),
+  name text not null check (char_length(name) <= 100 and btrim(name, E' \t\r\n') <> ''),
   email text not null check (
     char_length(email) <= 254 and email ~ '^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$'
   ),
-  subject text check (subject is null or char_length(subject) <= 150),
-  message text not null check (char_length(btrim(message)) between 1 and 5000),
+  subject text check (subject is null or (char_length(subject) <= 150 and btrim(subject, E' \t\r\n') <> '')),
+  message text not null check (char_length(message) <= 5000 and btrim(message, E' \t\r\n') <> ''),
   user_id uuid references auth.users (id) on delete set null,
   handled_at timestamptz
 );
@@ -218,6 +219,10 @@ Changed:
   8. In the SQL Editor, as a check that the database protects the data:
      `set role anon; select * from public.contact_messages;` → "permission
      denied"; then `reset role;`.
+  9. As admin, open a message, delete that row in the Supabase table editor,
+     then click Mark handled → "Couldn't update this message. Try again."
+     (Tab counts are a snapshot from page load; the sidebar badge refreshes
+     after each change, so they can differ until a reload if new messages arrive.)
 
 ## Future work
 
