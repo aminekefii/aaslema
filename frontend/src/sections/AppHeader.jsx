@@ -3,6 +3,7 @@ import { LogOut, Menu, X, Compass } from 'lucide-react'
 import { brand, appNavLinks } from '../data.js'
 import Switcher from '../components/Switcher.jsx'
 import { currentPath } from '../route.js'
+import { isAdmin } from '../roles.js'
 
 // "Leila Ben Ali" -> "LB", "tom@x.com" -> "T"
 const initials = (name) => name.split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase()
@@ -34,6 +35,7 @@ export default function AppHeader({ user, onSignOut }) {
           {appNavLinks.map(([label, href]) => (
             <a key={label} href={href} className={isActive(href) ? 'active' : ''} onClick={() => setOpen(false)}>{label}</a>
           ))}
+          {isAdmin(user) && <a href="/admin" onClick={() => setOpen(false)}>Admin</a>}
           {/* The header's Sign Out button is hidden on phones, so the menu gets its own */}
           <button type="button" className="app-nav__signout" onClick={onSignOut}>Sign Out</button>
         </nav>

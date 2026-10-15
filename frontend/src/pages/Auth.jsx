@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Eye, EyeOff, Info } from 'lucide-react'
 import { supabase, useUser } from '../supabase.js'
+import { homeFor } from '../roles.js'
 
 // Sign in / Sign up / Reset password pages, backed by Supabase Auth (email + password).
 
@@ -98,9 +99,9 @@ function AuthShell({ title, lead, children, footer, onSubmit, google = true }) {
 
 export function SignIn() {
   const signIn = async (form) => {
-    const { error } = await supabase.auth.signInWithPassword({ email: form.get('email'), password: form.get('password') })
+    const { data, error } = await supabase.auth.signInWithPassword({ email: form.get('email'), password: form.get('password') })
     if (error) return { text: error.message, error: true }
-    window.location.assign('/app')
+    window.location.assign(homeFor(data.user))
     return { text: 'Signed in. Taking you home…' }
   }
 

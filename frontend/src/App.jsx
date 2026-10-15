@@ -20,25 +20,31 @@ import Community from './pages/Community.jsx'
 import AppHome from './pages/AppHome.jsx'
 import Planner from './pages/Planner.jsx'
 import Profile from './pages/Profile.jsx'
+import AdminLayout from './sections/AdminLayout.jsx'
+import AdminUsers from './pages/admin/AdminUsers.jsx'
 import { useEffect, useState } from 'react'
 import { currentPath } from './route.js'
-import { isAppPath, redirectFor, withHash } from './redirects.js'
+import { isAdminPath, isAppPath, redirectFor, withHash } from './redirects.js'
+import { isAdmin } from './roles.js'
 import { supabase, useUser } from './supabase.js'
 
 // Tiny path-based page switch; any other public path shows the landing page.
 const pages = { '/faq': Faq, '/contact': Contact, '/destinations': Destinations, '/festivals': Festivals, '/community': Community, '/signin': SignIn, '/signup': SignUp, '/reset-password': ResetPassword }
 // Signed-in area; keys must match appPagePaths in redirects.js
 const appPages = { '/app': AppHome, '/app/destinations': Destinations, '/app/festivals': Festivals, '/app/community': Community, '/app/contact': Contact, '/app/planner': Planner, '/app/profile': Profile }
+// Admin area; keys must match adminPagePaths in redirects.js
+const adminPages = { '/admin': AdminUsers }
 const inApp = isAppPath(currentPath)
+const inAdmin = isAdminPath(currentPath)
 const cityId = currentPath.match(/^\/(?:app\/)?destinations\/([^/]+)$/)?.[1]
-const Page = cityId ? () => <CityDetail id={cityId} /> : (inApp ? appPages : pages)[currentPath]
+const Page = cityId ? () => <CityDetail id={cityId} /> : (inAdmin ? adminPages : inApp ? appPages : pages)[currentPath]
 
 export default function App() {
   const user = useUser()
   const [signingOut, setSigningOut] = useState(false)
   // Wait for the saved session before deciding, so the wrong page never flashes
-  const redirect = user === undefined || signingOut ? null : redirectFor(currentPath, user !== null)
-  const ready = user !== undefined && !redirect && !(inApp && !user)
+  const redirect = user === undefined || signingOut ? null : redirectFor(currentPath, user !== null, isAdmin(user))
+  const ready = user !== undefined && !redirect && !(inApp && !user) && !(inAdmin && !isAdmin(user))
 
   useEffect(() => {
     if (redirect) window.location.replace(withHash(redirect, window.location.hash))
@@ -61,6 +67,8 @@ export default function App() {
   }
 
   if (!ready) return null
+
+  if (inAdmin) return <AdminLayout user={user} onSignOut={signOut}><Page user={user} /></AdminLayout>
 
   return (
     <>
