@@ -38,7 +38,7 @@ const adminPages = { '/admin': AdminUsers, '/admin/messages': AdminMessages }
 const inApp = isAppPath(currentPath)
 const inAdmin = isAdminPath(currentPath)
 const cityId = currentPath.match(/^\/(?:app\/)?destinations\/([^/]+)$/)?.[1]
-const Page = cityId ? () => <CityDetail id={cityId} /> : (inAdmin ? adminPages : inApp ? appPages : pages)[currentPath]
+const Page = cityId ? (props) => <CityDetail id={cityId} {...props} /> : (inAdmin ? adminPages : inApp ? appPages : pages)[currentPath]
 
 export default function App() {
   const user = useUser()

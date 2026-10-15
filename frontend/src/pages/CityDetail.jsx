@@ -6,9 +6,11 @@ import {
 import { cities } from '../cities.js'
 import Modal from '../components/Modal.jsx'
 import { base } from '../route.js'
+import { adjustCount, likeCount } from '../cityCounts.js'
+import { fetchLikeCounts, fetchMyCityIds, setCityFlag } from '../cityActivity.js'
 
-// Port of aaslema-new's CityDetail page. Aaslema keeps likes, visits and moments in
-// Supabase; this template has no backend, so they live in the viewer's browser.
+// Port of aaslema-new's CityDetail page. Likes and visits live in Supabase (cityActivity.js);
+// the plan and moments still live in the viewer's browser.
 const readList = (key) => {
   try { return JSON.parse(localStorage.getItem(key) || '[]') } catch { return [] }
 }
@@ -31,11 +33,18 @@ const TABS = [
 
 const EMPTY_MOMENT = { url: '', location: '', description: '' }
 
-export default function CityDetail({ id }) {
+export default function CityDetail({ id, user }) {
   const city = cities.find((c) => c.id === id)
-  const [hasLiked, setHasLiked] = useState(() => readList('liked_cities').includes(id))
+  const [hasLiked, setHasLiked] = useState(false)
   const [isInPlan, setIsInPlan] = useState(() => city && readList('planned_cities').includes(city.name))
-  const [isVisited, setIsVisited] = useState(() => readList('visited_cities').includes(id))
+  const [isVisited, setIsVisited] = useState(false)
+  // Like counts for everyone; null until loaded (or if loading failed)
+  const [counts, setCounts] = useState(null)
+  const [likeBusy, setLikeBusy] = useState(false)
+  const [visitBusy, setVisitBusy] = useState(false)
+  // null, 'signin' or 'error' — shown under the buttons
+  const [note, setNote] = useState(null)
+  const userId = user?.id
   const [activeTab, setActiveTab] = useState('overview')
   const [moments, setMoments] = useState(() => readList(`moments_${id}`))
   const [isUploading, setIsUploading] = useState(false)
@@ -46,6 +55,21 @@ export default function CityDetail({ id }) {
   useEffect(() => {
     document.title = `${city ? city.name : 'City not found'} - Aaslema`
   }, [city])
+
+  useEffect(() => {
+    fetchLikeCounts().then(setCounts)
+  }, [id])
+
+  // Likes and visits belong to one user: reset when the user changes and ignore late answers
+  useEffect(() => {
+    setHasLiked(false)
+    setIsVisited(false)
+    if (!userId) return
+    let current = true
+    fetchMyCityIds('city_likes').then((ids) => { if (current) setHasLiked(ids.includes(id)) })
+    fetchMyCityIds('city_visits').then((ids) => { if (current) setIsVisited(ids.includes(id)) })
+    return () => { current = false }
+  }, [id, userId])
 
   if (!city) {
     return (
@@ -60,19 +84,26 @@ export default function CityDetail({ id }) {
     )
   }
 
-  const likes = city.likes + (hasLiked ? 1 : 0)
-
-  const handleLike = () => {
-    writeList('liked_cities', toggleIn(readList('liked_cities'), city.id))
-    setHasLiked(!hasLiked)
+  // Flip right away, save, and flip back if saving fails
+  const toggleFlag = async (table, isOn, setOn, setBusy, countsLikes) => {
+    if (!user) return setNote('signin')
+    setNote(null)
+    setBusy(true)
+    setOn(!isOn)
+    if (countsLikes) setCounts((c) => c && adjustCount(c, city.id, isOn ? -1 : 1))
+    const saved = await setCityFlag(table, city.id, !isOn)
+    if (!saved) {
+      setOn(isOn)
+      if (countsLikes) setCounts((c) => c && adjustCount(c, city.id, isOn ? 1 : -1))
+      setNote('error')
+    }
+    setBusy(false)
   }
+  const handleLike = () => toggleFlag('city_likes', hasLiked, setHasLiked, setLikeBusy, true)
+  const handleToggleVisited = () => toggleFlag('city_visits', isVisited, setIsVisited, setVisitBusy, false)
   const handleAddToPlan = () => {
     writeList('planned_cities', toggleIn(readList('planned_cities'), city.name))
     setIsInPlan(!isInPlan)
-  }
-  const handleToggleVisited = () => {
-    writeList('visited_cities', toggleIn(readList('visited_cities'), city.id))
-    setIsVisited(!isVisited)
   }
 
   const openUpload = (location = '') => {
@@ -131,15 +162,15 @@ export default function CityDetail({ id }) {
               </dl>
 
               <div className="city-actions">
-                <button onClick={handleLike} aria-pressed={hasLiked} className={`city-btn ${hasLiked ? 'city-btn--primary' : ''}`}>
+                <button onClick={handleLike} disabled={likeBusy} aria-pressed={hasLiked} className={`city-btn ${hasLiked ? 'city-btn--primary' : ''}`}>
                   <Heart size={16} fill={hasLiked ? 'currentColor' : 'none'} />
-                  {hasLiked ? 'Liked' : 'Like'} · {likes}
+                  {hasLiked ? 'Liked' : 'Like'}{counts && ` · ${likeCount(counts, city.id)}`}
                 </button>
                 <button onClick={handleAddToPlan} aria-pressed={isInPlan} className={`city-btn ${isInPlan ? 'city-btn--soft' : ''}`}>
                   {isInPlan ? <CheckCircle2 size={16} /> : <Calendar size={16} />}
                   {isInPlan ? 'In your plan' : 'Add to plan'}
                 </button>
-                <button onClick={handleToggleVisited} aria-pressed={isVisited} className={`city-btn ${isVisited ? 'city-btn--soft' : ''}`}>
+                <button onClick={handleToggleVisited} disabled={visitBusy} aria-pressed={isVisited} className={`city-btn ${isVisited ? 'city-btn--soft' : ''}`}>
                   {isVisited ? <CheckCircle2 size={16} /> : <MapPin size={16} />}
                   {isVisited ? 'Visited' : 'Mark as visited'}
                 </button>
@@ -147,9 +178,16 @@ export default function CityDetail({ id }) {
                   <Share2 size={16} /> Share
                 </button>
               </div>
+              {note === 'signin' && (
+                <p className="city-note">Sign in to like and track your visits. <a href="/signin">Sign in</a></p>
+              )}
+              {note === 'error' && <p className="city-note city-note--error" role="alert">Couldn't save that. Please try again.</p>}
             </div>
 
-            <img src={city.image} alt={city.name} className="city-hero__image" />
+            <div className="city-hero__media">
+              <img src={city.image} alt={city.name} className="city-hero__image" />
+              {isVisited && <span className="city-hero__visited"><CheckCircle2 size={18} /> Visited</span>}
+            </div>
           </div>
         </div>
       </section>
