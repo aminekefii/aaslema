@@ -2,6 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 import { Quote } from 'lucide-react'
 import Stars from '../components/Stars.jsx'
 import { testimonials } from '../data.js'
+import { initials } from '../names.js'
+import { slideCards } from '../reviews.js'
+import { fetchPublishedReviews } from '../reviewsApi.js'
 
 // Cards per view, matching travosy-react's tiny-three-item slider (3 / 2 / 1).
 function usePerView() {
@@ -17,10 +20,16 @@ function usePerView() {
 
 export default function Testimonials() {
   const perView = usePerView()
-  const positions = Math.max(1, testimonials.length - perView + 1)
+  const [published, setPublished] = useState(null) // null until loaded, or if loading failed
+  const cards = slideCards(published, testimonials)
+  const positions = Math.max(1, cards.length - perView + 1)
   const [active, setActive] = useState(0)
   const [paused, setPaused] = useState(false)
   const dragStart = useRef(null)
+
+  useEffect(() => {
+    fetchPublishedReviews().then(setPublished)
+  }, [])
 
   useEffect(() => setActive((a) => Math.min(a, positions - 1)), [positions])
 
@@ -63,15 +72,18 @@ export default function Testimonials() {
             className="reviews__track"
             style={{ transform: `translateX(-${(active * 100) / perView}%)` }}
           >
-            {testimonials.map((t) => (
-              <figure key={t.name} className="review" style={{ flexBasis: `${100 / perView}%` }}>
+            {cards.map((t) => (
+              <figure key={t.key ?? t.name} className="review" style={{ flexBasis: `${100 / perView}%` }}>
                 <div className="review__bubble">
                   <Quote size={40} className="review__quote" />
                   <blockquote>“ {t.quote} ”</blockquote>
-                  <Stars />
+                  <Stars count={t.rating ?? 5} />
                 </div>
                 <figcaption>
-                  <img src={t.avatar} alt={t.name} draggable="false" />
+                  {t.avatar
+                    ? <img src={t.avatar} alt={t.name} draggable="false" />
+                    : <span className="review__initials" aria-hidden="true">{initials(t.name)}</span>}
+
                   <strong>{t.name}</strong>
                   <span>{t.role}</span>
                 </figcaption>
