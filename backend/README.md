@@ -14,3 +14,4 @@ Supabase dashboard's SQL Editor (they are safe to re-run):
 
 1. `001_admin_users.sql` — admin check and the admin Users list
 2. `002_make_admin.sql` — marks the site owner's account as admin; the result must show one row. Sign out and back in afterwards
+3. `003_contact_messages.sql` — stores Contact form messages; only admins can read them
