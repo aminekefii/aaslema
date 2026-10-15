@@ -3,7 +3,8 @@ import { ChevronLeft, ChevronRight, Heart, Navigation } from 'lucide-react'
 import usePerView from '../usePerView.js'
 import { timeAgo } from '../timeAgo.js'
 
-// Visitors (no onLike) get a sign-in link showing the count instead of a button
+// Visitors (no onLike) get a sign-in link showing the count instead of a button;
+// on their own moments users only see the count (they can't like their own)
 function LikeButton({ moment, onLike }) {
   const content = (
     <>
@@ -11,6 +12,9 @@ function LikeButton({ moment, onLike }) {
       <span>{moment.likes}</span>
     </>
   )
+  if (moment.mine) {
+    return <span className="moment-card__like moment-card__like--mine" title="Your moment" aria-label={`${moment.likes} likes on your moment`}>{content}</span>
+  }
   if (!onLike) {
     return <a href="/signin" className="moment-card__like" aria-label={`${moment.likes} likes. Sign in to like this moment`}>{content}</a>
   }

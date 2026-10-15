@@ -144,7 +144,7 @@ export default function CityDetail({ id, user }) {
 
   // Same idea for moments: flip the card right away, flip it back if saving fails
   const handleMomentLike = async (moment) => {
-    if (likingMoments.current.has(moment.id)) return
+    if (moment.mine || likingMoments.current.has(moment.id)) return
     likingMoments.current.add(moment.id)
     setMomentLikeError(false)
     const flip = (list) => list.map((m) => (m.id === moment.id ? toggleMomentLike(m) : m))

@@ -596,6 +596,7 @@ button, input, select { font: inherit; }
   text-decoration: none; transition: color 0.2s, border-color 0.2s, background 0.2s;
 }
 .moment-card__like:hover { border-color: var(--primary); color: var(--primary); }
+.moment-card__like--mine, .moment-card__like--mine:hover { border-color: var(--border); color: var(--text); cursor: default; }
 .moment-card__like--on, .moment-card__like--on:hover { border-color: var(--primary); background: var(--tint); color: var(--primary); }
 .moments-carousel__arrow {
   position: absolute; top: 36%; z-index: 2; display: grid; place-items: center; width: 40px; height: 40px;
