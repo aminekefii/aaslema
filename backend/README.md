@@ -1,7 +1,6 @@
 # Backend
 
-Not started yet. The frontend currently keeps all dynamic data in the browser
-(`localStorage`), so these are the first candidates for a real API:
+Accounts use Supabase Auth, and admin features use SQL functions in Supabase (see below). The rest of the dynamic data still lives in the browser (`localStorage`); these are the next candidates for a real backend:
 
 - Sign in / sign up (`frontend/src/pages/Auth.jsx`) — Supabase Auth
 - Community posts (`frontend/src/pages/Community.jsx`)
@@ -14,5 +13,4 @@ Not started yet. The frontend currently keeps all dynamic data in the browser
 Supabase dashboard's SQL Editor (they are safe to re-run):
 
 1. `001_admin_users.sql` — admin check and the admin Users list
-2. `002_make_admin.sql` — marks the site owner's account as admin (sign out
-   and back in afterwards)
+2. `002_make_admin.sql` — marks the site owner's account as admin; the result must show one row. Sign out and back in afterwards
