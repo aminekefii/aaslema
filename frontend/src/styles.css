@@ -571,6 +571,8 @@ button, input, select { font: inherit; }
 .city-highlight__thumbs img:first-child { margin-left: 0; }
 .city-moments__head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 .city-moments__head .city-sub { margin-bottom: 0; }
+.city-moments__signin { color: var(--primary); font-weight: 600; }
+.city-moments__signin:hover { text-decoration: underline; }
 .city-empty { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 56px 20px; text-align: center; }
 .city-empty p { margin: 0; font-size: 15px; }
 .city-moments { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }

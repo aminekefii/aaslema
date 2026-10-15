@@ -323,7 +323,9 @@ export default function CityDetail({ id, user }) {
                   <h2 className="city-h2">Moments</h2>
                   <p className="city-sub">Photos travellers shared from {city.name}.</p>
                 </div>
-                <button onClick={() => openUpload()} className="btn btn--primary"><Camera size={16} /> Add moment</button>
+                {user
+                  ? <button onClick={() => openUpload()} className="btn btn--primary"><Camera size={16} /> Add moment</button>
+                  : <a href="/signin" className="city-moments__signin">Sign in to your account to upload your moments</a>}
               </div>
 
               {moments.length === 0 ? (
