@@ -23,3 +23,6 @@ export function momentFromForm({ file, caption, spot }, user, city) {
 export const momentPath = (userId, id) => `${userId}/${id}.jpg`
 
 export const spotMoments = (moments, spot) => moments.filter((m) => m.spot === spot)
+
+// Admins approve only what they can see: a pending moment whose photo loaded
+export const canApprove = (moment, url) => !moment.approved_at && Boolean(url)

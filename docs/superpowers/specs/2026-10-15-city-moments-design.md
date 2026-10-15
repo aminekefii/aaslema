@@ -25,7 +25,7 @@ Replaces today's moments, which live only in the uploader's browser
 | Highlight ("spot") | Optional, one of that destination's highlights |
 | Caption | Required, 3–300 characters |
 | Photo storage | Private Supabase Storage bucket `moments`, JPEG only, ≤ 2 MB; photos shrunk in the browser to ≤ 1600 px first |
-| Who sees a photo | Uploader and admins always; everyone else only once approved (database-enforced, via signed URLs) |
+| Who sees a photo | Admins always; everyone else (the uploader too) only once approved (database-enforced, via signed URLs), so the bucket can't host unreviewed images |
 | After upload | Popup: under review; nothing else shown to the user until approval |
 | Admin actions | Approve, Delete (in-page confirm; also removes the file). No unpublish |
 | User actions after upload | None (no edit, no delete) |
@@ -70,13 +70,29 @@ create policy "Users read their own moments, admins all" on public.moments
   for select to authenticated
   using (user_id = auth.uid() or public.is_admin());
 
--- The photo must be in the uploader's own folder
+-- Uploaded photo exists? Runs as the owner, because uploaders can't read storage rows.
+create or replace function public.moment_photo_exists(path text)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select exists (select 1 from storage.objects o where o.bucket_id = 'moments' and o.name = path)
+$$;
+
+revoke all on function public.moment_photo_exists(text) from public;
+grant execute on function public.moment_photo_exists(text) to authenticated;
+
+-- The photo must already be uploaded, in the uploader's own folder (it can't be
+-- swapped later: there is no storage update rule and the name is taken)
 drop policy if exists "Users add their own moments" on public.moments;
 create policy "Users add their own moments" on public.moments
   for insert to authenticated
   with check (
     user_id = auth.uid() and approved_at is null
     and split_part(image_path, '/', 1) = auth.uid()::text
+    and public.moment_photo_exists(image_path)
   );
 
 drop policy if exists "Admins approve moments" on public.moments;
@@ -144,18 +160,18 @@ on conflict (id) do update
 drop policy if exists "Users upload moment photos to their folder" on storage.objects;
 create policy "Users upload moment photos to their folder" on storage.objects
   for insert to authenticated
-  with check (bucket_id = 'moments' and (storage.foldername(name))[1] = auth.uid()::text);
-
-drop policy if exists "Moment photos: uploader, admins, or published" on storage.objects;
-create policy "Moment photos: uploader, admins, or published" on storage.objects
-  for select to anon, authenticated
-  using (
-    bucket_id = 'moments' and (
-      (storage.foldername(name))[1] = auth.uid()::text
-      or public.is_admin()
-      or public.moment_photo_is_published(name)
-    )
+  with check (
+    bucket_id = 'moments' and (storage.foldername(name))[1] = auth.uid()::text
+    and name ~ '^[0-9a-f-]{36}/[0-9a-f-]{36}\.jpg$'
   );
+
+-- Not even the uploader can link to an unapproved photo, so the bucket can't host unreviewed images
+drop policy if exists "Moment photos: uploader, admins, or published" on storage.objects;
+drop policy if exists "Moment photos: admins, or published" on storage.objects;
+create policy "Moment photos: admins, or published" on storage.objects
+  for select to anon, authenticated
+  using (bucket_id = 'moments' and (public.is_admin() or public.moment_photo_is_published(name)));
+
 
 -- Admins remove any photo; uploaders only a photo no moment uses (cleanup after a failed save)
 drop policy if exists "Moment photos: admins, or uploader before saving" on storage.objects;
@@ -174,8 +190,15 @@ Notes:
   use `upsert: false`).
 - Nobody can edit a moment's content after it is saved; only `approved_at`
   changes, and only by admins.
-- For anon, `auth.uid()` is null, so the folder checks are false and only
-  published photos can be read.
+- Only admins and published photos can be read, so nobody can share a link
+  to an unreviewed photo.
+- A moment can only point at a photo that is already uploaded
+  (`moment_photo_exists`), and that photo can never be replaced, so what the
+  admin approves is what goes live.
+- Uploaders may delete an unused photo (cleanup after a failed save), but
+  Supabase's `remove` also needs read access, which they don't have, so the
+  cleanup can fail; the leftover file is private and unused.
+
 
 ## Shared code
 

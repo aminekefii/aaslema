@@ -5,6 +5,7 @@ import { lastSeen } from '../../adminUsers.js'
 // Tabs only look at approved_at, so the review helpers fit moments too
 import { filterReviews, isPublished, reviewCounts } from '../../adminReviews.js'
 import { photoUrls } from '../../momentsApi.js'
+import { canApprove } from '../../moments.js'
 
 const tabs = [['pending', 'Pending'], ['published', 'Published'], ['all', 'All']]
 const cityName = (id) => cities.find((c) => c.id === id)?.name ?? id
@@ -148,7 +149,12 @@ function MomentItem({ moment, url, onChange, onRemove }) {
             </>
           ) : (
             <>
-              {!published && <button type="button" className="btn btn--primary btn--sm" disabled={busy} onClick={approve}>Approve</button>}
+              {!published && (
+                <button type="button" className="btn btn--primary btn--sm" disabled={busy || !canApprove(moment, url)} onClick={approve} title={url ? undefined : "The photo is missing, so this moment can't be approved"}>
+                  Approve
+                </button>
+              )}
+
               <button type="button" className="btn btn--sm admin-btn-outline" disabled={busy} onClick={() => setConfirming(true)}>Delete</button>
             </>
           )}

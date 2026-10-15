@@ -29,13 +29,29 @@ create policy "Users read their own moments, admins all" on public.moments
   for select to authenticated
   using (user_id = auth.uid() or public.is_admin());
 
--- The photo must be in the uploader's own folder
+-- Uploaded photo exists? Runs as the owner, because uploaders can't read storage rows.
+create or replace function public.moment_photo_exists(path text)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select exists (select 1 from storage.objects o where o.bucket_id = 'moments' and o.name = path)
+$$;
+
+revoke all on function public.moment_photo_exists(text) from public;
+grant execute on function public.moment_photo_exists(text) to authenticated;
+
+-- The photo must already be uploaded, in the uploader's own folder (it can't be
+-- swapped later: there is no storage update rule and the name is taken)
 drop policy if exists "Users add their own moments" on public.moments;
 create policy "Users add their own moments" on public.moments
   for insert to authenticated
   with check (
     user_id = auth.uid() and approved_at is null
     and split_part(image_path, '/', 1) = auth.uid()::text
+    and public.moment_photo_exists(image_path)
   );
 
 drop policy if exists "Admins approve moments" on public.moments;
@@ -103,18 +119,18 @@ on conflict (id) do update
 drop policy if exists "Users upload moment photos to their folder" on storage.objects;
 create policy "Users upload moment photos to their folder" on storage.objects
   for insert to authenticated
-  with check (bucket_id = 'moments' and (storage.foldername(name))[1] = auth.uid()::text);
-
-drop policy if exists "Moment photos: uploader, admins, or published" on storage.objects;
-create policy "Moment photos: uploader, admins, or published" on storage.objects
-  for select to anon, authenticated
-  using (
-    bucket_id = 'moments' and (
-      (storage.foldername(name))[1] = auth.uid()::text
-      or public.is_admin()
-      or public.moment_photo_is_published(name)
-    )
+  with check (
+    bucket_id = 'moments' and (storage.foldername(name))[1] = auth.uid()::text
+    and name ~ '^[0-9a-f-]{36}/[0-9a-f-]{36}\.jpg$'
   );
+
+-- Not even the uploader can link to an unapproved photo, so the bucket can't host unreviewed images
+drop policy if exists "Moment photos: uploader, admins, or published" on storage.objects;
+drop policy if exists "Moment photos: admins, or published" on storage.objects;
+create policy "Moment photos: admins, or published" on storage.objects
+  for select to anon, authenticated
+  using (bucket_id = 'moments' and (public.is_admin() or public.moment_photo_is_published(name)));
+
 
 -- Admins remove any photo; uploaders only a photo no moment uses (cleanup after a failed save)
 drop policy if exists "Moment photos: admins, or uploader before saving" on storage.objects;

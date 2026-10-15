@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { PHOTO_MAX_BYTES, momentFromForm, momentPath, spotMoments } from './moments.js'
+import { PHOTO_MAX_BYTES, canApprove, momentFromForm, momentPath, spotMoments } from './moments.js'
 
 const user = { email: 'leila@x.com', user_metadata: { full_name: 'Leila Ben Ali' } }
 const city = { id: 'tozeur', highlights: ['Chott el Djerid', 'Dar Cherait'] }
@@ -68,5 +68,13 @@ describe('spotMoments', () => {
     const moments = [{ id: 1, spot: 'A' }, { id: 2, spot: null }, { id: 3, spot: 'A' }]
     expect(spotMoments(moments, 'A').map((m) => m.id)).toEqual([1, 3])
     expect(spotMoments(moments, 'B')).toEqual([])
+  })
+})
+
+describe('canApprove', () => {
+  it('needs a pending moment whose photo loaded', () => {
+    expect(canApprove({ approved_at: null }, 'https://signed/url')).toBe(true)
+    expect(canApprove({ approved_at: null }, undefined)).toBe(false)
+    expect(canApprove({ approved_at: '2026-10-15T10:00:00Z' }, 'https://signed/url')).toBe(false)
   })
 })
