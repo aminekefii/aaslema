@@ -4,13 +4,23 @@ Last updated: 2026-10-15 (after commit `266efbc`)
 
 ## State
 
-- Branch `main`, working tree clean.
+- Branch `main`, working tree clean; nothing from `5c83124` (moments spec) onwards is pushed yet.
 - Frontend tests: 11 files, 181 tests, all passing (`npx vitest run` in `frontend/`).
 - Supabase SQL lives in `backend/supabase/` (`001`–`007`). Each file is run
   by hand in the Supabase SQL editor; check that `004_city_likes_visits.sql`,
   `005_city_visit_counts.sql`, `006_reviews.sql` and `007_moments.sql` have
   been applied before testing likes, visits, the Most Visited section, Rate
   Your Trip reviews and destination moments.
+
+## Waiting on you
+
+- Push `main` (everything from `5c83124` onwards).
+- Run `007_moments.sql` in the Supabase SQL Editor (and `006_reviews.sql` if not done yet).
+- Browser checks nobody has done yet (no browser was available):
+  - Reviews: the "Manual (owner)" list in `docs/superpowers/specs/2026-10-15-trip-reviews-design.md`, plus the
+    "Read more" popup with a long review.
+  - Moments: the "Manual (owner)" list in `docs/superpowers/specs/2026-10-15-city-moments-design.md`, including a
+    large phone photo and an iPhone HEIC photo.
 
 ## Done
 
