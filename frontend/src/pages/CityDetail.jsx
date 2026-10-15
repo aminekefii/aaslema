@@ -8,9 +8,13 @@ import Modal from '../components/Modal.jsx'
 import { base } from '../route.js'
 import { adjustCount, likeCount } from '../cityCounts.js'
 import { fetchLikeCounts, fetchMyCityIds, setCityFlag } from '../cityActivity.js'
+import MomentsCarousel from '../components/MomentsCarousel.jsx'
+import { CAPTION_MAX, momentFromForm, spotMoments } from '../moments.js'
+import { fetchPublishedMoments, uploadMoment } from '../momentsApi.js'
+import { textLength } from '../reviews.js'
 
-// Port of aaslema-new's CityDetail page. Likes and visits live in Supabase (cityActivity.js);
-// the plan and moments still live in the viewer's browser.
+// Port of aaslema-new's CityDetail page. Likes, visits (cityActivity.js) and moments
+// (momentsApi.js) live in Supabase; the plan still lives in the viewer's browser.
 const readList = (key) => {
   try { return JSON.parse(localStorage.getItem(key) || '[]') } catch { return [] }
 }
@@ -31,7 +35,7 @@ const TABS = [
   { id: 'moments', label: 'Moments' },
 ]
 
-const EMPTY_MOMENT = { url: '', location: '', description: '' }
+const EMPTY_MOMENT = { file: null, preview: '', spot: '', caption: '' }
 
 export default function CityDetail({ id, user }) {
   const city = cities.find((c) => c.id === id)
@@ -49,9 +53,13 @@ export default function CityDetail({ id, user }) {
   const [note, setNote] = useState(null)
   const userId = user?.id
   const [activeTab, setActiveTab] = useState('overview')
-  const [moments, setMoments] = useState(() => readList(`moments_${id}`))
+  // Approved moments: undefined while loading, [] if none (or loading failed)
+  const [moments, setMoments] = useState(undefined)
   const [isUploading, setIsUploading] = useState(false)
   const [newMoment, setNewMoment] = useState(EMPTY_MOMENT)
+  // null, 'uploading' or { error } — shown in the upload popup
+  const [uploadStatus, setUploadStatus] = useState(null)
+  const [showUnderReview, setShowUnderReview] = useState(false)
   const [showShareModal, setShowShareModal] = useState(false)
   const [copied, setCopied] = useState(false)
 
@@ -79,6 +87,16 @@ export default function CityDetail({ id, user }) {
     })
     return () => { current = false }
   }, [id, userId])
+
+  useEffect(() => {
+    let current = true
+    setMoments(undefined)
+    fetchPublishedMoments(id).then((rows) => { if (current) setMoments(rows ?? []) })
+    return () => { current = false }
+  }, [id])
+
+  // Free the photo preview when it's replaced or the popup closes
+  useEffect(() => () => { if (newMoment.preview) URL.revokeObjectURL(newMoment.preview) }, [newMoment.preview])
 
   if (!city) {
     return (
@@ -119,26 +137,25 @@ export default function CityDetail({ id, user }) {
     setIsInPlan(!isInPlan)
   }
 
-  const openUpload = (location = '') => {
-    setNewMoment({ ...EMPTY_MOMENT, location })
+  const openUpload = () => {
+    setNewMoment(EMPTY_MOMENT)
+    setUploadStatus(null)
     setIsUploading(true)
   }
-  const handleFinishUpload = (e) => {
-    e.preventDefault()
-    if (!newMoment.url) return
-    const moment = {
-      id: Date.now(),
-      url: newMoment.url,
-      location: newMoment.location,
-      description: newMoment.description,
-      date: new Date().toISOString(),
-    }
-    const updated = [moment, ...moments]
-    setMoments(updated)
-    // Large photos can exceed browser storage; they still show for this visit.
-    writeList(`moments_${city.id}`, updated)
+  const closeUpload = () => {
     setIsUploading(false)
     setNewMoment(EMPTY_MOMENT)
+  }
+  const handleFinishUpload = async (e) => {
+    e.preventDefault()
+    const result = momentFromForm(newMoment, user, city)
+    if (result.error) return setUploadStatus({ error: result.error })
+    setUploadStatus('uploading')
+    const saved = await uploadMoment(newMoment.file, result.row, user.id)
+    if (saved.error) return setUploadStatus({ error: saved.error })
+    setUploadStatus(null)
+    closeUpload()
+    setShowUnderReview(true)
   }
 
   const share = (url) => {
@@ -284,7 +301,7 @@ export default function CityDetail({ id, user }) {
                 <h2 className="city-h2">Highlights</h2>
                 <div className="city-highlights">
                   {city.highlights.map((h) => {
-                    const spotMoments = moments.filter((m) => m.location === h)
+                    const shots = spotMoments(moments ?? [], h)
                     return (
                       <div key={h} className="cd-card city-highlight">
                         <div className="city-highlight__top">
@@ -292,12 +309,12 @@ export default function CityDetail({ id, user }) {
                         </div>
                         <h3>{h}</h3>
                         <p>A key stop on the {city.name} trail.</p>
-                        {spotMoments.length > 0 && (
+                        {shots.length > 0 && (
                           <div className="city-highlight__moments">
                             <div className="city-highlight__thumbs">
-                              {spotMoments.slice(0, 3).map((m) => <img key={m.id} src={m.url} alt="" />)}
+                              {shots.slice(0, 3).map((m) => <img key={m.id} src={m.url} alt="" />)}
                             </div>
-                            <span>{spotMoments.length} {spotMoments.length === 1 ? 'moment' : 'moments'}</span>
+                            <span>{shots.length} {shots.length === 1 ? 'moment' : 'moments'}</span>
                           </div>
                         )}
                       </div>
@@ -328,26 +345,15 @@ export default function CityDetail({ id, user }) {
                   : <a href="/signin" className="city-moments__signin">Sign in to your account to upload your moments</a>}
               </div>
 
-              {moments.length === 0 ? (
+              {moments === undefined ? (
+                <p className="city-sub">Loading moments…</p>
+              ) : moments.length === 0 ? (
                 <div className="cd-card city-empty">
                   <MapIcon size={32} />
                   <p>No moments yet. Add the first photo from {city.name}.</p>
                 </div>
               ) : (
-                <div className="city-moments">
-                  {moments.map((moment) => (
-                    <figure key={moment.id} className="cd-card city-moment">
-                      <div className="city-moment__image">
-                        <img src={moment.url} alt={moment.description || 'Moment'} loading="lazy" />
-                      </div>
-                      <figcaption>
-                        {moment.location && <p className="city-moment__place"><Navigation size={12} /> {moment.location}</p>}
-                        {moment.description && <p className="city-moment__text">{moment.description}</p>}
-                        <small>{new Date(moment.date).toLocaleDateString()}</small>
-                      </figcaption>
-                    </figure>
-                  ))}
-                </div>
+                <MomentsCarousel moments={moments} />
               )}
             </div>
           )}
@@ -356,53 +362,64 @@ export default function CityDetail({ id, user }) {
 
       {/* Moment upload modal */}
       {isUploading && (
-        <Modal title="Add a moment" labelId="moment-dialog-title" onClose={() => setIsUploading(false)} wide>
+        <Modal title="Add a moment" labelId="moment-dialog-title" onClose={uploadStatus === 'uploading' ? () => {} : closeUpload} wide>
           <p className="modal__sub">Share a photo from your trip to {city.name}.</p>
-          <form onSubmit={handleFinishUpload} className="moment-form">
-            {newMoment.url ? (
-              <div className="moment-form__preview">
-                <img src={newMoment.url} alt="Preview" />
-                <button type="button" onClick={() => setNewMoment({ ...newMoment, url: '' })}>Change photo</button>
-              </div>
-            ) : (
-              <label className="moment-form__drop">
-                <Camera size={28} />
-                <span>Choose a photo</span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  hidden
-                  onChange={(e) => {
-                    const file = e.target.files?.[0]
-                    if (!file) return
-                    const reader = new FileReader()
-                    reader.onload = () => setNewMoment((m) => ({ ...m, url: reader.result }))
-                    reader.readAsDataURL(file)
-                  }}
-                />
+          <form onSubmit={handleFinishUpload} className="moment-form" noValidate>
+            <fieldset className="contact__fieldset" disabled={uploadStatus === 'uploading'}>
+              {newMoment.preview ? (
+                <div className="moment-form__preview">
+                  <img src={newMoment.preview} alt="Preview" />
+                  <button type="button" onClick={() => setNewMoment({ ...newMoment, file: null, preview: '' })}>Change photo</button>
+                </div>
+              ) : (
+                <label className="moment-form__drop">
+                  <Camera size={28} />
+                  <span>Choose a photo</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    hidden
+                    onChange={(e) => {
+                      const file = e.target.files?.[0]
+                      if (file) setNewMoment((m) => ({ ...m, file, preview: URL.createObjectURL(file) }))
+                    }}
+                  />
+                </label>
+              )}
+
+              <label>
+                Highlight
+                <select value={newMoment.spot} onChange={(e) => setNewMoment({ ...newMoment, spot: e.target.value })}>
+                  <option value="">General area</option>
+                  {city.highlights.map((h) => <option key={h} value={h}>{h}</option>)}
+                </select>
               </label>
-            )}
 
-            <label>
-              Location
-              <select value={newMoment.location} onChange={(e) => setNewMoment({ ...newMoment, location: e.target.value })}>
-                <option value="">General area</option>
-                {city.highlights.map((h) => <option key={h} value={h}>{h}</option>)}
-              </select>
-            </label>
+              <label>
+                Caption
+                <textarea
+                  rows={3}
+                  placeholder="What made this spot special?"
+                  value={newMoment.caption}
+                  onChange={(e) => setNewMoment({ ...newMoment, caption: e.target.value })}
+                />
+                <span className="moment-form__count">{textLength(newMoment.caption.trim())} / {CAPTION_MAX}</span>
+              </label>
 
-            <label>
-              Caption
-              <textarea
-                rows={3}
-                placeholder="What made this spot special?"
-                value={newMoment.description}
-                onChange={(e) => setNewMoment({ ...newMoment, description: e.target.value })}
-              />
-            </label>
-
-            <button type="submit" disabled={!newMoment.url} className="btn btn--primary">Save moment</button>
+              <button type="submit" className="btn btn--primary">
+                {uploadStatus === 'uploading' ? 'Uploading…' : 'Share moment'}
+              </button>
+            </fieldset>
+            {uploadStatus?.error && <p className="contact__error" role="alert">{uploadStatus.error}</p>}
           </form>
+        </Modal>
+      )}
+
+      {/* Shown after a successful upload */}
+      {showUnderReview && (
+        <Modal title="Thanks for sharing!" labelId="moment-review-title" onClose={() => setShowUnderReview(false)}>
+          <p className="modal__sub">Your moment is under review and will appear here once an admin approves it.</p>
+          <button type="button" className="btn btn--primary moment-review__close" onClick={() => setShowUnderReview(false)}>Close</button>
         </Modal>
       )}
 
