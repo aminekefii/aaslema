@@ -4,9 +4,7 @@ import { brand, appNavLinks } from '../data.js'
 import Switcher from '../components/Switcher.jsx'
 import { currentPath } from '../route.js'
 import { isAdmin } from '../roles.js'
-
-// "Leila Ben Ali" -> "LB", "tom@x.com" -> "T"
-const initials = (name) => name.split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase()
+import { initials } from '../names.js'
 
 // Home is only active on /app itself; the other sections also cover their sub-pages.
 const isActive = (href) => href === currentPath || (href !== '/app' && currentPath.startsWith(`${href}/`))
