@@ -54,10 +54,18 @@ From the specs' "Future work" sections:
 2. **Admin part 4:** move destinations, festivals and FAQs into the database.
 3. **Profile:** edit name and avatar, list own posts, "Places I've visited".
 4. **AI Planner:** needs an AI provider and a backend endpoint; "Add to plan" moves to Supabase with it.
-5. **Moments follow-ups:** users delete their own moments; unpublish; likes or comments; the small fixes deferred in review (frozen upload on plain-http LAN testing, HEIC with no file type, padded captions, links expiring after an hour, files left when a user is deleted).
-6. **Reviews follow-ups:** show the user's review on Profile; users delete their own review; per-destination reviews (Community Voice); the small fixes deferred in review (form after an admin delete, emoji initials, rename sends a review back to pending, stale success message).
+5. **Moments: iPhone photos upload partly green (open bug, to fix later).** HEIC photos are converted with
+   `heic-to` 1.6.5 (commit `8f9ac1a`). An uncommitted change also spots HEIC content in files named `.JPG`
+   (`hasHeicHeader` in `frontend/src/moments.js`, used in `frontend/src/imageResize.js`); it isn't committed yet.
+   With it, `C:\Users\amine\Pictures\14\IMG_0823.JPG` uploads, but about 40% of it is green (whole 512px blocks).
+   Found so far: that file looks incomplete (libheif-js 1.19.8 says "Extent in iloc box references data outside of
+   file bounds"); heic-to's libheif 1.23.5 decodes what is there and leaves the rest green. The owner reports the
+   same issue still happens, so it may not only be damaged files: check with a photo taken straight from an iPhone,
+   and try converting to JPEG in heic-to instead of `type: 'bitmap'`, another libheif build, or rejecting damaged photos.
+6. **Moments follow-ups:** users delete their own moments; unpublish; likes or comments; the small fixes deferred in review (frozen upload on plain-http LAN testing, padded captions, links expiring after an hour, files left when a user is deleted).
+7. **Reviews follow-ups:** show the user's review on Profile; users delete their own review; per-destination reviews (Community Voice); the small fixes deferred in review (form after an admin delete, emoji initials, rename sends a review back to pending, stale success message).
 
-7. Smaller items:
+8. Smaller items:
  user actions in admin (block, delete, promote), paging for users,
    message rate limiting / archive / email notification, React Router if the app keeps growing.
 
