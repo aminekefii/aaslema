@@ -36,7 +36,8 @@ const EMPTY_MOMENT = { url: '', location: '', description: '' }
 export default function CityDetail({ id, user }) {
   const city = cities.find((c) => c.id === id)
   const [hasLiked, setHasLiked] = useState(false)
-  const [isInPlan, setIsInPlan] = useState(() => city && readList('planned_cities').includes(city.name))
+  // Visitors can't plan, so a plan left in their browser from before isn't shown
+  const [isInPlan, setIsInPlan] = useState(() => Boolean(user && city && readList('planned_cities').includes(city.name)))
   const [isVisited, setIsVisited] = useState(false)
   // Like counts for everyone; null until loaded (or if loading failed)
   const [counts, setCounts] = useState(null)
@@ -112,6 +113,8 @@ export default function CityDetail({ id, user }) {
   const handleLike = () => toggleFlag('city_likes', hasLiked, setHasLiked, setLikeBusy, true)
   const handleToggleVisited = () => toggleFlag('city_visits', isVisited, setIsVisited, setVisitBusy, false)
   const handleAddToPlan = () => {
+    if (!user) return setNote('signin')
+    setNote(null)
     writeList('planned_cities', toggleIn(readList('planned_cities'), city.name))
     setIsInPlan(!isInPlan)
   }
@@ -189,7 +192,7 @@ export default function CityDetail({ id, user }) {
                 </button>
               </div>
               {note === 'signin' && (
-                <p className="city-note">Sign in to like and track your visits. <a href="/signin">Sign in</a></p>
+                <p className="city-note">Sign in to like, plan and track your visits. <a href="/signin">Sign in</a></p>
               )}
               {note === 'error' && <p className="city-note city-note--error" role="alert">Couldn't save that. Please try again.</p>}
               {note === 'loadError' && <p className="city-note city-note--error" role="alert">Couldn't load your likes and visits. Please refresh the page.</p>}
