@@ -786,6 +786,10 @@ button, input, select { font: inherit; }
 .contact__form input:focus, .contact__form textarea:focus { border-color: var(--primary); }
 .contact__form .btn { justify-self: start; }
 .contact__sent { margin: 0; color: var(--primary); font-weight: 500; }
+.contact__fieldset { display: contents; }
+.contact__fieldset:disabled input, .contact__fieldset:disabled textarea, .contact__fieldset:disabled .btn { opacity: 0.7; }
+.contact__error { margin: 0; color: #c0392b; font-weight: 500; }
+.contact__hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 
 /* ---------- Footer ---------- */
 .footer {

@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { MapPin, Mail, Clock, Phone, Send } from 'lucide-react'
 import { brand } from '../data.js'
+import { supabase } from '../supabase.js'
+import { messageFromForm } from '../contactMessage.js'
 
 const details = [
   { icon: MapPin, label: 'Address', value: brand.address },
@@ -9,12 +11,36 @@ const details = [
   { icon: Clock, label: 'Opening hours', value: brand.hours },
 ]
 
-export default function Contact() {
-  const [sent, setSent] = useState(false)
+const sendFailed = `Couldn't send your message. Please try again, or email us at ${brand.email}.`
+
+export default function Contact({ user }) {
+  // null, 'sending', 'sent' or { error }
+  const [status, setStatus] = useState(null)
 
   useEffect(() => {
     document.title = 'Contact - Aaslema'
   }, [])
+
+  const submit = async (e) => {
+    e.preventDefault()
+    const form = e.target
+    const result = messageFromForm(Object.fromEntries(new FormData(form)), user)
+    if (result.error) return setStatus({ error: result.error })
+
+    // Bots get the normal thank-you, but nothing is saved
+    if (!result.spam) {
+      setStatus('sending')
+      try {
+        if (!supabase) throw new Error('Supabase is not configured')
+        const { error } = await supabase.from('contact_messages').insert(result.row)
+        if (error) throw error
+      } catch {
+        return setStatus({ error: sendFailed })
+      }
+    }
+    form.reset()
+    setStatus('sent')
+  }
 
   return (
     <>
@@ -39,17 +65,23 @@ export default function Contact() {
             ))}
           </ul>
 
-          {/* No backend yet: the form only confirms locally. */}
-          <form className="contact__form" onSubmit={(e) => { e.preventDefault(); setSent(true) }}>
+          <form className="contact__form" onSubmit={submit} noValidate>
             <h2>Send us a message</h2>
-            <div className="contact__row">
-              <label>Name<input type="text" name="name" required /></label>
-              <label>Email<input type="email" name="email" required /></label>
-            </div>
-            <label>Subject<input type="text" name="subject" /></label>
-            <label>Message<textarea name="message" rows={6} required /></label>
-            <button type="submit" className="btn btn--primary">Send Message <Send size={16} /></button>
-            {sent && <p className="contact__sent">Thanks! Your message is ready to go once the form is connected.</p>}
+            <fieldset className="contact__fieldset" disabled={status === 'sending'}>
+              <div className="contact__row">
+                <label>Name<input type="text" name="name" autoComplete="name" defaultValue={user?.user_metadata?.full_name ?? ''} required /></label>
+                <label>Email<input type="email" name="email" autoComplete="email" defaultValue={user?.email ?? ''} required /></label>
+              </div>
+              <label>Subject<input type="text" name="subject" /></label>
+              <label>Message<textarea name="message" rows={6} required /></label>
+              {/* Hidden from people; bots that fill every field get caught */}
+              <label className="contact__hp" aria-hidden="true">Website<input type="text" name="website" tabIndex={-1} autoComplete="off" /></label>
+              <button type="submit" className="btn btn--primary">
+                {status === 'sending' ? 'Sending…' : <>Send Message <Send size={16} /></>}
+              </button>
+            </fieldset>
+            {status === 'sent' && <p className="contact__sent" role="status">Thanks! We got your message and usually reply within a day.</p>}
+            {status?.error && <p className="contact__error" role="alert">{status.error}</p>}
           </form>
         </div>
       </section>
