@@ -2,7 +2,8 @@
 // Pure (no window) so it can be unit-tested; paths have no trailing slash, '' is the landing page.
 
 // Pages that exist under /app
-export const appPagePaths = ['/app', '/app/destinations', '/app/festivals', '/app/community', '/app/contact', '/app/planner', '/app/profile']
+export const appPagePaths = ['/app', '/app/destinations', '/app/festivals', '/app/community', '/app/review', '/app/contact', '/app/planner', '/app/profile']
+
 // Pages that exist under /admin (admins only)
 export const adminPagePaths = ['/admin', '/admin/messages']
 // Public pages that have an /app twin

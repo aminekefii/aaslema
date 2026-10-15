@@ -795,17 +795,30 @@ button, input, select { font: inherit; }
 .contact__form h2 { font-size: 32px; margin: 0; }
 .contact__row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 .contact__form label { display: grid; gap: 6px; font-size: 15px; font-weight: 500; color: var(--title); }
-.contact__form input, .contact__form textarea {
+.contact__form input, .contact__form textarea, .contact__form select {
   font: inherit; font-size: 16px; padding: 12px 16px; border-radius: 10px; resize: vertical;
   border: 1px solid var(--border); background: var(--bg); color: var(--text); outline: 0;
 }
-.contact__form input:focus, .contact__form textarea:focus { border-color: var(--primary); }
+.contact__form input:focus, .contact__form textarea:focus, .contact__form select:focus { border-color: var(--primary); }
 .contact__form .btn { justify-self: start; }
 .contact__sent { margin: 0; color: var(--primary); font-weight: 500; }
 .contact__fieldset { display: contents; }
 .contact__fieldset:disabled input, .contact__fieldset:disabled textarea, .contact__fieldset:disabled .btn { opacity: 0.7; }
 .contact__error { margin: 0; color: #c0392b; font-weight: 500; }
 .contact__hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+/* ---------- Rate Your Trip ---------- */
+.review-page { max-width: 720px; }
+.review-page__note { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin: 0; }
+.review-form__status { margin: 0; justify-self: start; padding: 2px 12px; border-radius: 999px; font-size: 14px; font-weight: 500; background: rgba(247, 146, 30, 0.12); color: var(--secondary); }
+.review-form__status--live { background: var(--tint); color: var(--primary-dark); }
+.review-form__stars { display: flex; gap: 4px; }
+.review-form__stars button { padding: 2px; border: 0; background: none; color: var(--border); cursor: pointer; }
+.review-form__stars button.on { color: #fbbf24; }
+.review-form__stars button:focus-visible { outline: 2px solid var(--primary); border-radius: 6px; }
+.review-form__count { justify-self: end; font-size: 13px; font-weight: 400; color: var(--text); }
+.review-form__hint { margin: 0; font-size: 14px; }
+
 
 /* ---------- Footer ---------- */
 .footer {

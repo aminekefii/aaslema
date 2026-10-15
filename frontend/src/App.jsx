@@ -20,6 +20,7 @@ import Community from './pages/Community.jsx'
 import AppHome from './pages/AppHome.jsx'
 import Planner from './pages/Planner.jsx'
 import Profile from './pages/Profile.jsx'
+import Review from './pages/Review.jsx'
 import AdminLayout from './sections/AdminLayout.jsx'
 import AdminUsers from './pages/admin/AdminUsers.jsx'
 import AdminMessages from './pages/admin/AdminMessages.jsx'
@@ -32,7 +33,8 @@ import { supabase, useUser } from './supabase.js'
 // Tiny path-based page switch; any other public path shows the landing page.
 const pages = { '/faq': Faq, '/contact': Contact, '/destinations': Destinations, '/festivals': Festivals, '/community': Community, '/signin': SignIn, '/signup': SignUp, '/reset-password': ResetPassword }
 // Signed-in area; keys must match appPagePaths in redirects.js
-const appPages = { '/app': AppHome, '/app/destinations': Destinations, '/app/festivals': Festivals, '/app/community': Community, '/app/contact': Contact, '/app/planner': Planner, '/app/profile': Profile }
+const appPages = { '/app': AppHome, '/app/destinations': Destinations, '/app/festivals': Festivals, '/app/community': Community, '/app/review': Review, '/app/contact': Contact,
+ '/app/planner': Planner, '/app/profile': Profile }
 // Admin area; keys must match adminPagePaths in redirects.js
 const adminPages = { '/admin': AdminUsers, '/admin/messages': AdminMessages }
 const inApp = isAppPath(currentPath)

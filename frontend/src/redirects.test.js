@@ -140,3 +140,14 @@ describe('redirectFor and /admin/messages', () => {
     expect(redirectFor('/admin/messages/1', true, true)).toBe('/admin')
   })
 })
+
+describe('redirectFor and /app/review', () => {
+  it('is an app page', () => {
+    expect(appPagePaths).toContain('/app/review')
+  })
+
+  it('is for signed-in users only', () => {
+    expect(redirectFor('/app/review', true)).toBe(null)
+    expect(redirectFor('/app/review', false)).toBe('/signin')
+  })
+})

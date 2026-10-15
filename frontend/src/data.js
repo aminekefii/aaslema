@@ -27,7 +27,9 @@ export const appNavLinks = [
   ['Destinations', '/app/destinations'],
   ['Festivals', '/app/festivals'],
   ['Community', '/app/community'],
+  ['Rate Your Trip', '/app/review'],
   ['Contact', '/app/contact'],
+
   ['AI Planner', '/app/planner'],
 ]
 
