@@ -606,6 +606,13 @@ button, input, select { font: inherit; }
 .share-options { display: grid; gap: 10px; margin-top: 20px; }
 .share-options .city-btn { border-color: var(--border); color: var(--title); }
 .share-options .city-btn:hover { border-color: var(--primary); color: var(--primary); }
+.share-options--soon { position: relative; }
+.share-options__buttons { display: contents; }
+.share-options__buttons > * { visibility: hidden; }
+.share-options__soon {
+  position: absolute; inset: 0; z-index: 1; display: grid; place-items: center; margin: 0;
+  border: 1px dashed var(--border); border-radius: 12px; color: var(--title); font-size: 18px; font-weight: 600;
+}
 .moment-form { display: grid; gap: 16px; margin-top: 20px; }
 .moment-form label { display: grid; gap: 6px; font-size: 15px; font-weight: 500; color: var(--title); }
 .moment-form input[type='text'], .moment-form select, .moment-form textarea {

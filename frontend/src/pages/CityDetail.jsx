@@ -410,7 +410,10 @@ export default function CityDetail({ id, user }) {
       {/* Share modal */}
       {showShareModal && (
         <Modal title={`Share ${city.name}`} labelId="share-dialog-title" onClose={() => setShowShareModal(false)}>
-          <div className="share-options">
+          {/* Sharing isn't live yet: the buttons stay hidden underneath so the card keeps its size */}
+          <div className="share-options share-options--soon">
+            <p className="share-options__soon">Coming soon</p>
+            <fieldset className="share-options__buttons" disabled aria-hidden="true">
             <button className="city-btn" onClick={() => share(`https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`)}>
               <Facebook size={16} /> Share on Facebook
             </button>
@@ -423,6 +426,7 @@ export default function CityDetail({ id, user }) {
             <button className="btn btn--primary" onClick={copyLink}>
               <Share2 size={16} /> {copied ? 'Link copied!' : 'Copy link'}
             </button>
+            </fieldset>
           </div>
         </Modal>
       )}
