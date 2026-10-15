@@ -1,6 +1,20 @@
+import { isHeic } from './moments.js'
+
+// Opens the photo; iPhone HEIC photos only open natively in Safari, so other browsers
+// convert them with heic-to (about 3 MB, so it is loaded only when needed).
+async function openPhoto(file) {
+  try {
+    return await createImageBitmap(file)
+  } catch (error) {
+    if (!isHeic(file)) throw error
+    const { heicTo } = await import('heic-to')
+    return heicTo({ blob: file, type: 'bitmap' })
+  }
+}
+
 // Shrinks a photo to a JPEG before upload, so phone photos stay well under the 2 MB bucket limit.
 export async function resizeToJpeg(file, maxSide = 1600, quality = 0.85) {
-  const bitmap = await createImageBitmap(file)
+  const bitmap = await openPhoto(file)
   const scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height))
   const canvas = document.createElement('canvas')
   canvas.width = Math.round(bitmap.width * scale)

@@ -57,6 +57,8 @@ export default function CityDetail({ id, user }) {
   const [moments, setMoments] = useState(undefined)
   const [isUploading, setIsUploading] = useState(false)
   const [newMoment, setNewMoment] = useState(EMPTY_MOMENT)
+  // Preview the browser can't show (e.g. HEIC in Chrome); the photo still uploads
+  const [brokenPreview, setBrokenPreview] = useState('')
   // null, 'uploading' or { error } — shown in the upload popup
   const [uploadStatus, setUploadStatus] = useState(null)
   const [showUnderReview, setShowUnderReview] = useState(false)
@@ -368,7 +370,15 @@ export default function CityDetail({ id, user }) {
             <fieldset className="contact__fieldset" disabled={uploadStatus === 'uploading'}>
               {newMoment.preview ? (
                 <div className="moment-form__preview">
-                  <img src={newMoment.preview} alt="Preview" />
+                  {brokenPreview === newMoment.preview ? (
+                    <div className="moment-form__no-preview">
+                      <Camera size={28} />
+                      <span>{newMoment.file.name}</span>
+                      <small>No preview, but the photo will upload</small>
+                    </div>
+                  ) : (
+                    <img src={newMoment.preview} alt="Preview" onError={() => setBrokenPreview(newMoment.preview)} />
+                  )}
                   <button type="button" onClick={() => setNewMoment({ ...newMoment, file: null, preview: '' })}>Change photo</button>
                 </div>
               ) : (

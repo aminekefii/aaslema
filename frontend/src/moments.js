@@ -9,9 +9,12 @@ const NAME_MAX = 100
 // Before shrinking; the uploaded JPEG is much smaller (bucket limit 2 MB)
 export const PHOTO_MAX_BYTES = 15 * 1024 * 1024
 
+// iPhone photos; Chrome on Windows often gives them no file type, so the name counts too
+export const isHeic = (file) => /^image\/hei[cf]$/.test(file.type ?? '') || /\.hei[cf]$/i.test(file.name ?? '')
+
 export function momentFromForm({ file, caption, spot }, user, city) {
   if (!file) return { error: 'Please choose a photo.' }
-  if (!file.type?.startsWith('image/')) return { error: 'Please choose an image file.' }
+  if (!file.type?.startsWith('image/') && !isHeic(file)) return { error: 'Please choose an image file.' }
   if (file.size > PHOTO_MAX_BYTES) return { error: 'This photo is too large (15 MB max).' }
   const text = (caption ?? '').trim()
   if (textLength(text) < CAPTION_MIN) return { error: 'Please write a caption (at least 3 characters).' }

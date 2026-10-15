@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { PHOTO_MAX_BYTES, canApprove, momentFromForm, momentPath, spotMoments } from './moments.js'
+import { PHOTO_MAX_BYTES, canApprove, isHeic, momentFromForm, momentPath, spotMoments } from './moments.js'
 
 const user = { email: 'leila@x.com', user_metadata: { full_name: 'Leila Ben Ali' } }
 const city = { id: 'tozeur', highlights: ['Chott el Djerid', 'Dar Cherait'] }
@@ -20,6 +20,11 @@ describe('momentFromForm', () => {
   it('needs an image file', () => {
     expect(momentFromForm({ ...valid, file: { type: 'application/pdf', size: 10 } }, user, city)).toEqual({ error: 'Please choose an image file.' })
     expect(momentFromForm({ ...valid, file: { type: '', size: 10 } }, user, city)).toEqual({ error: 'Please choose an image file.' })
+  })
+
+  it('accepts iPhone HEIC photos, even when the browser gives no file type', () => {
+    expect(momentFromForm({ ...valid, file: { name: 'IMG_0001.HEIC', type: '', size: 10 } }, user, city).row).toBeDefined()
+    expect(momentFromForm({ ...valid, file: { name: 'IMG_0001.heif', type: '', size: 10 } }, user, city).row).toBeDefined()
   })
 
   it('allows photos up to 15 MB', () => {
@@ -76,5 +81,17 @@ describe('canApprove', () => {
     expect(canApprove({ approved_at: null }, 'https://signed/url')).toBe(true)
     expect(canApprove({ approved_at: null }, undefined)).toBe(false)
     expect(canApprove({ approved_at: '2026-10-15T10:00:00Z' }, 'https://signed/url')).toBe(false)
+  })
+})
+
+describe('isHeic', () => {
+  it('spots HEIC/HEIF photos by type or by name', () => {
+    expect(isHeic({ name: 'a.jpg', type: 'image/heic' })).toBe(true)
+    expect(isHeic({ name: 'a', type: 'image/heif' })).toBe(true)
+    expect(isHeic({ name: 'IMG_0001.HEIC', type: '' })).toBe(true)
+    expect(isHeic({ name: 'IMG_0001.heif', type: 'application/octet-stream' })).toBe(true)
+    expect(isHeic({ name: 'IMG_0001.jpg', type: 'image/jpeg' })).toBe(false)
+    expect(isHeic({ name: 'heic.png', type: 'image/png' })).toBe(false)
+    expect(isHeic({ type: '' })).toBe(false)
   })
 })
