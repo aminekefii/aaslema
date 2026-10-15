@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite --port 5500",
     "build": "vite build",
-    "preview": "vite preview --port 5500"
+    "preview": "vite preview --port 5500",
+    "test": "vitest run"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.3",
@@ -17,6 +18,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
-    "vite": "^5.4.11"
+    "vite": "^5.4.11",
+    "vitest": "^2.1.9"
   }
 }
