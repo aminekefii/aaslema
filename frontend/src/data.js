@@ -21,6 +21,16 @@ export const navLinks = [
   ['FAQ', '/faq'],
 ]
 
+// Navbar of the signed-in area; Profile and Sign Out sit on the right of the header.
+export const appNavLinks = [
+  ['Home', '/app'],
+  ['Destinations', '/app/destinations'],
+  ['Festivals', '/app/festivals'],
+  ['Community', '/app/community'],
+  ['Contact', '/app/contact'],
+  ['AI Planner', '/app/planner'],
+]
+
 export const faqs = [
   {
     q: 'When is the best time to visit Tunisia?',
