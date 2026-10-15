@@ -100,7 +100,7 @@ export function SignIn() {
   const signIn = async (form) => {
     const { error } = await supabase.auth.signInWithPassword({ email: form.get('email'), password: form.get('password') })
     if (error) return { text: error.message, error: true }
-    window.location.assign('/')
+    window.location.assign('/app')
     return { text: 'Signed in. Taking you home…' }
   }
 
@@ -133,7 +133,7 @@ export function SignUp() {
     // Supabase hides whether an email is taken; an existing account comes back with no identities
     if (data.user?.identities?.length === 0) return { text: 'An account with this email already exists. Sign in instead.', error: true }
     if (data.session) {
-      window.location.assign('/')
+      window.location.assign('/app')
       return { text: 'Account created. Taking you home…' }
     }
     return { text: 'Almost there: check your email and click the link to confirm your account.' }
