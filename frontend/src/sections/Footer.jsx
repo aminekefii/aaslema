@@ -1,5 +1,7 @@
 import { ArrowUp, Compass, Facebook, Instagram, Twitter } from 'lucide-react'
 import { brand, footerColumns, images } from '../data.js'
+import { isAppPath, redirectFor } from '../redirects.js'
+import { currentPath } from '../route.js'
 
 const socials = [
   { icon: Instagram, label: 'Instagram', href: 'https://www.instagram.com/' },
@@ -7,19 +9,22 @@ const socials = [
   { icon: Facebook, label: 'Facebook', href: 'https://www.facebook.com/' },
 ]
 
+// Inside the app, point internal links at their /app twin to skip a redirect
+const appHref = (href) => (isAppPath(currentPath) && redirectFor(href, true)) || href
+
 export default function Footer() {
   return (
     <footer className="footer" style={{ backgroundImage: `url(${images.footer})` }}>
       <div className="container">
         <div className="footer__links">
           <div className="footer__about">
-            <a href="/" className="logo"><Compass size={30} strokeWidth={2.2} /><span>{brand.name}</span></a>
+            <a href={isAppPath(currentPath) ? '/app' : '/'} className="logo"><Compass size={30} strokeWidth={2.2} /><span>{brand.name}</span></a>
             <p>A travel guide for backpackers and bikepackers exploring Tunisia, from the medinas to the Sahara.</p>
           </div>
           {footerColumns.map((col) => (
             <div key={col.title}>
               <h4>{col.title}</h4>
-              <ul>{col.links.map(([label, href]) => <li key={label}><a href={href}>{label}</a></li>)}</ul>
+              <ul>{col.links.map(([label, href]) => <li key={label}><a href={appHref(href)}>{label}</a></li>)}</ul>
             </div>
           ))}
         </div>

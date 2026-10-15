@@ -22,12 +22,12 @@ import Planner from './pages/Planner.jsx'
 import Profile from './pages/Profile.jsx'
 import { useEffect, useState } from 'react'
 import { currentPath } from './route.js'
-import { isAppPath, redirectFor } from './redirects.js'
+import { isAppPath, redirectFor, withHash } from './redirects.js'
 import { supabase, useUser } from './supabase.js'
 
 // Tiny path-based page switch; any other public path shows the landing page.
 const pages = { '/faq': Faq, '/contact': Contact, '/destinations': Destinations, '/festivals': Festivals, '/community': Community, '/signin': SignIn, '/signup': SignUp, '/reset-password': ResetPassword }
-// Signed-in area; keep in sync with appPages in redirects.js
+// Signed-in area; keys must match appPagePaths in redirects.js
 const appPages = { '/app': AppHome, '/app/destinations': Destinations, '/app/festivals': Festivals, '/app/community': Community, '/app/contact': Contact, '/app/planner': Planner, '/app/profile': Profile }
 const inApp = isAppPath(currentPath)
 const cityId = currentPath.match(/^\/(?:app\/)?destinations\/([^/]+)$/)?.[1]
@@ -41,7 +41,7 @@ export default function App() {
   const ready = user !== undefined && !redirect && !(inApp && !user)
 
   useEffect(() => {
-    if (redirect) window.location.replace(redirect)
+    if (redirect) window.location.replace(withHash(redirect, window.location.hash))
   }, [redirect])
 
   // Coming from another page via a "/#section" link: scroll once the sections exist.

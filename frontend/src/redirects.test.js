@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { isAppPath, redirectFor } from './redirects.js'
+import { appPagePaths, isAppPath, redirectFor, withHash } from './redirects.js'
 
 describe('isAppPath', () => {
   it('matches /app and paths under it', () => {
@@ -49,5 +49,23 @@ describe('redirectFor when signed in', () => {
 
   it.each(['/faq', '/reset-password', '/application', '/unknown'])('leaves %s alone', (path) => {
     expect(redirectFor(path, true)).toBe(null)
+  })
+})
+
+describe('withHash', () => {
+  it('keeps the hash on mirrored app pages', () => {
+    expect(withHash('/app/community', '#post-1')).toBe('/app/community#post-1')
+    expect(withHash('/app/community', '')).toBe('/app/community')
+  })
+
+  it('drops the hash for /app and /signin', () => {
+    expect(withHash('/app', '#access_token=x')).toBe('/app')
+    expect(withHash('/signin', '#x')).toBe('/signin')
+  })
+})
+
+describe('appPagePaths', () => {
+  it('allows every app page path while signed in', () => {
+    for (const path of appPagePaths) expect(redirectFor(path, true)).toBe(null)
   })
 })

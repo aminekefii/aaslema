@@ -129,7 +129,7 @@ export const posts = [
 
 // [label, href] pairs, mirroring the footer of aaslema-new
 export const footerColumns = [
-  { title: 'Explore', links: [['Destinations', '/destinations'], ['Trip planner', '#'], ['Community', '/community']] },
+  { title: 'Explore', links: [['Destinations', '/destinations'], ['Trip planner', '/app/planner'], ['Community', '/community']] },
   { title: 'Travel Styles', links: [['Backpacking', '#'], ['Bikepacking', '#'], ['History', '#']] },
   { title: 'About', links: [['Contact', '/contact'], ['FAQ', '/faq'], ['Legal notice', '#'], ['Privacy', '#']] },
 ]
