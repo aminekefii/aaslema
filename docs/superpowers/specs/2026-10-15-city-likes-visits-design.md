@@ -119,8 +119,7 @@ Notes:
 None of these throw; each returns a plain value as described:
 
 - `fetchLikeCounts()` — `supabase.rpc('city_like_counts')` → counts map via
-  `countsFromRows`; `{ counts: null }` on error or when Supabase isn't
-  configured.
+  `countsFromRows`; `null` on error or when Supabase isn't configured.
 - `fetchMyCityIds(table)` — `supabase.from(table).select('city_id')` (RLS
   limits it to the user's rows) → array of ids; `[]` on error. `table` is
   `'city_likes'` or `'city_visits'`.
@@ -150,7 +149,8 @@ None of these throw; each returns a plain value as described:
 - On mount: `fetchLikeCounts()`; if `user`, `fetchMyCityIds('city_likes')`
   and `fetchMyCityIds('city_visits')` to set `hasLiked` / `isVisited`.
 - Like button: `{hasLiked ? 'Liked' : 'Like'} · {count}` where count is
-  `likeCount(counts, id)` (shows `·` with no number until loaded).
+  `likeCount(counts, id)`; until counts load (or if they fail) the button
+  shows just "Like" / "Liked" with no number.
 - Click (signed in): disable the button, flip the state and adjust the
   count immediately, call `setCityFlag`; on failure flip back, restore the
   count and show "Couldn't save that. Please try again." under the
