@@ -13,6 +13,16 @@ export async function fetchLikeCounts() {
   }
 }
 
+export async function fetchVisitCounts() {
+  if (!supabase) return null
+  try {
+    const { data, error } = await supabase.rpc('city_visit_counts')
+    return error ? null : countsFromRows(data ?? [], 'visits')
+  } catch {
+    return null
+  }
+}
+
 // Row level security limits this to the signed-in user's own rows; null if loading failed
 export async function fetchMyCityIds(table) {
   if (!supabase) return null

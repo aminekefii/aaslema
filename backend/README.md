@@ -16,3 +16,4 @@ Supabase dashboard's SQL Editor (they are safe to re-run):
 2. `002_make_admin.sql` — marks the site owner's account as admin; the result must show one row. Sign out and back in afterwards
 3. `003_contact_messages.sql` — stores Contact form messages; only admins can read them
 4. `004_city_likes_visits.sql` — destination likes (shared counts) and visits (personal)
+5. `005_city_visit_counts.sql` — visit counts per destination for the landing page's Most Visited section
