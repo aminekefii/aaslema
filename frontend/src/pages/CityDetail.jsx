@@ -5,6 +5,7 @@ import {
 } from 'lucide-react'
 import { cities } from '../cities.js'
 import Modal from '../components/Modal.jsx'
+import { base } from '../route.js'
 
 // Port of aaslema-new's CityDetail page. Aaslema keeps likes, visits and moments in
 // Supabase; this template has no backend, so they live in the viewer's browser.
@@ -53,7 +54,7 @@ export default function CityDetail({ id }) {
           <MapPin size={40} />
           <h1>City not found</h1>
           <p>We couldn't find the governorate you're looking for.</p>
-          <a href="/destinations" className="btn btn--primary">Browse other cities</a>
+          <a href={`${base}/destinations`} className="btn btn--primary">Browse other cities</a>
         </div>
       </section>
     )
@@ -116,7 +117,7 @@ export default function CityDetail({ id }) {
       {/* Header */}
       <section className="city-hero">
         <div className="container">
-          <a href="/destinations" className="city-hero__back"><ArrowLeft size={16} /> Back to destinations</a>
+          <a href={`${base}/destinations`} className="city-hero__back"><ArrowLeft size={16} /> Back to destinations</a>
 
           <div className="city-hero__grid">
             <div>

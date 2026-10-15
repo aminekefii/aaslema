@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Heart, Search, Users } from 'lucide-react'
 import { cities } from '../cities.js'
+import { base } from '../route.js'
 
 // Port of aaslema-new's Guide page: searchable grid of all 24 governorates.
 export default function Destinations() {
@@ -46,7 +47,7 @@ export default function Destinations() {
           {filtered.length > 0 ? (
             <div className="guide__grid">
               {filtered.map((city) => (
-                <a key={city.id} href={`/destinations/${city.id}`} className="guide-card">
+                <a key={city.id} href={`${base}/destinations/${city.id}`} className="guide-card">
                   <div className="guide-card__image">
                     <img src={city.image} alt={city.name} loading="lazy" />
                   </div>
