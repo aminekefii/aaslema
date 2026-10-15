@@ -7,7 +7,7 @@ Status: approved in brainstorming, awaiting spec review
 
 After signing in, a user gets their own area of the site (`/app`) with a top
 navbar for everything they can do: Home (feed), Destinations, Festivals,
-Community, Contact, AI Planner, Profile, and Sign Out. The public site stays as
+Community, Contact, AI Planner, Profile, and Sign Out. The public site stays a
 it is for visitors.
 
 This spec covers **part 1 of 4**: the app area shell (layout, navbar, routing,
