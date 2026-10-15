@@ -42,6 +42,8 @@ export default function CityDetail({ id, user }) {
   const [counts, setCounts] = useState(null)
   const [likeBusy, setLikeBusy] = useState(false)
   const [visitBusy, setVisitBusy] = useState(false)
+  // Whether this user's own likes and visits have loaded; buttons wait for it
+  const [mineLoaded, setMineLoaded] = useState(false)
   // null, 'signin' or 'error' — shown under the buttons
   const [note, setNote] = useState(null)
   const userId = user?.id
@@ -64,10 +66,16 @@ export default function CityDetail({ id, user }) {
   useEffect(() => {
     setHasLiked(false)
     setIsVisited(false)
+    setMineLoaded(!userId)
     if (!userId) return
     let current = true
-    fetchMyCityIds('city_likes').then((ids) => { if (current) setHasLiked(ids.includes(id)) })
-    fetchMyCityIds('city_visits').then((ids) => { if (current) setIsVisited(ids.includes(id)) })
+    Promise.all([fetchMyCityIds('city_likes'), fetchMyCityIds('city_visits')]).then(([liked, visited]) => {
+      if (!current) return
+      if (!liked || !visited) return setNote('loadError')
+      setHasLiked(liked.includes(id))
+      setIsVisited(visited.includes(id))
+      setMineLoaded(true)
+    })
     return () => { current = false }
   }, [id, userId])
 
@@ -97,6 +105,8 @@ export default function CityDetail({ id, user }) {
       if (countsLikes) setCounts((c) => c && adjustCount(c, city.id, isOn ? 1 : -1))
       setNote('error')
     }
+    // The server's count wins over the optimistic one (it also fills in counts that never loaded)
+    if (saved && countsLikes) fetchLikeCounts().then((fresh) => { if (fresh) setCounts(fresh) })
     setBusy(false)
   }
   const handleLike = () => toggleFlag('city_likes', hasLiked, setHasLiked, setLikeBusy, true)
@@ -162,7 +172,7 @@ export default function CityDetail({ id, user }) {
               </dl>
 
               <div className="city-actions">
-                <button onClick={handleLike} disabled={likeBusy} aria-pressed={hasLiked} className={`city-btn ${hasLiked ? 'city-btn--primary' : ''}`}>
+                <button onClick={handleLike} disabled={likeBusy || !mineLoaded} aria-pressed={hasLiked} className={`city-btn ${hasLiked ? 'city-btn--primary' : ''}`}>
                   <Heart size={16} fill={hasLiked ? 'currentColor' : 'none'} />
                   {hasLiked ? 'Liked' : 'Like'}{counts && ` · ${likeCount(counts, city.id)}`}
                 </button>
@@ -170,7 +180,7 @@ export default function CityDetail({ id, user }) {
                   {isInPlan ? <CheckCircle2 size={16} /> : <Calendar size={16} />}
                   {isInPlan ? 'In your plan' : 'Add to plan'}
                 </button>
-                <button onClick={handleToggleVisited} disabled={visitBusy} aria-pressed={isVisited} className={`city-btn ${isVisited ? 'city-btn--soft' : ''}`}>
+                <button onClick={handleToggleVisited} disabled={visitBusy || !mineLoaded} aria-pressed={isVisited} className={`city-btn ${isVisited ? 'city-btn--soft' : ''}`}>
                   {isVisited ? <CheckCircle2 size={16} /> : <MapPin size={16} />}
                   {isVisited ? 'Visited' : 'Mark as visited'}
                 </button>
@@ -182,6 +192,7 @@ export default function CityDetail({ id, user }) {
                 <p className="city-note">Sign in to like and track your visits. <a href="/signin">Sign in</a></p>
               )}
               {note === 'error' && <p className="city-note city-note--error" role="alert">Couldn't save that. Please try again.</p>}
+              {note === 'loadError' && <p className="city-note city-note--error" role="alert">Couldn't load your likes and visits. Please refresh the page.</p>}
             </div>
 
             <div className="city-hero__media">

@@ -26,7 +26,7 @@ export default function Destinations({ user }) {
     setVisited([])
     if (!userId) return
     let current = true
-    fetchMyCityIds('city_visits').then((ids) => { if (current) setVisited(ids) })
+    fetchMyCityIds('city_visits').then((ids) => { if (current) setVisited(ids ?? []) })
     return () => { current = false }
   }, [userId])
 
@@ -76,7 +76,10 @@ export default function Destinations({ user }) {
                     </div>
                     <div className="guide-card__head">
                       <div>
-                        <h2>{city.name}</h2>
+                        <h2>
+                          {city.name}
+                          {isVisited && <span className="sr-only"> (visited)</span>}
+                        </h2>
                         <p>{city.title}</p>
                       </div>
                       <span className={`guide-card__likes ${likes > 0 ? 'is-liked' : ''}`} title="Likes">

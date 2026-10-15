@@ -13,14 +13,14 @@ export async function fetchLikeCounts() {
   }
 }
 
-// Row level security limits this to the signed-in user's own rows
+// Row level security limits this to the signed-in user's own rows; null if loading failed
 export async function fetchMyCityIds(table) {
-  if (!supabase) return []
+  if (!supabase) return null
   try {
     const { data, error } = await supabase.from(table).select('city_id')
-    return error ? [] : (data ?? []).map((row) => row.city_id)
+    return error ? null : (data ?? []).map((row) => row.city_id)
   } catch {
-    return []
+    return null
   }
 }
 
