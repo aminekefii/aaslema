@@ -289,9 +289,6 @@ export default function CityDetail({ id, user }) {
                       <div key={h} className="cd-card city-highlight">
                         <div className="city-highlight__top">
                           <span className="city-highlight__icon"><Navigation size={18} /></span>
-                          <button onClick={() => openUpload(h)} className="city-icon-btn" aria-label={`Add a moment at ${h}`} title="Add a moment">
-                            <Camera size={18} />
-                          </button>
                         </div>
                         <h3>{h}</h3>
                         <p>A key stop on the {city.name} trail.</p>
