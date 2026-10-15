@@ -990,6 +990,15 @@ html.dark .feature-card:hover { border-color: var(--border); }
 .admin-review__confirm { align-self: center; color: var(--title); font-weight: 500; }
 .admin-btn-danger { background: #c0392b; border: 1px solid #c0392b; color: var(--white); }
 .admin-btn-danger:disabled { opacity: 0.6; cursor: default; }
+.admin-moment { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 16px; padding: 14px; }
+.admin-moment__photo {
+  display: grid; place-items: center; width: 160px; aspect-ratio: 4 / 3; object-fit: cover;
+  border-radius: 8px; background: var(--lighter); font-size: 13px; text-align: center;
+}
+@media (max-width: 575px) {
+  .admin-moment { grid-template-columns: 1fr; }
+  .admin-moment__photo { width: 100%; }
+}
 
 
 /* ---------- Responsive ---------- */

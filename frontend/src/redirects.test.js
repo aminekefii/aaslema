@@ -163,3 +163,15 @@ describe('redirectFor and /admin/reviews', () => {
     expect(redirectFor('/admin/reviews', false)).toBe('/signin')
   })
 })
+
+describe('redirectFor and /admin/moments', () => {
+  it('is an admin page', () => {
+    expect(adminPagePaths).toContain('/admin/moments')
+  })
+
+  it('is for admins only', () => {
+    expect(redirectFor('/admin/moments', true, true)).toBe(null)
+    expect(redirectFor('/admin/moments', true, false)).toBe('/app')
+    expect(redirectFor('/admin/moments', false)).toBe('/signin')
+  })
+})

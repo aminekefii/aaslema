@@ -25,6 +25,7 @@ import AdminLayout from './sections/AdminLayout.jsx'
 import AdminUsers from './pages/admin/AdminUsers.jsx'
 import AdminMessages from './pages/admin/AdminMessages.jsx'
 import AdminReviews from './pages/admin/AdminReviews.jsx'
+import AdminMoments from './pages/admin/AdminMoments.jsx'
 import { useEffect, useState } from 'react'
 import { currentPath } from './route.js'
 import { isAdminPath, isAppPath, redirectFor, withHash } from './redirects.js'
@@ -37,7 +38,8 @@ const pages = { '/faq': Faq, '/contact': Contact, '/destinations': Destinations,
 const appPages = { '/app': AppHome, '/app/destinations': Destinations, '/app/festivals': Festivals, '/app/community': Community, '/app/review': Review, '/app/contact': Contact,
  '/app/planner': Planner, '/app/profile': Profile }
 // Admin area; keys must match adminPagePaths in redirects.js
-const adminPages = { '/admin': AdminUsers, '/admin/messages': AdminMessages, '/admin/reviews': AdminReviews }
+const adminPages = { '/admin': AdminUsers, '/admin/messages': AdminMessages, '/admin/reviews': AdminReviews, '/admin/moments': AdminMoments }
+
 
 const inApp = isAppPath(currentPath)
 const inAdmin = isAdminPath(currentPath)
