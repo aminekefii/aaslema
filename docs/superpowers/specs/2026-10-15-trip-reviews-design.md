@@ -176,9 +176,10 @@ New `src/names.js` (pure, tested), moved from `AppHeader.jsx`:
   (existing). While saving: inputs disabled, button "Saving…".
   - Insert uses `.insert(row).select().single()` so the page gets the
     saved row (users may read their own review).
-  - Success: "Thanks! Your review will appear on the site once an admin
-    approves it." The form stays filled with the saved review; status
-    becomes "Waiting for approval".
+  - Success: `savedMessage(row)` — "Thanks! Your review will appear on the
+    site once an admin approves it.", or "Saved. Your review is still on the
+    site." when nothing changed and it stays published. The form stays filled
+    with the saved review and the status follows the saved row.
   - Insert `23505` (a review was saved from another tab): reload the
     review and show "You already have a review; it's shown below."
   - Any other failure: "Couldn't save your review. Please try again." Typed
@@ -194,6 +195,8 @@ New `src/names.js` (pure, tested), moved from `AppHeader.jsx`:
   - body under 10 characters after trim → "Please write at least 10 characters."
   - body over 1000 after trim → "Your review is too long (1000 characters max)."
   - `author_name` is `displayName(user)` cut to 100 characters; `body` trimmed.
+  - Lengths are counted in code points (`textLength`), like Postgres
+    `char_length`, so an emoji counts as one character.
 - `cardsFromReviews(rows)` → `[{ key: id, quote: body, name: author_name, role: travel_style, rating, avatar: null }]`.
 
 ## Landing page slider
