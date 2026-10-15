@@ -2,22 +2,13 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Quote } from 'lucide-react'
 import Stars from '../components/Stars.jsx'
 import Modal from '../components/Modal.jsx'
+import usePerView from '../usePerView.js'
 import { testimonials } from '../data.js'
 import { initials } from '../names.js'
 import { slideCards } from '../reviews.js'
 import { fetchPublishedReviews } from '../reviewsApi.js'
 
-// Cards per view, matching travosy-react's tiny-three-item slider (3 / 2 / 1).
-function usePerView() {
-  const get = () => (window.innerWidth >= 992 ? 3 : window.innerWidth >= 767 ? 2 : 1)
-  const [perView, setPerView] = useState(get)
-  useEffect(() => {
-    const onResize = () => setPerView(get())
-    window.addEventListener('resize', onResize)
-    return () => window.removeEventListener('resize', onResize)
-  }, [])
-  return perView
-}
+
 
 export default function Testimonials() {
   const perView = usePerView()
