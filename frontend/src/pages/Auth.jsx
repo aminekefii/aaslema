@@ -43,10 +43,14 @@ function AuthShell({ title, lead, children, footer, onSubmit, google = true }) {
   const submit = async (e) => {
     e.preventDefault()
     if (!supabase) return setNotice({ text: "Accounts aren't connected yet. Add the Supabase values to .env.local." })
+    const form = e.target
     setBusy(true)
     setNotice(null)
     try {
-      setNotice(await onSubmit(new FormData(e.target)))
+      const result = await onSubmit(new FormData(form))
+      // Keep the typed values only when there's an error to fix
+      if (!result.error) form.reset()
+      setNotice(result)
     } catch {
       setNotice({ text: 'Something went wrong. Check your connection and try again.', error: true })
     }
