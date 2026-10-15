@@ -34,6 +34,7 @@ export const appNavLinks = [
 // Sidebar of the admin area; sections are added as they're built.
 export const adminNavLinks = [
   ['Users', '/admin'],
+  ['Messages', '/admin/messages'],
 ]
 
 export const faqs = [

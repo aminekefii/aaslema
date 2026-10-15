@@ -22,6 +22,7 @@ import Planner from './pages/Planner.jsx'
 import Profile from './pages/Profile.jsx'
 import AdminLayout from './sections/AdminLayout.jsx'
 import AdminUsers from './pages/admin/AdminUsers.jsx'
+import AdminMessages from './pages/admin/AdminMessages.jsx'
 import { useEffect, useState } from 'react'
 import { currentPath } from './route.js'
 import { isAdminPath, isAppPath, redirectFor, withHash } from './redirects.js'
@@ -33,7 +34,7 @@ const pages = { '/faq': Faq, '/contact': Contact, '/destinations': Destinations,
 // Signed-in area; keys must match appPagePaths in redirects.js
 const appPages = { '/app': AppHome, '/app/destinations': Destinations, '/app/festivals': Festivals, '/app/community': Community, '/app/contact': Contact, '/app/planner': Planner, '/app/profile': Profile }
 // Admin area; keys must match adminPagePaths in redirects.js
-const adminPages = { '/admin': AdminUsers }
+const adminPages = { '/admin': AdminUsers, '/admin/messages': AdminMessages }
 const inApp = isAppPath(currentPath)
 const inAdmin = isAdminPath(currentPath)
 const cityId = currentPath.match(/^\/(?:app\/)?destinations\/([^/]+)$/)?.[1]

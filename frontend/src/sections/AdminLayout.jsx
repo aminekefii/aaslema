@@ -1,15 +1,41 @@
-import { useState } from 'react'
-import { Compass, ExternalLink, LogOut, Menu, Users, X } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Compass, ExternalLink, LogOut, Mail, Menu, Users, X } from 'lucide-react'
 import { adminNavLinks, brand } from '../data.js'
 import Switcher from '../components/Switcher.jsx'
 import { currentPath } from '../route.js'
+import { supabase } from '../supabase.js'
 
-const icons = { '/admin': Users }
+const icons = { '/admin': Users, '/admin/messages': Mail }
+
+// Number of unhandled messages; reloads when the Messages page changes one
+function useNewMessageCount() {
+  const [count, setCount] = useState(0)
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const { count, error } = await supabase
+          .from('contact_messages')
+          .select('id', { count: 'exact', head: true })
+          .is('handled_at', null)
+        if (!error) setCount(count ?? 0)
+      } catch {
+        // No badge if the count can't be loaded
+      }
+    }
+    load()
+    window.addEventListener('admin:messages-changed', load)
+    return () => window.removeEventListener('admin:messages-changed', load)
+  }, [])
+
+  return count
+}
 
 // Sidebar shell for /admin pages; becomes a top bar with a menu on phones.
 export default function AdminLayout({ user, onSignOut, children }) {
   const [open, setOpen] = useState(false)
   const name = user.user_metadata?.full_name || user.email
+  const newMessages = useNewMessageCount()
 
   return (
     <div className="admin">
@@ -30,6 +56,7 @@ export default function AdminLayout({ user, onSignOut, children }) {
             return (
               <a key={href} href={href} className={href === currentPath ? 'active' : ''} aria-current={href === currentPath ? 'page' : undefined}>
                 {Icon && <Icon size={18} />} {label}
+                {href === '/admin/messages' && newMessages > 0 && <span className="admin-nav__count">{newMessages}</span>}
               </a>
             )
           })}
