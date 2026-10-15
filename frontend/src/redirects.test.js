@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { appPagePaths, isAppPath, redirectFor, withHash } from './redirects.js'
+import { adminPagePaths, appPagePaths, isAdminPath, isAppPath, redirectFor, withHash } from './redirects.js'
 
 describe('isAppPath', () => {
   it('matches /app and paths under it', () => {
@@ -67,5 +67,60 @@ describe('withHash', () => {
 describe('appPagePaths', () => {
   it('allows every app page path while signed in', () => {
     for (const path of appPagePaths) expect(redirectFor(path, true)).toBe(null)
+  })
+})
+
+describe('isAdminPath', () => {
+  it('matches /admin and paths under it', () => {
+    expect(isAdminPath('/admin')).toBe(true)
+    expect(isAdminPath('/admin/users')).toBe(true)
+  })
+
+  it('does not match paths that only start with the letters "admin"', () => {
+    expect(isAdminPath('/administrator')).toBe(false)
+    expect(isAdminPath('/admins')).toBe(false)
+    expect(isAdminPath('')).toBe(false)
+  })
+})
+
+describe('redirectFor and the admin area', () => {
+  it.each(['/admin', '/admin/users'])('sends signed-out visitors on %s to /signin', (path) => {
+    expect(redirectFor(path, false)).toBe('/signin')
+  })
+
+  it.each(['/admin', '/admin/users'])('sends signed-in non-admins on %s to /app', (path) => {
+    expect(redirectFor(path, true)).toBe('/app')
+    expect(redirectFor(path, true, false)).toBe('/app')
+  })
+
+  it('lets admins stay on every admin page', () => {
+    for (const path of adminPagePaths) expect(redirectFor(path, true, true)).toBe(null)
+  })
+
+  it.each(['/admin/nope', '/admin/users/extra'])('sends admins on unknown %s to /admin', (path) => {
+    expect(redirectFor(path, true, true)).toBe('/admin')
+  })
+
+  it.each(['', '/signin', '/signup'])('sends admins on %s to /admin', (path) => {
+    expect(redirectFor(path, true, true)).toBe('/admin')
+  })
+
+  it('lets admins use the user area like anyone else', () => {
+    for (const path of appPagePaths) expect(redirectFor(path, true, true)).toBe(null)
+    expect(redirectFor('/app/nope', true, true)).toBe('/app')
+    expect(redirectFor('/destinations/tozeur', true, true)).toBe('/app/destinations/tozeur')
+    expect(redirectFor('/community', true, true)).toBe('/app/community')
+  })
+
+  it.each(['/faq', '/reset-password', '/administrator'])('leaves admins on %s alone', (path) => {
+    expect(redirectFor(path, true, true)).toBe(null)
+  })
+
+  it('leaves signed-out visitors on /administrator alone', () => {
+    expect(redirectFor('/administrator', false)).toBe(null)
+  })
+
+  it('never carries a hash to /admin', () => {
+    expect(withHash('/admin', '#access_token=x')).toBe('/admin')
   })
 })
