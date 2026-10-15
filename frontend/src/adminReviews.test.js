@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { filterReviews, isPublished, reviewCounts } from './adminReviews.js'
+import { approvalChange, filterReviews, isPublished, reviewCounts } from './adminReviews.js'
 
 const pending = { id: 'a', approved_at: null }
 const published = { id: 'b', approved_at: '2026-10-15T10:00:00Z' }
@@ -24,5 +24,23 @@ describe('reviewCounts', () => {
   it('counts each tab', () => {
     expect(reviewCounts(reviews)).toEqual({ pending: 2, published: 1, all: 3 })
     expect(reviewCounts([])).toEqual({ pending: 0, published: 0, all: 0 })
+  })
+})
+
+describe('approvalChange', () => {
+  const now = '2026-10-15T12:00:00.000Z'
+
+  it('approves a pending review only if its text is the version the admin saw', () => {
+    expect(approvalChange({ id: 'a', approved_at: null, updated_at: '2026-10-15T09:00:00.123456+00:00' }, now)).toEqual({
+      values: { approved_at: now },
+      match: { id: 'a', updated_at: '2026-10-15T09:00:00.123456+00:00' },
+    })
+  })
+
+  it('unpublishes a published review', () => {
+    expect(approvalChange({ id: 'b', approved_at: '2026-10-15T10:00:00Z', updated_at: 'u' }, now)).toEqual({
+      values: { approved_at: null },
+      match: { id: 'b', updated_at: 'u' },
+    })
   })
 })

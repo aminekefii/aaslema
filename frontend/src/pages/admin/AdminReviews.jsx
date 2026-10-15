@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react'
 import Stars from '../../components/Stars.jsx'
 import { supabase } from '../../supabase.js'
 import { lastSeen } from '../../adminUsers.js'
-import { filterReviews, isPublished, reviewCounts } from '../../adminReviews.js'
+import { approvalChange, filterReviews, isPublished, reviewCounts } from '../../adminReviews.js'
 
 const tabs = [['pending', 'Pending'], ['published', 'Published'], ['all', 'All']]
+const updateFailed = "Couldn't update this review. Try again."
+const changedMeanwhile = 'This review was changed or removed since the page loaded. Reload to see it.'
 
 // Tells the sidebar to refresh its pending-review count
 const notifyChanged = () => window.dispatchEvent(new Event('admin:reviews-changed'))
@@ -88,26 +90,26 @@ export default function AdminReviews() {
 
 function ReviewItem({ review, onChange, onRemove }) {
   const [busy, setBusy] = useState(false)
-  const [failed, setFailed] = useState(false)
+  const [failed, setFailed] = useState(null) // error message, or null
   const [confirming, setConfirming] = useState(false)
   const published = isPublished(review)
 
   const act = async (action) => {
     setBusy(true)
-    setFailed(false)
+    setFailed(null)
     try {
       await action()
       notifyChanged()
-    } catch {
-      setFailed(true)
+    } catch (e) {
+      setFailed(e?.code === 'PGRST116' ? changedMeanwhile : updateFailed)
     }
     setBusy(false)
   }
 
-  // .single() errors when no row matched (deleted meanwhile, or no admin rights)
+  // .single() errors with PGRST116 when no row matched (edited or deleted meanwhile)
   const toggle = () => act(async () => {
-    const approved_at = published ? null : new Date().toISOString()
-    const { data, error } = await supabase.from('reviews').update({ approved_at }).eq('id', review.id).select().single()
+    const { values, match } = approvalChange(review, new Date().toISOString())
+    const { data, error } = await supabase.from('reviews').update(values).match(match).select().single()
     if (error) throw error
     onChange(data)
   })
@@ -142,7 +144,8 @@ function ReviewItem({ review, onChange, onRemove }) {
           </>
         )}
       </div>
-      {failed && <p className="admin-note--error admin-msg__error">Couldn't update this review. Try again.</p>}
+      {failed && <p className="admin-note--error admin-msg__error">{failed}</p>}
+
     </li>
   )
 }

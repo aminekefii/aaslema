@@ -235,7 +235,12 @@ New `src/names.js` (pure, tested), moved from `AppHeader.jsx`:
   full text with line breaks kept, a "Published" or "Pending" tag, and:
   - **Approve** (pending) → `update({ approved_at: <now ISO> })`;
     **Unpublish** (published) → `update({ approved_at: null })`.
-    Both use `.eq('id', id).select().single()` and replace the review in state.
+    Both match `{ id, updated_at }` of the review the admin is looking at
+    (`approvalChange`), so an author edit made meanwhile is never approved
+    unseen; then `.select().single()` and replace the review in state. No
+    match (`PGRST116`) → "This review was changed or removed since the page
+    loaded. Reload to see it."
+
   - **Delete** → in place "Delete this review?" with **Delete** and
     **Cancel** → `delete().eq('id', id)`; on success remove it from state.
   - After a successful change: dispatch `admin:reviews-changed`. On failure:
