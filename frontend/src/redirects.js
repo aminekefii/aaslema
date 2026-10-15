@@ -4,7 +4,7 @@
 // Pages that exist under /app
 export const appPagePaths = ['/app', '/app/destinations', '/app/festivals', '/app/community', '/app/contact', '/app/planner', '/app/profile']
 // Pages that exist under /admin (admins only)
-export const adminPagePaths = ['/admin']
+export const adminPagePaths = ['/admin', '/admin/messages']
 // Public pages that have an /app twin
 const mirrored = ['/destinations', '/festivals', '/community', '/contact']
 const isCityPath = (path) => /^\/destinations\/[^/]+$/.test(path)

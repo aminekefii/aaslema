@@ -124,3 +124,19 @@ describe('redirectFor and the admin area', () => {
     expect(withHash('/admin', '#access_token=x')).toBe('/admin')
   })
 })
+
+describe('redirectFor and /admin/messages', () => {
+  it('is an admin page', () => {
+    expect(adminPagePaths).toContain('/admin/messages')
+  })
+
+  it('lets admins stay, sends non-admins to /app and visitors to /signin', () => {
+    expect(redirectFor('/admin/messages', true, true)).toBe(null)
+    expect(redirectFor('/admin/messages', true, false)).toBe('/app')
+    expect(redirectFor('/admin/messages', false)).toBe('/signin')
+  })
+
+  it('sends admins on unknown paths under it to /admin', () => {
+    expect(redirectFor('/admin/messages/1', true, true)).toBe('/admin')
+  })
+})
