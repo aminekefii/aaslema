@@ -41,8 +41,9 @@ their own specs later (see Future work).
 
 ## Redirect rules
 
-Decided by one pure function in `route.js`:
-`redirectFor(path, signedIn)` returns the URL to go to, or `null` to stay.
+Decided by one pure function in `src/redirects.js` (kept apart from
+`route.js`, which reads `window` at import time, so it can be unit-tested in
+Node): `redirectFor(path, signedIn)` returns the URL to go to, or `null` to stay.
 `path` is the pathname without a trailing slash (`currentPath`).
 
 Signed out:
@@ -95,8 +96,13 @@ already shows "Accounts aren't connected yet".
   - Reuses the existing `header`, `nav`, `header__actions`, `menu-toggle`
     classes and the `header--solid` look so it matches the public header; the
     phone menu behaves the same way.
-  - Sign Out: `await supabase.auth.signOut()` (errors ignored, the local
-    session is cleared regardless), then `window.location.assign('/')`.
+  - Sign Out calls `onSignOut` from `App`. `App` sets a `signingOut` flag
+    (so the signed-out redirect to `/signin` does not race the sign-out
+    navigation), awaits `supabase.auth.signOut()` (supabase-js clears the
+    local session even when the server call fails), then
+    `window.location.assign('/')`.
+  - `App` passes `user` to `AppHeader` and to app pages as a prop, so there
+    is one session subscription.
 - `src/pages/AppHome.jsx` — "Your feed is coming soon", one line about posts
   from travellers, button to `/app/community`.
 - `src/pages/Planner.jsx` — "AI Planner is coming soon", one line, button to
@@ -113,10 +119,9 @@ already shows "Accounts aren't connected yet".
   - Render `AppHeader` for `/app` paths, `Header` otherwise.
   - Session loading and redirect behaviour as above.
   - Footer stays on all pages.
-- `src/route.js`
-  - `export const base = isAppPath(currentPath) ? '/app' : ''`
-  - `export function redirectFor(path, signedIn)`
-  - small helper `isAppPath(path)` (`path === '/app' || path.startsWith('/app/')`).
+- `src/redirects.js` (new) — `isAppPath(path)` (`path === '/app' ||
+  path.startsWith('/app/')`) and `redirectFor(path, signedIn)`.
+- `src/route.js` — `export const base = isAppPath(currentPath) ? '/app' : ''`.
 - `src/pages/Destinations.jsx`, `src/pages/CityDetail.jsx` — the three
   internal `/destinations...` links become `` `${base}/destinations...` ``.
 - `src/pages/Auth.jsx` — after successful sign in / sign up (session
