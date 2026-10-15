@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { PHOTO_MAX_BYTES, canApprove, isHeic, momentFromForm, momentPath, spotMoments } from './moments.js'
+import { PHOTO_MAX_BYTES, canApprove, hasHeicHeader, isHeic, momentFromForm, momentPath, spotMoments } from './moments.js'
 
 const user = { email: 'leila@x.com', user_metadata: { full_name: 'Leila Ben Ali' } }
 const city = { id: 'tozeur', highlights: ['Chott el Djerid', 'Dar Cherait'] }
@@ -93,5 +93,18 @@ describe('isHeic', () => {
     expect(isHeic({ name: 'IMG_0001.jpg', type: 'image/jpeg' })).toBe(false)
     expect(isHeic({ name: 'heic.png', type: 'image/png' })).toBe(false)
     expect(isHeic({ type: '' })).toBe(false)
+  })
+})
+
+describe('hasHeicHeader', () => {
+  const header = (brand) => new Uint8Array([0, 0, 0, 0x28, ...new TextEncoder().encode('ftyp' + brand)])
+
+  it('spots HEIC content whatever the file is called', () => {
+    expect(hasHeicHeader(header('heic'))).toBe(true)
+    expect(hasHeicHeader(header('heix'))).toBe(true)
+    expect(hasHeicHeader(header('mif1'))).toBe(true)
+    expect(hasHeicHeader(header('avif'))).toBe(false)
+    expect(hasHeicHeader(new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0, 0, 0, 0, 0, 0, 0, 0]))).toBe(false)
+    expect(hasHeicHeader(new Uint8Array([0, 0]))).toBe(false)
   })
 })

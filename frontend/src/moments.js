@@ -12,6 +12,14 @@ export const PHOTO_MAX_BYTES = 15 * 1024 * 1024
 // iPhone photos; Chrome on Windows often gives them no file type, so the name counts too
 export const isHeic = (file) => /^image\/hei[cf]$/.test(file.type ?? '') || /\.hei[cf]$/i.test(file.name ?? '')
 
+// HEIC content from the file's first 12 bytes ("ftyp" + brand), for HEIC photos saved as .JPG
+const HEIC_BRANDS = ['heic', 'heix', 'hevc', 'hevx', 'heim', 'heis', 'mif1', 'msf1']
+export function hasHeicHeader(bytes) {
+  if (bytes.length < 12) return false
+  const text = String.fromCharCode(...bytes.slice(4, 12))
+  return text.startsWith('ftyp') && HEIC_BRANDS.includes(text.slice(4))
+}
+
 export function momentFromForm({ file, caption, spot }, user, city) {
   if (!file) return { error: 'Please choose a photo.' }
   if (!file.type?.startsWith('image/') && !isHeic(file)) return { error: 'Please choose an image file.' }
