@@ -31,6 +31,11 @@ export const appNavLinks = [
   ['AI Planner', '/app/planner'],
 ]
 
+// Sidebar of the admin area; sections are added as they're built.
+export const adminNavLinks = [
+  ['Users', '/admin'],
+]
+
 export const faqs = [
   {
     q: 'When is the best time to visit Tunisia?',

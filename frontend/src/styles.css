@@ -837,6 +837,47 @@ html.dark .feature-card:hover { border-color: var(--border); }
 .theme-switcher__input:checked + .theme-switcher__label .theme-switcher__ball { transform: translateX(24px); }
 .theme-switcher__input:focus-visible + .theme-switcher__label { outline: 2px solid var(--primary); outline-offset: 2px; }
 
+/* ---------- Admin ---------- */
+.admin { display: grid; grid-template-columns: 250px 1fr; min-height: 100vh; background: var(--lighter); }
+.admin-side {
+  position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; gap: 28px;
+  padding: 28px 18px; background: var(--heading); color: var(--white);
+}
+.admin-side__top { display: flex; align-items: center; justify-content: space-between; padding: 0 6px; }
+.admin-side .logo { font-size: 24px; line-height: 1.1; }
+.admin-side__label { display: block; color: var(--dark-muted); font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; }
+.admin-nav { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.admin-nav a, .admin-nav button {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 0; border-radius: 8px;
+  background: none; color: var(--white); font: inherit; font-weight: 500; text-align: left; cursor: pointer;
+}
+.admin-nav a:hover, .admin-nav button:hover { background: rgba(255, 255, 255, 0.06); }
+.admin-nav a.active { background: var(--primary); }
+.admin-nav__bottom { display: flex; flex-direction: column; gap: 4px; margin-top: auto; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.08); }
+.admin-side__user { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 12px 0; color: var(--dark-muted); font-size: 14px; }
+.admin-side__user span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.admin-menu-toggle { display: none; background: none; border: 0; color: var(--white); cursor: pointer; }
+.admin-main { min-width: 0; padding: 40px; }
+.admin-main h1 { margin-bottom: 24px; color: var(--title); font-size: 32px; }
+.admin-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+.admin-stat { padding: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.admin-stat strong { display: block; color: var(--title); font-size: 30px; }
+.admin-stat span { color: var(--text); font-size: 14px; }
+.admin-search {
+  width: 100%; max-width: 360px; margin-bottom: 16px; padding: 10px 14px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--title); font: inherit;
+}
+.admin-table-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.admin-table { width: 100%; border-collapse: collapse; font-size: 15px; }
+.admin-table th, .admin-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); text-align: left; white-space: nowrap; }
+.admin-table th { background: var(--lighter); color: var(--title); font-weight: 600; }
+.admin-table tr:last-child td { border-bottom: 0; }
+.admin-badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 13px; font-weight: 500; }
+.admin-badge--ok { background: var(--tint); color: var(--primary-dark); }
+.admin-badge--warn { background: rgba(247, 146, 30, 0.12); color: var(--secondary); }
+.admin-note { padding: 24px 0; color: var(--text); }
+.admin-note--error { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; color: #c0392b; }
+
 /* ---------- Responsive ---------- */
 @media (max-width: 1199px) {
   .grid--4 { grid-template-columns: repeat(2, 1fr); }
@@ -883,6 +924,13 @@ html.dark .feature-card:hover { border-color: var(--border); }
   .hero__banner { height: 450px; }
   .about-orbit { margin: 30px auto; }
   .popular__grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 280px; }
+  .admin { grid-template-columns: 1fr; }
+  .admin-side { z-index: 10; height: auto; gap: 0; padding: 14px 16px; }
+  .admin-menu-toggle { display: block; }
+  .admin-nav { display: none; padding-top: 12px; }
+  .admin-nav--open { display: flex; }
+  .admin-main { padding: 24px 16px; }
+  .admin-stats { grid-template-columns: 1fr; }
 }
 
 @media (min-width: 992px) and (max-width: 1199px) {
