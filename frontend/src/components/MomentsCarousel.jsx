@@ -1,10 +1,34 @@
 import { useEffect, useRef, useState } from 'react'
-import { ChevronLeft, ChevronRight, Navigation } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Heart, Navigation } from 'lucide-react'
 import usePerView from '../usePerView.js'
 import { timeAgo } from '../timeAgo.js'
 
+// Visitors (no onLike) get a sign-in link showing the count instead of a button
+function LikeButton({ moment, onLike }) {
+  const content = (
+    <>
+      <Heart size={16} fill={moment.liked ? 'currentColor' : 'none'} />
+      <span>{moment.likes}</span>
+    </>
+  )
+  if (!onLike) {
+    return <a href="/signin" className="moment-card__like" aria-label={`${moment.likes} likes. Sign in to like this moment`}>{content}</a>
+  }
+  return (
+    <button
+      type="button"
+      className={`moment-card__like ${moment.liked ? 'moment-card__like--on' : ''}`}
+      onClick={() => onLike(moment)}
+      aria-pressed={moment.liked}
+      aria-label={`Like this moment (${moment.likes} likes)`}
+    >
+      {content}
+    </button>
+  )
+}
+
 // Approved moments of a destination: arrows and swipe, 3 / 2 / 1 cards, no autoplay.
-export default function MomentsCarousel({ moments }) {
+export default function MomentsCarousel({ moments, onLike }) {
   const perView = usePerView()
   const positions = Math.max(1, moments.length - perView + 1)
   const [index, setIndex] = useState(0)
@@ -39,7 +63,10 @@ export default function MomentsCarousel({ moments }) {
                   <strong>{m.author_name}</strong>
                   <p className="moment-card__caption">{m.caption}</p>
                   {m.spot && <p className="moment-card__spot"><Navigation size={12} /> {m.spot}</p>}
-                  <time dateTime={m.created_at}>{timeAgo(m.created_at)}</time>
+                  <div className="moment-card__footer">
+                    <time dateTime={m.created_at}>{timeAgo(m.created_at)}</time>
+                    <LikeButton moment={m} onLike={onLike} />
+                  </div>
                 </figcaption>
               </div>
             </figure>

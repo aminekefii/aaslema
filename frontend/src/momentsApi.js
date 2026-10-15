@@ -30,9 +30,26 @@ export async function fetchPublishedMoments(cityId) {
     if (error) return null
     const rows = data ?? []
     const urls = await photoUrls(rows.map((r) => r.image_path))
-    return rows.filter((r) => urls[r.image_path]).map((r) => ({ ...r, url: urls[r.image_path] }))
+    // likes / liked are missing until 008_moment_likes.sql has been run
+    return rows
+      .filter((r) => urls[r.image_path])
+      .map((r) => ({ ...r, url: urls[r.image_path], likes: Number(r.likes ?? 0), liked: Boolean(r.liked) }))
   } catch {
     return null
+  }
+}
+
+// Like or unlike an approved moment as the signed-in user; true if saved
+export async function setMomentLike(momentId, on) {
+  if (!supabase) return false
+  try {
+    const { error } = on
+      ? await supabase.from('moment_likes').insert({ moment_id: momentId })
+      : await supabase.from('moment_likes').delete().eq('moment_id', momentId)
+    // Already liked (duplicate key) is the state we wanted
+    return !error || (on && error.code === '23505')
+  } catch {
+    return false
   }
 }
 

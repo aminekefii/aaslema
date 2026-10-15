@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { PHOTO_MAX_BYTES, canApprove, hasHeicHeader, isHeic, momentFromForm, momentPath, spotMoments } from './moments.js'
+import { PHOTO_MAX_BYTES, canApprove, hasHeicHeader, isHeic, momentFromForm, momentPath, spotMoments, toggleMomentLike } from './moments.js'
 
 const user = { email: 'leila@x.com', user_metadata: { full_name: 'Leila Ben Ali' } }
 const city = { id: 'tozeur', highlights: ['Chott el Djerid', 'Dar Cherait'] }
@@ -106,5 +106,17 @@ describe('hasHeicHeader', () => {
     expect(hasHeicHeader(header('avif'))).toBe(false)
     expect(hasHeicHeader(new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0, 0, 0, 0, 0, 0, 0, 0]))).toBe(false)
     expect(hasHeicHeader(new Uint8Array([0, 0]))).toBe(false)
+  })
+})
+
+describe('toggleMomentLike', () => {
+  it('likes and unlikes, adjusting the count', () => {
+    const moment = { id: 'm1', likes: 4, liked: false }
+    expect(toggleMomentLike(moment)).toEqual({ id: 'm1', likes: 5, liked: true })
+    expect(toggleMomentLike({ ...moment, liked: true })).toEqual({ id: 'm1', likes: 3, liked: false })
+  })
+
+  it('never goes below zero', () => {
+    expect(toggleMomentLike({ likes: 0, liked: true })).toEqual({ likes: 0, liked: false })
   })
 })

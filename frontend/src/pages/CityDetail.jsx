@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   Heart, MapPin, ArrowLeft, Utensils, History, Sparkles, Calendar, Share2,
   Navigation, Star, CheckCircle2, Map as MapIcon, Camera, Facebook, Twitter,
@@ -9,8 +9,8 @@ import { base } from '../route.js'
 import { adjustCount, likeCount } from '../cityCounts.js'
 import { fetchLikeCounts, fetchMyCityIds, setCityFlag } from '../cityActivity.js'
 import MomentsCarousel from '../components/MomentsCarousel.jsx'
-import { CAPTION_MAX, momentFromForm, spotMoments } from '../moments.js'
-import { fetchPublishedMoments, uploadMoment } from '../momentsApi.js'
+import { CAPTION_MAX, momentFromForm, spotMoments, toggleMomentLike } from '../moments.js'
+import { fetchPublishedMoments, setMomentLike, uploadMoment } from '../momentsApi.js'
 import { textLength } from '../reviews.js'
 
 // Port of aaslema-new's CityDetail page. Likes, visits (cityActivity.js) and moments
@@ -62,6 +62,9 @@ export default function CityDetail({ id, user }) {
   // null, 'uploading' or { error } — shown in the upload popup
   const [uploadStatus, setUploadStatus] = useState(null)
   const [showUnderReview, setShowUnderReview] = useState(false)
+  // Moments whose like is being saved (one save at a time per moment)
+  const likingMoments = useRef(new Set())
+  const [momentLikeError, setMomentLikeError] = useState(false)
   const [showShareModal, setShowShareModal] = useState(false)
   const [copied, setCopied] = useState(false)
 
@@ -137,6 +140,21 @@ export default function CityDetail({ id, user }) {
     setNote(null)
     writeList('planned_cities', toggleIn(readList('planned_cities'), city.name))
     setIsInPlan(!isInPlan)
+  }
+
+  // Same idea for moments: flip the card right away, flip it back if saving fails
+  const handleMomentLike = async (moment) => {
+    if (likingMoments.current.has(moment.id)) return
+    likingMoments.current.add(moment.id)
+    setMomentLikeError(false)
+    const flip = (list) => list.map((m) => (m.id === moment.id ? toggleMomentLike(m) : m))
+    setMoments(flip)
+    const saved = await setMomentLike(moment.id, !moment.liked)
+    if (!saved) {
+      setMoments(flip)
+      setMomentLikeError(true)
+    }
+    likingMoments.current.delete(moment.id)
   }
 
   const openUpload = () => {
@@ -355,7 +373,10 @@ export default function CityDetail({ id, user }) {
                   <p>No moments yet. Add the first photo from {city.name}.</p>
                 </div>
               ) : (
-                <MomentsCarousel moments={moments} />
+                <>
+                  <MomentsCarousel moments={moments} onLike={user ? handleMomentLike : null} />
+                  {momentLikeError && <p className="city-note">Couldn't save your like. Please try again.</p>}
+                </>
               )}
             </div>
           )}

@@ -37,3 +37,10 @@ export const spotMoments = (moments, spot) => moments.filter((m) => m.spot === s
 
 // Admins approve only what they can see: a pending moment whose photo loaded
 export const canApprove = (moment, url) => !moment.approved_at && Boolean(url)
+
+// Instant like / unlike on a card, before the database confirms it
+export const toggleMomentLike = (moment) => ({
+  ...moment,
+  liked: !moment.liked,
+  likes: Math.max(0, moment.likes + (moment.liked ? -1 : 1)),
+})

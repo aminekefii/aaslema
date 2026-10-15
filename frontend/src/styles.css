@@ -589,6 +589,14 @@ button, input, select { font: inherit; }
 }
 .moment-card__spot { display: flex; align-items: center; gap: 4px; margin: 0; color: var(--primary); font-size: 13px; }
 .moment-card time { font-size: 13px; }
+.moment-card__footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.moment-card__like {
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid var(--border);
+  border-radius: 20px; background: transparent; color: var(--text); font: inherit; font-size: 14px; cursor: pointer;
+  text-decoration: none; transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.moment-card__like:hover { border-color: var(--primary); color: var(--primary); }
+.moment-card__like--on, .moment-card__like--on:hover { border-color: var(--primary); background: var(--tint); color: var(--primary); }
 .moments-carousel__arrow {
   position: absolute; top: 36%; z-index: 2; display: grid; place-items: center; width: 40px; height: 40px;
   border: 1px solid var(--border); border-radius: 50%; background: var(--surface); color: var(--title);
