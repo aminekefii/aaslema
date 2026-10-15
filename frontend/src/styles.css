@@ -945,6 +945,16 @@ html.dark .feature-card:hover { border-color: var(--border); }
 .admin-msg__error { margin: 12px 0 0; }
 .admin-btn-outline { background: none; border: 1px solid var(--border); color: var(--title); }
 .admin-btn-outline:disabled { opacity: 0.6; cursor: default; }
+.admin-review { padding: 16px 18px; }
+.admin-review__head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.admin-review .stars { color: #fbbf24; }
+.admin-review__date { margin-left: auto; font-size: 14px; }
+.admin-review__by { margin: 10px 0 0; font-size: 14px; }
+.admin-review__by strong { color: var(--title); }
+.admin-review__confirm { align-self: center; color: var(--title); font-weight: 500; }
+.admin-btn-danger { background: #c0392b; border: 1px solid #c0392b; color: var(--white); }
+.admin-btn-danger:disabled { opacity: 0.6; cursor: default; }
+
 
 /* ---------- Responsive ---------- */
 @media (max-width: 1199px) {

@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
-import { Compass, ExternalLink, LogOut, Mail, Menu, Users, X } from 'lucide-react'
+import { Compass, ExternalLink, LogOut, Mail, Menu, Star, Users, X } from 'lucide-react'
 import { adminNavLinks, brand } from '../data.js'
 import Switcher from '../components/Switcher.jsx'
 import { currentPath } from '../route.js'
 import { supabase } from '../supabase.js'
 
-const icons = { '/admin': Users, '/admin/messages': Mail }
+const icons = { '/admin': Users, '/admin/messages': Mail, '/admin/reviews': Star }
 
-// Number of unhandled messages; reloads when the Messages page changes one
-function useNewMessageCount() {
+// Rows still waiting for an admin (column is null); reloads when a page fires the event
+function useAdminCount(table, column, event) {
   const [count, setCount] = useState(0)
 
   useEffect(() => {
@@ -17,9 +17,9 @@ function useNewMessageCount() {
       const request = ++latest
       try {
         const { count, error } = await supabase
-          .from('contact_messages')
+          .from(table)
           .select('id', { count: 'exact', head: true })
-          .is('handled_at', null)
+          .is(column, null)
         // Two quick changes can answer out of order; keep only the newest answer
         if (!error && request === latest) setCount(count ?? 0)
       } catch {
@@ -27,9 +27,9 @@ function useNewMessageCount() {
       }
     }
     load()
-    window.addEventListener('admin:messages-changed', load)
-    return () => window.removeEventListener('admin:messages-changed', load)
-  }, [])
+    window.addEventListener(event, load)
+    return () => window.removeEventListener(event, load)
+  }, [table, column, event])
 
   return count
 }
@@ -38,7 +38,10 @@ function useNewMessageCount() {
 export default function AdminLayout({ user, onSignOut, children }) {
   const [open, setOpen] = useState(false)
   const name = user.user_metadata?.full_name || user.email
-  const newMessages = useNewMessageCount()
+  const badges = {
+    '/admin/messages': useAdminCount('contact_messages', 'handled_at', 'admin:messages-changed'),
+    '/admin/reviews': useAdminCount('reviews', 'approved_at', 'admin:reviews-changed'),
+  }
 
   return (
     <div className="admin">
@@ -59,7 +62,8 @@ export default function AdminLayout({ user, onSignOut, children }) {
             return (
               <a key={href} href={href} className={href === currentPath ? 'active' : ''} aria-current={href === currentPath ? 'page' : undefined}>
                 {Icon && <Icon size={18} />} {label}
-                {href === '/admin/messages' && newMessages > 0 && <span className="admin-nav__count">{newMessages}</span>}
+                {badges[href] > 0 && <span className="admin-nav__count">{badges[href]}</span>}
+
               </a>
             )
           })}

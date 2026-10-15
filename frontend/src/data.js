@@ -37,6 +37,8 @@ export const appNavLinks = [
 export const adminNavLinks = [
   ['Users', '/admin'],
   ['Messages', '/admin/messages'],
+  ['Reviews', '/admin/reviews'],
+
 ]
 
 export const faqs = [
