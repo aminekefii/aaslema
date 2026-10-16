@@ -5,8 +5,9 @@ import { myCityCards } from '../cityCounts.js'
 import { timeAgo } from '../timeAgo.js'
 
 // Profile dashboard list of destinations from one of the user's tables (visits or plan), newest first;
-// each card opens the destination.
-export default function CityListSection({ table, title, countText, emptyText, dateLabel }) {
+// each card opens the destination. With `heading`, it is one part of a page: an h2 with the count instead of
+// the page h1 and count line.
+export default function CityListSection({ table, title, heading, countText, emptyText, dateLabel }) {
   // undefined while loading, null if loading failed
   const [items, setItems] = useState(undefined)
 
@@ -17,7 +18,7 @@ export default function CityListSection({ table, title, countText, emptyText, da
   }, [table])
 
   useEffect(() => {
-    document.title = `${title} - Aaslema`
+    if (title) document.title = `${title} - Aaslema`
   }, [title])
 
   useEffect(() => {
@@ -26,8 +27,10 @@ export default function CityListSection({ table, title, countText, emptyText, da
 
   return (
     <>
-      <h1>{title}</h1>
-      {items && <p className="profile-card__lead">{countText(items.length)}</p>}
+      {heading
+        ? <h2 className="plan-part__title">{heading}{items ? ` (${items.length})` : ''}</h2>
+        : <h1>{title}</h1>}
+      {!heading && items && <p className="profile-card__lead">{countText(items.length)}</p>}
       {items === undefined && <p className="profile-note">Loading…</p>}
       {items === null && (
         <p className="profile-note profile-note--error my-moments__error" role="alert">

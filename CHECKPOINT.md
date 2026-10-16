@@ -1,24 +1,24 @@
 # Checkpoint
 
-Last updated: 2026-10-16 (after the festivals sign-in note)
+Last updated: 2026-10-16 (after festivals in the plan)
 
 ## State
 
 - Profile dashboard, author photos, the Rate your trip move, My moments, Visited destinations, My plan and the AI Planner
-  move are merged into `main`. Branch `festivals-signin-note` adds a sign-in note for visitors on Festivals.
+  move and the festivals sign-in note are merged into `main`. Branch `festival-plans` adds festivals to the plan.
   Push `main` to update `origin/main`.
-- Frontend tests: 12 files, 215 tests, all passing (`npx vitest run` in `frontend/`).
-- Supabase SQL lives in `backend/supabase/` (`001`–`012`). Each file is run
+- Frontend tests: 13 files, 220 tests, all passing (`npx vitest run` in `frontend/`).
+- Supabase SQL lives in `backend/supabase/` (`001`–`013`). Each file is run
   by hand in the Supabase SQL editor; check that `004_city_likes_visits.sql`,
   `005_city_visit_counts.sql`, `006_reviews.sql`, `007_moments.sql`,
-  `008_moment_likes.sql`, `009_profiles.sql`, `010_author_photos.sql`, `011_my_moments.sql` and `012_city_plans.sql` have been applied
-  before testing likes, visits, the Most Visited section, Rate Your Trip reviews, destination moments, moment likes,
-  the profile page, author photos, My moments and My plan.
+  `008_moment_likes.sql`, `009_profiles.sql`, `010_author_photos.sql`, `011_my_moments.sql`, `012_city_plans.sql` and `013_festival_plans.sql` have been
+  applied before testing likes, visits, the Most Visited section, Rate Your Trip reviews, destination moments, moment
+  likes, the profile page, author photos, My moments and My plan (destinations and festivals).
 
 ## Waiting on you
 
 - Push `main`.
-- In the Supabase SQL Editor run, in order: `006`–`008` if not done yet, then `009_profiles.sql`, then `010_author_photos.sql`, then `011_my_moments.sql`, then `012_city_plans.sql`.
+- In the Supabase SQL Editor run, in order: `006`–`008` if not done yet, then `009_profiles.sql`, then `010_author_photos.sql`, then `011_my_moments.sql`, then `012_city_plans.sql`, then `013_festival_plans.sql`.
   If you ever re-run `006` or `008` later, run `010` again afterwards (they replace its review and moment lists).
 - Supabase Auth → URL Configuration: add `<site>/app/profile/edit` (and the localhost one) to Redirect URLs, so email-change links come back to Edit profile (not needed if a `/**` wildcard covers it).
 - Browser checks nobody has done yet (no browser was available):
@@ -34,6 +34,7 @@ Last updated: 2026-10-16 (after the festivals sign-in note)
   - My moments: the "Manual (owner)" list in `docs/superpowers/specs/2026-10-16-my-moments-design.md`;
     before `011` is run the page shows "Couldn't load your moments." with Try again.
   - My plan: the "Manual (owner)" list in `docs/superpowers/specs/2026-10-16-my-plan-design.md`.
+  - Festivals in the plan: the "Manual (owner)" list in `docs/superpowers/specs/2026-10-16-festival-plans-design.md`.
 
 ## Done
 
@@ -66,7 +67,8 @@ Last updated: 2026-10-16 (after the festivals sign-in note)
 | Visited destinations in the profile dashboard (`/app/profile/visited`; no SQL) | — | `96b3e8a` |
 | My plan: Add to plan saves to Supabase; My plan section in the profile dashboard (`012_city_plans.sql`) | `2026-10-16-my-plan` | `0f4c737` – `f3c2a3f` |
 | AI Planner moved from the app navbar into the profile dashboard (`/app/profile/planner`; `/app/planner` redirects there) | — | `de08e96` |
-| Festivals page: visitors see "Sign in to add festivals to your plan" (adding festivals to a plan is not built yet) | — | (branch `festivals-signin-note`) |
+| Festivals page: visitors see "Sign in to add festivals to your plan" | — | `0f8f0f4` |
+| Festivals in the plan: Add to plan on `/app/festivals`; My plan split into Destinations and Festivals (`013_festival_plans.sql`) | `2026-10-16-festival-plans` | `e11baa7` – (branch `festival-plans`) |
 
 Specs and plans are in `docs/superpowers/specs/` and `docs/superpowers/plans/`.
 
@@ -76,10 +78,9 @@ From the specs' "Future work" sections:
 
 1. **Admin part 3 / Feed:** Community posts in Supabase with moderation; real feed in `/app`.
 2. **Admin part 4:** move destinations, festivals and FAQs into the database.
-3. **Festivals in the plan:** an "Add to plan" button on each festival (the visitor note already promises it).
-4. **Profile:** more sidebar sections (My reviews, My posts); delete/edit own moments; name + photo on Feed posts once they're in Supabase; photos on admin pages.
-5. **AI Planner:** needs an AI provider and a backend endpoint; it can start from the user's plan (`city_plans`).
-6. **Moments: iPhone photos upload partly green (open bug, to fix later).** HEIC photos are converted with
+3. **Profile:** more sidebar sections (My reviews, My posts); delete/edit own moments; name + photo on Feed posts once they're in Supabase; photos on admin pages.
+4. **AI Planner:** needs an AI provider and a backend endpoint; it can start from the user's plan (`city_plans`).
+5. **Moments: iPhone photos upload partly green (open bug, to fix later).** HEIC photos are converted with
    `heic-to` 1.6.5 (commit `8f9ac1a`). HEIC content in files named `.JPG` is also spotted (commit `4cb490c`:
    `hasHeicHeader` in `frontend/src/moments.js`, used in `frontend/src/imageResize.js`).
    With it, `C:\Users\amine\Pictures\14\IMG_0823.JPG` uploads, but about 40% of it is green (whole 512px blocks).
@@ -87,10 +88,10 @@ From the specs' "Future work" sections:
    file bounds"); heic-to's libheif 1.23.5 decodes what is there and leaves the rest green. The owner reports the
    same issue still happens, so it may not only be damaged files: check with a photo taken straight from an iPhone,
    and try converting to JPEG in heic-to instead of `type: 'bitmap'`, another libheif build, or rejecting damaged photos.
-7. **Moments follow-ups:** users delete their own moments; unpublish; comments; the small fixes deferred in review (frozen upload on plain-http LAN testing, padded captions, links expiring after an hour, files left when a user is deleted).
-8. **Reviews follow-ups:** show the user's review on Profile; users delete their own review; per-destination reviews (Community Voice); the small fixes deferred in review (form after an admin delete, emoji initials, rename sends a review back to pending, stale success message).
+6. **Moments follow-ups:** users delete their own moments; unpublish; comments; the small fixes deferred in review (frozen upload on plain-http LAN testing, padded captions, links expiring after an hour, files left when a user is deleted).
+7. **Reviews follow-ups:** show the user's review on Profile; users delete their own review; per-destination reviews (Community Voice); the small fixes deferred in review (form after an admin delete, emoji initials, rename sends a review back to pending, stale success message).
 
-9. Smaller items:
+8. Smaller items:
  user actions in admin (block, delete, promote), paging for users,
    message rate limiting / archive / email notification, React Router if the app keeps growing.
 
