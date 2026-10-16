@@ -34,11 +34,11 @@ export async function fetchMyCityIds(table) {
   }
 }
 
-// The signed-in user's visits with when they were marked, newest first; null if loading failed
-export async function fetchMyVisits() {
+// The signed-in user's rows of city_visits or city_plans with their dates, newest first; null if loading failed
+export async function fetchMyCityRows(table) {
   if (!supabase) return null
   try {
-    const { data, error } = await supabase.from('city_visits').select('city_id, created_at').order('created_at', { ascending: false })
+    const { data, error } = await supabase.from(table).select('city_id, created_at').order('created_at', { ascending: false })
     return error ? null : (data ?? [])
   } catch {
     return null
