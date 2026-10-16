@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { CalendarDays } from 'lucide-react'
 import { festivalRegions } from '../festivals.js'
 
-export default function Festivals() {
+export default function Festivals({ user }) {
   useEffect(() => {
     document.title = 'Festivals - Aaslema'
   }, [])
@@ -18,6 +18,12 @@ export default function Festivals() {
 
       <section className="section">
         <div className="container fest">
+          {/* Visitors only; signed-in users are on /app/festivals */}
+          {!user && (
+            <p className="fest__signin">
+              <CalendarDays size={18} /> Sign in to add festivals to your plan. <a href="/signin">Sign in</a>
+            </p>
+          )}
           <nav className="fest__regions" aria-label="Jump to a region">
             {festivalRegions.map((r) => (
               <a key={r.id} href={`#${r.id}`}>{r.region}</a>

@@ -719,6 +719,12 @@ button, input, select { font: inherit; }
 
 /* ---------- Festivals page ---------- */
 .fest { max-width: 980px; }
+.fest__signin {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 30px; padding: 14px 18px;
+  border: 1px solid var(--border); border-radius: var(--radius); background: var(--tint); color: var(--title); font-weight: 500;
+}
+.fest__signin svg { color: var(--primary); }
+.fest__signin a { color: var(--primary); font-weight: 600; }
 .fest__regions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 50px; }
 .fest__regions a {
   padding: 6px 16px; border-radius: 30px; font-size: 15px; font-weight: 500;
