@@ -21,7 +21,7 @@ Builds on `public.profiles` and the public `avatars` bucket
 | Name shown | The profile's current `full_name`; the post's saved `author_name` if there is no profile row |
 | Photo shown | The profile's current `avatar_path` as a public link; initials when none |
 | How | `published_reviews()` and `published_moments(text)` join `public.profiles` and return `author_avatar` |
-| Privacy | Only name and photo path leave the database; no user ids, phone, city or country |
+| Privacy | Only name and photo path leave the database; no phone, city or country. The photo path starts with the author's user id, which the public photo link shows anyway (accepted) |
 | Before `010` is run | Cards keep initials and saved names (the field is simply missing) |
 
 ## Database
@@ -33,8 +33,18 @@ change their return type, so they are dropped and recreated.
 ```sql
 -- Author name and photo on published reviews and moments, read live from public.profiles.
 -- Run after 006_reviews.sql, 007_moments.sql, 008_moment_likes.sql and 009_profiles.sql. Safe to re-run.
+-- Re-running 006 or 008 later undoes this file (008 quietly, 006 with an error): run 010 again afterwards.
+-- The photo path starts with the author's user id (it is in the public photo link anyway).
 
--- Approved reviews for the landing page, newest first, without user ids.
+-- Stop before dropping anything if 009 hasn't been run
+do $$
+begin
+  if to_regclass('public.profiles') is null then
+    raise exception 'Run 009_profiles.sql before 010_author_photos.sql';
+  end if;
+end $$;
+
+-- Approved reviews for the landing page, newest first, without user ids (the photo path has one, see above).
 drop function if exists public.published_reviews();
 create function public.published_reviews()
 returns table (id uuid, author_name text, author_avatar text, travel_style text, rating smallint, body text)
@@ -54,7 +64,7 @@ $$;
 revoke all on function public.published_reviews() from public;
 grant execute on function public.published_reviews() to anon, authenticated;
 
--- Approved moments of a destination with like counts, newest first, without user ids.
+-- Approved moments of a destination with like counts, newest first, without user ids (the photo path has one, see above).
 drop function if exists public.published_moments(text);
 create function public.published_moments(p_city_id text)
 returns table (id uuid, author_name text, author_avatar text, spot text, caption text, image_path text, created_at timestamptz, likes bigint, liked boolean, mine boolean)

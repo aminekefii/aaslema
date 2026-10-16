@@ -1,6 +1,7 @@
 -- Trip reviews: one per signed-in user, published after an admin approves it.
 -- Run after 001_admin_users.sql (uses public.is_admin()). Safe to re-run, but re-running
 -- does not change an existing table: alter its constraints by hand if they change later.
+-- After 010_author_photos.sql, re-running this fails at published_reviews: drop that function first, then run 010 again.
 
 create table if not exists public.reviews (
   id uuid primary key default gen_random_uuid(),

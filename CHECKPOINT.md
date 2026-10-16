@@ -17,7 +17,8 @@ Last updated: 2026-10-16 (branch `author-photos`)
 ## Waiting on you
 
 - Review and merge branch `author-photos` into `main`, then push `main`.
-- Run `009_profiles.sql`, then `010_author_photos.sql`, in the Supabase SQL Editor (and `006`–`008` if not done yet).
+- In the Supabase SQL Editor run, in order: `006`–`008` if not done yet, then `009_profiles.sql`, then `010_author_photos.sql`.
+  If you ever re-run `006` or `008` later, run `010` again afterwards (they replace its review and moment lists).
 - Supabase Auth → URL Configuration: add `<site>/app/profile` (and the localhost one) to Redirect URLs, so email-change links come back to the profile page.
 - Browser checks nobody has done yet (no browser was available):
   - Reviews: the "Manual (owner)" list in `docs/superpowers/specs/2026-10-15-trip-reviews-design.md`, plus the

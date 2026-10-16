@@ -1,6 +1,7 @@
 -- Moment likes (shared counts). Run after 007_moments.sql. Signed-in users like other people's
 -- approved moments and manage only their own likes; nobody can see who liked what. Safe to re-run,
 -- but re-running does not change an existing table: alter it by hand if it changes later.
+-- Re-running this after 010_author_photos.sql removes author photos from moments: run 010 again.
 
 create table if not exists public.moment_likes (
   user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
