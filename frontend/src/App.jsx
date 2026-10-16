@@ -20,6 +20,7 @@ import Community from './pages/Community.jsx'
 import AppHome from './pages/AppHome.jsx'
 import Planner from './pages/Planner.jsx'
 import EditProfile from './pages/EditProfile.jsx'
+import MyMoments from './pages/MyMoments.jsx'
 import ProfileLayout from './sections/ProfileLayout.jsx'
 import Review from './pages/Review.jsx'
 import AdminLayout from './sections/AdminLayout.jsx'
@@ -39,7 +40,7 @@ const pages = { '/faq': Faq, '/contact': Contact, '/destinations': Destinations,
 const inProfile = (Section) => (props) => <ProfileLayout {...props}><Section {...props} /></ProfileLayout>
 // Signed-in area; keys must match appPagePaths in redirects.js
 const appPages = { '/app': AppHome, '/app/destinations': Destinations, '/app/festivals': Festivals, '/app/community': Community, '/app/contact': Contact,
- '/app/planner': Planner, '/app/profile': inProfile(EditProfile), '/app/profile/review': inProfile(Review) }
+ '/app/planner': Planner, '/app/profile': inProfile(MyMoments), '/app/profile/edit': inProfile(EditProfile), '/app/profile/review': inProfile(Review) }
 // Admin area; keys must match adminPagePaths in redirects.js
 const adminPages = { '/admin': AdminUsers, '/admin/messages': AdminMessages, '/admin/reviews': AdminReviews, '/admin/moments': AdminMoments }
 

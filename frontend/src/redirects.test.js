@@ -39,7 +39,7 @@ describe('redirectFor when signed in', () => {
     expect(redirectFor(path, true)).toBe(target)
   })
 
-  it.each(['/app', '/app/destinations', '/app/destinations/tozeur', '/app/festivals', '/app/community', '/app/contact', '/app/planner', '/app/profile'])('stays on %s', (path) => {
+  it.each(['/app', '/app/destinations', '/app/destinations/tozeur', '/app/festivals', '/app/community', '/app/contact', '/app/planner', '/app/profile', '/app/profile/edit'])('stays on %s', (path) => {
     expect(redirectFor(path, true)).toBe(null)
   })
 

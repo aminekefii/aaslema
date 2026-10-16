@@ -92,7 +92,7 @@ export async function removeAvatar(userId, oldPath) {
 export async function changeEmail(email) {
   if (!supabase) return { error: accountFailed }
   try {
-    const { error } = await supabase.auth.updateUser({ email }, { emailRedirectTo: `${window.location.origin}/app/profile` })
+    const { error } = await supabase.auth.updateUser({ email }, { emailRedirectTo: `${window.location.origin}/app/profile/edit` })
     return error ? { error: error.message } : { ok: true }
   } catch {
     return { error: accountFailed }
