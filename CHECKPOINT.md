@@ -1,12 +1,13 @@
 # Checkpoint
 
-Last updated: 2026-10-16 (after My moments)
+Last updated: 2026-10-16 (after Visited destinations)
 
 ## State
 
-- Profile dashboard, author photos, the Rate your trip move and My moments are all merged into `main`.
+- Profile dashboard, author photos, the Rate your trip move and My moments are merged into `main`.
+  Branch `visited-destinations` adds the Visited destinations section.
   Push `main` to update `origin/main`.
-- Frontend tests: 12 files, 209 tests, all passing (`npx vitest run` in `frontend/`).
+- Frontend tests: 12 files, 212 tests, all passing (`npx vitest run` in `frontend/`).
 - Supabase SQL lives in `backend/supabase/` (`001`–`011`). Each file is run
   by hand in the Supabase SQL editor; check that `004_city_likes_visits.sql`,
   `005_city_visit_counts.sql`, `006_reviews.sql`, `007_moments.sql`,
@@ -60,7 +61,8 @@ Last updated: 2026-10-16 (after My moments)
 | Profile dashboard: sidebar layout, Edit profile with name, phone, city, country, photo, email, password; photo in the navbar (`009_profiles.sql`) | `2026-10-16-profile-dashboard` | `95ca377` – `6983d31` |
 | Author photos and live names on landing page reviews and destination moments (`010_author_photos.sql`) | `2026-10-16-author-photos` | `3c64d97` – `85ccc51` |
 | Rate your trip moved from the app navbar into the profile dashboard (`/app/profile/review`; `/app/review` redirects there) | — | `01fb4a2` |
-| My moments in the profile dashboard (`011_my_moments.sql`); Edit profile moved to `/app/profile/edit` | `2026-10-16-my-moments` | `571a705` – `6910603` + review fix |
+| My moments in the profile dashboard (`011_my_moments.sql`); Edit profile moved to `/app/profile/edit` | `2026-10-16-my-moments` | `571a705` – `6910603` + review fix |
+| Visited destinations in the profile dashboard (`/app/profile/visited`; no SQL) | — | (branch `visited-destinations`) |
 
 Specs and plans are in `docs/superpowers/specs/` and `docs/superpowers/plans/`.
 
@@ -70,7 +72,7 @@ From the specs' "Future work" sections:
 
 1. **Admin part 3 / Feed:** Community posts in Supabase with moderation; real feed in `/app`.
 2. **Admin part 4:** move destinations, festivals and FAQs into the database.
-3. **Profile:** more sidebar sections (Places I've visited, My reviews, My posts); delete/edit own moments; name + photo on Feed posts once they're in Supabase; photos on admin pages.
+3. **Profile:** more sidebar sections (My reviews, My posts); delete/edit own moments; name + photo on Feed posts once they're in Supabase; photos on admin pages.
 4. **AI Planner:** needs an AI provider and a backend endpoint; "Add to plan" moves to Supabase with it.
 5. **Moments: iPhone photos upload partly green (open bug, to fix later).** HEIC photos are converted with
    `heic-to` 1.6.5 (commit `8f9ac1a`). HEIC content in files named `.JPG` is also spotted (commit `4cb490c`:

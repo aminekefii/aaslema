@@ -34,6 +34,17 @@ export async function fetchMyCityIds(table) {
   }
 }
 
+// The signed-in user's visits with when they were marked, newest first; null if loading failed
+export async function fetchMyVisits() {
+  if (!supabase) return null
+  try {
+    const { data, error } = await supabase.from('city_visits').select('city_id, created_at').order('created_at', { ascending: false })
+    return error ? null : (data ?? [])
+  } catch {
+    return null
+  }
+}
+
 export async function setCityFlag(table, cityId, on) {
   if (!supabase) return false
   try {

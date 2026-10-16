@@ -26,3 +26,11 @@ export function mostVisited(counts, cities, n) {
     .slice(0, n)
     .map(({ city }) => city)
 }
+
+// Visited destinations page: visits (newest first) → cards; ids no longer in the list are skipped
+export function visitedCards(rows, cityList) {
+  return rows.flatMap((row) => {
+    const city = cityList.find((c) => c.id === row.city_id)
+    return city ? [{ id: city.id, name: city.name, title: city.title, image: city.image, visitedAt: row.created_at }] : []
+  })
+}

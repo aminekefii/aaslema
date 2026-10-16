@@ -45,6 +45,7 @@ export const adminNavLinks = [
 // Sidebar of the profile dashboard (/app/profile); sections are added as they're built.
 export const profileNavLinks = [
   ['My moments', '/app/profile'],
+  ['Visited destinations', '/app/profile/visited'],
   ['Edit profile', '/app/profile/edit'],
   ['Rate your trip', '/app/profile/review'],
 ]

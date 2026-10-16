@@ -2,7 +2,7 @@
 // Pure (no window) so it can be unit-tested; paths have no trailing slash, '' is the landing page.
 
 // Pages that exist under /app
-export const appPagePaths = ['/app', '/app/destinations', '/app/festivals', '/app/community', '/app/contact', '/app/planner', '/app/profile', '/app/profile/edit', '/app/profile/review']
+export const appPagePaths = ['/app', '/app/destinations', '/app/festivals', '/app/community', '/app/contact', '/app/planner', '/app/profile', '/app/profile/visited', '/app/profile/edit', '/app/profile/review']
 
 // Pages that moved; old links keep working
 const moved = { '/app/review': '/app/profile/review' }

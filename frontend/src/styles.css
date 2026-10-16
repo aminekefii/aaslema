@@ -1064,6 +1064,10 @@ html.dark .feature-card:hover { border-color: var(--border); }
 .my-moment__footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; font-size: 13px; }
 .my-moment__likes { display: inline-flex; align-items: center; gap: 4px; }
 .my-moments__error { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+/* Visited destinations reuses the My moments grid and cards; the whole card is a link */
+a.my-moment { color: inherit; transition: border-color 0.2s; }
+a.my-moment:hover { border-color: var(--primary); }
+.my-moment__title { margin: 0; font-size: 14px; }
 @media (max-width: 991px) {
   .profile-dash { grid-template-columns: 1fr; gap: 20px; }
   .profile-side { position: static; }

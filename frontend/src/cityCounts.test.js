@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { adjustCount, countsFromRows, likeCount, mostVisited, toggleId } from './cityCounts.js'
+import { adjustCount, countsFromRows, likeCount, mostVisited, toggleId, visitedCards } from './cityCounts.js'
 
 describe('countsFromRows', () => {
   it('turns rows into numbers per city, including bigint strings', () => {
@@ -87,5 +87,24 @@ describe('mostVisited', () => {
     const list = [...cities]
     mostVisited({ d: 9 }, list, 4)
     expect(list).toEqual(cities)
+  })
+})
+
+describe('visitedCards', () => {
+  const list = [
+    { id: 'tunis', name: 'Tunis', title: 'The Capital of Contrasts', image: '/t.jpg' },
+    { id: 'tozeur', name: 'Tozeur', title: 'Oasis', image: '/z.jpg' },
+  ]
+
+  it('matches visits to destinations, keeping the order given', () => {
+    const rows = [{ city_id: 'tozeur', created_at: '2026-10-16T10:00:00Z' }, { city_id: 'tunis', created_at: '2026-10-01T10:00:00Z' }]
+    expect(visitedCards(rows, list)).toEqual([
+      { id: 'tozeur', name: 'Tozeur', title: 'Oasis', image: '/z.jpg', visitedAt: '2026-10-16T10:00:00Z' },
+      { id: 'tunis', name: 'Tunis', title: 'The Capital of Contrasts', image: '/t.jpg', visitedAt: '2026-10-01T10:00:00Z' },
+    ])
+  })
+
+  it('skips destinations that no longer exist', () => {
+    expect(visitedCards([{ city_id: 'gone', created_at: '2026-10-16T10:00:00Z' }], list)).toEqual([])
   })
 })
