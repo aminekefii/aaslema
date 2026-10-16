@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { PHOTO_MAX_BYTES, canApprove, hasHeicHeader, isHeic, momentFromForm, momentPath, spotMoments, toggleMomentLike } from './moments.js'
+import { PHOTO_MAX_BYTES, canApprove, hasHeicHeader, isHeic, momentFromForm, momentPath, myMomentCard, spotMoments, toggleMomentLike } from './moments.js'
 
 const user = { email: 'leila@x.com', user_metadata: { full_name: 'Leila Ben Ali' } }
 const city = { id: 'tozeur', highlights: ['Chott el Djerid', 'Dar Cherait'] }
@@ -118,5 +118,31 @@ describe('toggleMomentLike', () => {
 
   it('never goes below zero', () => {
     expect(toggleMomentLike({ likes: 0, liked: true })).toEqual({ likes: 0, liked: false })
+  })
+})
+
+describe('myMomentCard', () => {
+  const list = [{ id: 'tozeur', name: 'Tozeur' }]
+  const row = {
+    id: 'm1', city_id: 'tozeur', spot: 'Chebika', caption: 'Oasis at dawn', image_path: 'u/p.jpg',
+    created_at: '2026-10-16T10:00:00Z', approved_at: null, likes: '3', url: 'https://x/p.jpg',
+  }
+
+  it('builds a card for a pending moment', () => {
+    expect(myMomentCard(row, list)).toEqual({
+      key: 'm1', url: 'https://x/p.jpg', cityName: 'Tozeur', spot: 'Chebika', caption: 'Oasis at dawn',
+      published: false, postedAt: '2026-10-16T10:00:00Z', likes: 3,
+    })
+  })
+
+  it('marks an approved moment as published', () => {
+    expect(myMomentCard({ ...row, approved_at: '2026-10-16T12:00:00Z' }, list).published).toBe(true)
+  })
+
+  it('falls back to the city id, no photo and no likes', () => {
+    const card = myMomentCard({ ...row, city_id: 'gone', url: undefined, likes: undefined }, list)
+    expect(card.cityName).toBe('gone')
+    expect(card.url).toBeNull()
+    expect(card.likes).toBe(0)
   })
 })

@@ -43,6 +43,21 @@ export async function fetchPublishedMoments(cityId) {
   }
 }
 
+// The signed-in user's moments, pending ones too, with photo links; null if loading failed
+export async function fetchMyMoments() {
+  if (!supabase) return null
+  try {
+    const { data, error } = await supabase.rpc('my_moments')
+    if (error) return null
+    const rows = data ?? []
+    // Uploaders can read their own photos (011_my_moments.sql); a missing link shows "Photo unavailable"
+    const urls = await photoUrls(rows.map((r) => r.image_path))
+    return rows.map((r) => ({ ...r, url: urls[r.image_path] }))
+  } catch {
+    return null
+  }
+}
+
 // Like or unlike someone else's approved moment as the signed-in user; true if saved
 export async function setMomentLike(momentId, on) {
   if (!supabase) return false

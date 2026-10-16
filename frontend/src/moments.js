@@ -44,3 +44,17 @@ export const toggleMomentLike = (moment) => ({
   liked: !moment.liked,
   likes: Math.max(0, moment.likes + (moment.liked ? -1 : 1)),
 })
+
+// A row of my_moments() (plus its photo link) → a My moments card
+export function myMomentCard(row, cityList) {
+  return {
+    key: row.id,
+    url: row.url ?? null,
+    cityName: cityList.find((c) => c.id === row.city_id)?.name ?? row.city_id,
+    spot: row.spot,
+    caption: row.caption,
+    published: Boolean(row.approved_at),
+    postedAt: row.created_at,
+    likes: Number(row.likes ?? 0),
+  }
+}
