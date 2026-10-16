@@ -1,26 +1,31 @@
 # Checkpoint
 
-Last updated: 2026-10-15 (after commit `266efbc`)
+Last updated: 2026-10-16 (branch `profile-dashboard`, after commit `6983d31`)
 
 ## State
 
-- Branch `main`, working tree clean; nothing from `5c83124` (moments spec) onwards is pushed yet.
-- Frontend tests: 11 files, 181 tests, all passing (`npx vitest run` in `frontend/`).
-- Supabase SQL lives in `backend/supabase/` (`001`–`007`). Each file is run
+- `origin/main` is at `f971492`. `main` also has the profile spec and plan (`b296107`, `c898593`), not pushed.
+- Branch `profile-dashboard` (from `main`) holds the profile dashboard work, not merged or pushed yet.
+- Frontend tests: 12 files, 203 tests, all passing (`npx vitest run` in `frontend/`).
+- Supabase SQL lives in `backend/supabase/` (`001`–`009`). Each file is run
   by hand in the Supabase SQL editor; check that `004_city_likes_visits.sql`,
-  `005_city_visit_counts.sql`, `006_reviews.sql` and `007_moments.sql` have
-  been applied before testing likes, visits, the Most Visited section, Rate
-  Your Trip reviews and destination moments.
+  `005_city_visit_counts.sql`, `006_reviews.sql`, `007_moments.sql`,
+  `008_moment_likes.sql` and `009_profiles.sql` have been applied before testing likes, visits,
+  the Most Visited section, Rate Your Trip reviews, destination moments, moment likes and the profile page.
 
 ## Waiting on you
 
-- Push `main` (everything from `5c83124` onwards).
-- Run `007_moments.sql` in the Supabase SQL Editor (and `006_reviews.sql` if not done yet).
+- Review and merge branch `profile-dashboard` into `main`, then push.
+- Run `009_profiles.sql` in the Supabase SQL Editor (and `006`–`008` if not done yet).
+- Supabase Auth → URL Configuration: add `<site>/app/profile` (and the localhost one) to Redirect URLs, so email-change links come back to the profile page.
 - Browser checks nobody has done yet (no browser was available):
   - Reviews: the "Manual (owner)" list in `docs/superpowers/specs/2026-10-15-trip-reviews-design.md`, plus the
     "Read more" popup with a long review.
   - Moments: the "Manual (owner)" list in `docs/superpowers/specs/2026-10-15-city-moments-design.md`, including a
     large phone photo and an iPhone HEIC photo.
+  - Profile: the "Manual (owner)" list in `docs/superpowers/specs/2026-10-16-profile-dashboard-design.md`,
+    plus: before `009` is run the page shows "Couldn't load your profile. Please refresh the page."; picking a PDF as
+    photo shows "Couldn't read that photo." and keeps the old one; buttons are disabled while saving.
 
 ## Done
 
@@ -43,6 +48,10 @@ Last updated: 2026-10-15 (after commit `266efbc`)
 | Highlight cards: camera button removed | — | `6be105b` |
 | Moments tab: visitors get a sign-in link instead of "Add moment" | — | `695d85b` |
 | Destination moments: photo upload to a private Supabase bucket, admin Moments page (approve / delete), approved moments in a carousel on each destination | `2026-10-15-city-moments` | `5c83124` – `266efbc` |
+| Moments: iPhone HEIC photos converted (also when named .JPG) | — | `8f9ac1a`, `4cb490c` |
+| Moment likes (`008_moment_likes.sql`); users can't like their own moment | — | `05a45ca`, `2d2f2e4` |
+| City page: "Add to plan" shows a Coming soon popup for signed-in users | — | `f971492` |
+| Profile dashboard (branch `profile-dashboard`): sidebar layout, Edit profile with name, phone, city, country, photo, email, password; photo in the navbar (`009_profiles.sql`) | `2026-10-16-profile-dashboard` | `95ca377` – `6983d31` |
 
 Specs and plans are in `docs/superpowers/specs/` and `docs/superpowers/plans/`.
 
@@ -52,7 +61,7 @@ From the specs' "Future work" sections:
 
 1. **Admin part 3 / Feed:** Community posts in Supabase with moderation; real feed in `/app`.
 2. **Admin part 4:** move destinations, festivals and FAQs into the database.
-3. **Profile:** edit name and avatar, list own posts, "Places I've visited".
+3. **Profile:** more sidebar sections (Places I've visited, My moments, My reviews, My posts); public name + photo for Feed / reviews / moments.
 4. **AI Planner:** needs an AI provider and a backend endpoint; "Add to plan" moves to Supabase with it.
 5. **Moments: iPhone photos upload partly green (open bug, to fix later).** HEIC photos are converted with
    `heic-to` 1.6.5 (commit `8f9ac1a`). HEIC content in files named `.JPG` is also spotted (commit `4cb490c`:
@@ -62,7 +71,7 @@ From the specs' "Future work" sections:
    file bounds"); heic-to's libheif 1.23.5 decodes what is there and leaves the rest green. The owner reports the
    same issue still happens, so it may not only be damaged files: check with a photo taken straight from an iPhone,
    and try converting to JPEG in heic-to instead of `type: 'bitmap'`, another libheif build, or rejecting damaged photos.
-6. **Moments follow-ups:** users delete their own moments; unpublish; likes or comments; the small fixes deferred in review (frozen upload on plain-http LAN testing, padded captions, links expiring after an hour, files left when a user is deleted).
+6. **Moments follow-ups:** users delete their own moments; unpublish; comments; the small fixes deferred in review (frozen upload on plain-http LAN testing, padded captions, links expiring after an hour, files left when a user is deleted).
 7. **Reviews follow-ups:** show the user's review on Profile; users delete their own review; per-destination reviews (Community Voice); the small fixes deferred in review (form after an admin delete, emoji initials, rename sends a review back to pending, stale success message).
 
 8. Smaller items:
