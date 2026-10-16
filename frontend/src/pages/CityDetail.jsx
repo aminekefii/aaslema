@@ -13,8 +13,8 @@ import { CAPTION_MAX, momentFromForm, spotMoments, toggleMomentLike } from '../m
 import { fetchPublishedMoments, setMomentLike, uploadMoment } from '../momentsApi.js'
 import { textLength } from '../reviews.js'
 
-// Port of aaslema-new's CityDetail page. Likes, visits (cityActivity.js) and moments
-// (momentsApi.js) live in Supabase. Planning isn't live yet: "Add to plan" shows "Coming soon".
+// Port of aaslema-new's CityDetail page. Likes, visits, the plan (cityActivity.js) and moments
+// (momentsApi.js) live in Supabase.
 
 const ACHIEVEMENTS = [
   { id: 'first_visit', title: 'First Contact', icon: '📍', desc: 'Arrived at the governorate.' },
