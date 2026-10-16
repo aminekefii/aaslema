@@ -39,7 +39,7 @@ describe('redirectFor when signed in', () => {
     expect(redirectFor(path, true)).toBe(target)
   })
 
-  it.each(['/app', '/app/destinations', '/app/destinations/tozeur', '/app/festivals', '/app/community', '/app/contact', '/app/planner', '/app/profile', '/app/profile/plan', '/app/profile/edit', '/app/profile/visited'])('stays on %s', (path) => {
+  it.each(['/app', '/app/destinations', '/app/destinations/tozeur', '/app/festivals', '/app/community', '/app/contact', '/app/profile', '/app/profile/plan', '/app/profile/planner', '/app/profile/edit', '/app/profile/visited'])('stays on %s', (path) => {
     expect(redirectFor(path, true)).toBe(null)
   })
 
@@ -138,6 +138,18 @@ describe('redirectFor and /admin/messages', () => {
 
   it('sends admins on unknown paths under it to /admin', () => {
     expect(redirectFor('/admin/messages/1', true, true)).toBe('/admin')
+  })
+})
+
+describe('redirectFor and the AI Planner', () => {
+  it('lives in the profile dashboard', () => {
+    expect(appPagePaths).toContain('/app/profile/planner')
+    expect(appPagePaths).not.toContain('/app/planner')
+  })
+
+  it('sends the old /app/planner link to the dashboard page', () => {
+    expect(redirectFor('/app/planner', true)).toBe('/app/profile/planner')
+    expect(redirectFor('/app/planner', false)).toBe('/signin')
   })
 })
 

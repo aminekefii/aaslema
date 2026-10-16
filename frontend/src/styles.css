@@ -1064,6 +1064,8 @@ html.dark .feature-card:hover { border-color: var(--border); }
 a.my-moment { color: inherit; transition: border-color 0.2s; }
 a.my-moment:hover { border-color: var(--primary); }
 .my-moment__title { margin: 0; font-size: 14px; }
+.planner-soon { max-width: 640px; margin-top: 20px; }
+.planner-soon p { margin: 0 0 16px; }
 @media (max-width: 991px) {
   .profile-dash { grid-template-columns: 1fr; gap: 20px; }
   .profile-side { position: static; }

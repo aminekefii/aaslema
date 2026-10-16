@@ -1,13 +1,13 @@
 # Checkpoint
 
-Last updated: 2026-10-16 (after My plan)
+Last updated: 2026-10-16 (after moving the AI Planner)
 
 ## State
 
-- Profile dashboard, author photos, the Rate your trip move, My moments and Visited destinations are merged into `main`.
-  Branch `my-plan` makes Add to plan real and adds My plan to the dashboard.
+- Profile dashboard, author photos, the Rate your trip move, My moments, Visited destinations and My plan are merged
+  into `main`. Branch `planner-in-dashboard` moves the AI Planner from the navbar into the profile dashboard.
   Push `main` to update `origin/main`.
-- Frontend tests: 12 files, 213 tests, all passing (`npx vitest run` in `frontend/`).
+- Frontend tests: 12 files, 215 tests, all passing (`npx vitest run` in `frontend/`).
 - Supabase SQL lives in `backend/supabase/` (`001`–`012`). Each file is run
   by hand in the Supabase SQL editor; check that `004_city_likes_visits.sql`,
   `005_city_visit_counts.sql`, `006_reviews.sql`, `007_moments.sql`,
@@ -64,7 +64,8 @@ Last updated: 2026-10-16 (after My plan)
 | Rate your trip moved from the app navbar into the profile dashboard (`/app/profile/review`; `/app/review` redirects there) | — | `01fb4a2` |
 | My moments in the profile dashboard (`011_my_moments.sql`); Edit profile moved to `/app/profile/edit` | `2026-10-16-my-moments` | `571a705` – `6910603` + review fix |
 | Visited destinations in the profile dashboard (`/app/profile/visited`; no SQL) | — | `96b3e8a` |
-| My plan: Add to plan saves to Supabase; My plan section in the profile dashboard (`012_city_plans.sql`) | `2026-10-16-my-plan` | `0f4c737` – (branch `my-plan`) |
+| My plan: Add to plan saves to Supabase; My plan section in the profile dashboard (`012_city_plans.sql`) | `2026-10-16-my-plan` | `0f4c737` – `f3c2a3f` |
+| AI Planner moved from the app navbar into the profile dashboard (`/app/profile/planner`; `/app/planner` redirects there) | — | (branch `planner-in-dashboard`) |
 
 Specs and plans are in `docs/superpowers/specs/` and `docs/superpowers/plans/`.
 

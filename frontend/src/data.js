@@ -29,7 +29,6 @@ export const appNavLinks = [
   ['Community', '/app/community'],
   ['Contact', '/app/contact'],
 
-  ['AI Planner', '/app/planner'],
 ]
 
 // Sidebar of the admin area; sections are added as they're built.
@@ -46,6 +45,7 @@ export const adminNavLinks = [
 export const profileNavLinks = [
   ['My moments', '/app/profile'],
   ['My plan', '/app/profile/plan'],
+  ['AI Planner', '/app/profile/planner'],
   ['Visited destinations', '/app/profile/visited'],
   ['Edit profile', '/app/profile/edit'],
   ['Rate your trip', '/app/profile/review'],
@@ -149,7 +149,7 @@ export const posts = [
 
 // [label, href] pairs, mirroring the footer of aaslema-new
 export const footerColumns = [
-  { title: 'Explore', links: [['Destinations', '/destinations'], ['Trip planner', '/app/planner'], ['Community', '/community']] },
+  { title: 'Explore', links: [['Destinations', '/destinations'], ['Trip planner', '/app/profile/planner'], ['Community', '/community']] },
   { title: 'Travel Styles', links: [['Backpacking', '#'], ['Bikepacking', '#'], ['History', '#']] },
   { title: 'About', links: [['Contact', '/contact'], ['FAQ', '/faq'], ['Legal notice', '#'], ['Privacy', '#']] },
 ]

@@ -42,7 +42,7 @@ const pages = { '/faq': Faq, '/contact': Contact, '/destinations': Destinations,
 const inProfile = (Section) => (props) => <ProfileLayout {...props}><Section {...props} /></ProfileLayout>
 // Signed-in area; keys must match appPagePaths in redirects.js
 const appPages = { '/app': AppHome, '/app/destinations': Destinations, '/app/festivals': Festivals, '/app/community': Community, '/app/contact': Contact,
- '/app/planner': Planner, '/app/profile': inProfile(MyMoments), '/app/profile/plan': inProfile(MyPlan), '/app/profile/visited': inProfile(VisitedDestinations), '/app/profile/edit': inProfile(EditProfile), '/app/profile/review': inProfile(Review) }
+ '/app/profile': inProfile(MyMoments), '/app/profile/plan': inProfile(MyPlan), '/app/profile/planner': inProfile(Planner), '/app/profile/visited': inProfile(VisitedDestinations), '/app/profile/edit': inProfile(EditProfile), '/app/profile/review': inProfile(Review) }
 // Admin area; keys must match adminPagePaths in redirects.js
 const adminPages = { '/admin': AdminUsers, '/admin/messages': AdminMessages, '/admin/reviews': AdminReviews, '/admin/moments': AdminMoments }
 
