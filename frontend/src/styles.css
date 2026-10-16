@@ -751,6 +751,7 @@ button, input, select { font: inherit; }
 .fest-item__plan.city-btn--soft { border-color: transparent; color: var(--primary); }
 .fest-item__plan:disabled { opacity: 0.6; cursor: default; }
 .fest__plan-note { margin: 0 0 20px; }
+.fest-item__error { grid-column: 1 / -1; margin: 0; }
 .fest__note { margin: 0; font-size: 15px; }
 
 /* ---------- Community page (port of aaslema-new's Community) ---------- */

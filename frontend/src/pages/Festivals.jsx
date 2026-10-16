@@ -9,7 +9,8 @@ export default function Festivals({ user }) {
   const [planned, setPlanned] = useState(undefined)
   // Festivals being saved; each button waits only for its own save
   const [busy, setBusy] = useState([])
-  const [saveError, setSaveError] = useState(false)
+  // Festivals whose last save failed; the error shows inside that festival, where the user clicked
+  const [failed, setFailed] = useState([])
   const userId = user?.id
 
   useEffect(() => {
@@ -27,13 +28,13 @@ export default function Festivals({ user }) {
   // Flip right away; flip back if saving fails
   const togglePlan = async (festivalId) => {
     const on = !planned.includes(festivalId)
-    setSaveError(false)
+    setFailed((f) => toggleId(f, festivalId, false))
     setBusy((b) => [...b, festivalId])
     setPlanned((p) => toggleId(p, festivalId, on))
     const saved = await setCityFlag('festival_plans', festivalId, on, 'festival_id')
     if (!saved) {
       setPlanned((p) => p && toggleId(p, festivalId, !on))
-      setSaveError(true)
+      setFailed((f) => toggleId(f, festivalId, true))
     }
     setBusy((b) => b.filter((id) => id !== festivalId))
   }
@@ -58,7 +59,6 @@ export default function Festivals({ user }) {
           {user && planned === null && (
             <p className="city-note city-note--error fest__plan-note" role="alert">Couldn't load your plan. Please refresh the page.</p>
           )}
-          {saveError && <p className="city-note city-note--error fest__plan-note" role="alert">Couldn't save that. Please try again.</p>}
           <nav className="fest__regions" aria-label="Jump to a region">
             {festivalRegions.map((r) => (
               <a key={r.id} href={`#${r.id}`}>{r.region}</a>
@@ -92,6 +92,9 @@ export default function Festivals({ user }) {
                           {inPlan ? <CheckCircle2 size={16} /> : <Calendar size={16} />}
                           {inPlan ? 'In your plan' : 'Add to plan'}
                         </button>
+                      )}
+                      {failed.includes(f.id) && (
+                        <p className="city-note city-note--error fest-item__error" role="alert">Couldn't save that. Please try again.</p>
                       )}
                     </li>
                   )
