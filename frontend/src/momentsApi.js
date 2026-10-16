@@ -1,5 +1,6 @@
 import { supabase } from './supabase.js'
 import { resizeToJpeg } from './imageResize.js'
+import { avatarUrl } from './profileApi.js'
 import { momentPath } from './moments.js'
 
 // Destination moments in Supabase. None of these throw: pages get a plain value back.
@@ -30,10 +31,13 @@ export async function fetchPublishedMoments(cityId) {
     if (error) return null
     const rows = data ?? []
     const urls = await photoUrls(rows.map((r) => r.image_path))
-    // likes / liked / mine are missing until 008_moment_likes.sql has been run
+    // likes / liked / mine come from 008_moment_likes.sql, author_avatar from 010_author_photos.sql
     return rows
       .filter((r) => urls[r.image_path])
-      .map((r) => ({ ...r, url: urls[r.image_path], likes: Number(r.likes ?? 0), liked: Boolean(r.liked), mine: Boolean(r.mine) }))
+      .map((r) => ({
+        ...r, url: urls[r.image_path], likes: Number(r.likes ?? 0), liked: Boolean(r.liked), mine: Boolean(r.mine),
+        author_avatar_url: avatarUrl(r.author_avatar),
+      }))
   } catch {
     return null
   }

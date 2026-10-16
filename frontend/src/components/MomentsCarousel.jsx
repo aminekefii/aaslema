@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight, Heart, Navigation } from 'lucide-react'
 import usePerView from '../usePerView.js'
 import { timeAgo } from '../timeAgo.js'
+import { initials } from '../names.js'
 
 // Visitors (no onLike) get a sign-in link showing the count instead of a button;
 // on their own moments users only see the count (they can't like their own)
@@ -64,7 +65,12 @@ export default function MomentsCarousel({ moments, onLike }) {
               <div className="moment-card__inner">
                 <img src={m.url} alt={m.caption} draggable="false" />
                 <figcaption>
-                  <strong>{m.author_name}</strong>
+                  <div className="moment-card__by">
+                    {m.author_avatar_url
+                      ? <img src={m.author_avatar_url} alt="" className="moment-card__avatar" draggable="false" />
+                      : <span className="moment-card__avatar moment-card__avatar--initials" aria-hidden="true">{initials(m.author_name)}</span>}
+                    <strong>{m.author_name}</strong>
+                  </div>
                   <p className="moment-card__caption">{m.caption}</p>
                   {m.spot && <p className="moment-card__spot"><Navigation size={12} /> {m.spot}</p>}
                   <div className="moment-card__footer">

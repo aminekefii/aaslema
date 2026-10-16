@@ -1,22 +1,23 @@
 # Checkpoint
 
-Last updated: 2026-10-16 (branch `profile-dashboard`, after commit `6983d31`)
+Last updated: 2026-10-16 (branch `author-photos`)
 
 ## State
 
-- `origin/main` is at `f971492`. `main` also has the profile spec and plan (`b296107`, `c898593`), not pushed.
-- Branch `profile-dashboard` (from `main`) holds the profile dashboard work, not merged or pushed yet.
-- Frontend tests: 12 files, 203 tests, all passing (`npx vitest run` in `frontend/`).
-- Supabase SQL lives in `backend/supabase/` (`001`–`009`). Each file is run
+- `origin/main` is at `f971492`. Local `main` has the profile dashboard (merged) and the author-photos spec and plan, not pushed.
+- Branch `author-photos` (from `main` `9fe04fd`) holds the author photos work, not merged yet.
+- Frontend tests: 12 files, 204 tests, all passing (`npx vitest run` in `frontend/`).
+- Supabase SQL lives in `backend/supabase/` (`001`–`010`). Each file is run
   by hand in the Supabase SQL editor; check that `004_city_likes_visits.sql`,
   `005_city_visit_counts.sql`, `006_reviews.sql`, `007_moments.sql`,
-  `008_moment_likes.sql` and `009_profiles.sql` have been applied before testing likes, visits,
-  the Most Visited section, Rate Your Trip reviews, destination moments, moment likes and the profile page.
+  `008_moment_likes.sql`, `009_profiles.sql` and `010_author_photos.sql` have been applied before testing likes,
+  visits, the Most Visited section, Rate Your Trip reviews, destination moments, moment likes, the profile page
+  and author photos.
 
 ## Waiting on you
 
-- Review and merge branch `profile-dashboard` into `main`, then push.
-- Run `009_profiles.sql` in the Supabase SQL Editor (and `006`–`008` if not done yet).
+- Review and merge branch `author-photos` into `main`, then push `main`.
+- Run `009_profiles.sql`, then `010_author_photos.sql`, in the Supabase SQL Editor (and `006`–`008` if not done yet).
 - Supabase Auth → URL Configuration: add `<site>/app/profile` (and the localhost one) to Redirect URLs, so email-change links come back to the profile page.
 - Browser checks nobody has done yet (no browser was available):
   - Reviews: the "Manual (owner)" list in `docs/superpowers/specs/2026-10-15-trip-reviews-design.md`, plus the
@@ -26,6 +27,8 @@ Last updated: 2026-10-16 (branch `profile-dashboard`, after commit `6983d31`)
   - Profile: the "Manual (owner)" list in `docs/superpowers/specs/2026-10-16-profile-dashboard-design.md`,
     plus: before `009` is run the page shows "Couldn't load your profile. Please refresh the page."; picking a PDF as
     photo shows "Couldn't read that photo." and keeps the old one; buttons are disabled while saving.
+  - Author photos: the "Manual (owner)" list in `docs/superpowers/specs/2026-10-16-author-photos-design.md`
+    (the small photo on moment cards must be a 28px circle, not a big 4:3 picture).
 
 ## Done
 
@@ -51,7 +54,8 @@ Last updated: 2026-10-16 (branch `profile-dashboard`, after commit `6983d31`)
 | Moments: iPhone HEIC photos converted (also when named .JPG) | — | `8f9ac1a`, `4cb490c` |
 | Moment likes (`008_moment_likes.sql`); users can't like their own moment | — | `05a45ca`, `2d2f2e4` |
 | City page: "Add to plan" shows a Coming soon popup for signed-in users | — | `f971492` |
-| Profile dashboard (branch `profile-dashboard`): sidebar layout, Edit profile with name, phone, city, country, photo, email, password; photo in the navbar (`009_profiles.sql`) | `2026-10-16-profile-dashboard` | `95ca377` – `6983d31` |
+| Profile dashboard: sidebar layout, Edit profile with name, phone, city, country, photo, email, password; photo in the navbar (`009_profiles.sql`) | `2026-10-16-profile-dashboard` | `95ca377` – `6983d31` |
+| Author photos and live names on landing page reviews and destination moments (`010_author_photos.sql`) | `2026-10-16-author-photos` | `3c64d97` – (this branch) |
 
 Specs and plans are in `docs/superpowers/specs/` and `docs/superpowers/plans/`.
 
@@ -61,7 +65,7 @@ From the specs' "Future work" sections:
 
 1. **Admin part 3 / Feed:** Community posts in Supabase with moderation; real feed in `/app`.
 2. **Admin part 4:** move destinations, festivals and FAQs into the database.
-3. **Profile:** more sidebar sections (Places I've visited, My moments, My reviews, My posts); public name + photo for Feed / reviews / moments.
+3. **Profile:** more sidebar sections (Places I've visited, My moments, My reviews, My posts); name + photo on Feed posts once they're in Supabase; photos on admin pages.
 4. **AI Planner:** needs an AI provider and a backend endpoint; "Add to plan" moves to Supabase with it.
 5. **Moments: iPhone photos upload partly green (open bug, to fix later).** HEIC photos are converted with
    `heic-to` 1.6.5 (commit `8f9ac1a`). HEIC content in files named `.JPG` is also spotted (commit `4cb490c`:
