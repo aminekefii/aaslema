@@ -34,8 +34,8 @@ Replaces the placeholder `src/pages/Profile.jsx`. Builds on `useUser()`,
 
 ## Database and storage
 
-New file `backend/supabase/008_profiles.sql`, run once in the Supabase SQL
-Editor after 001; safe to re-run.
+New file `backend/supabase/009_profiles.sql`, run once in the Supabase SQL
+Editor after 001 (and after 008_moment_likes.sql, so the numbers stay in order); safe to re-run.
 
 ```sql
 -- User profiles: name, phone, city, country, photo. Email and password stay in Supabase Auth.
@@ -278,13 +278,15 @@ message line:
 ### `src/sections/AppHeader.jsx`
 
 The profile circle shows `<img>` of `avatarUrl(user.user_metadata.avatar_path)`
-when set (alt = the user's name), otherwise the initials as now.
+when set (empty alt text: the link's `aria-label` already names the user),
+otherwise the initials as now. The profile pages start with a short page
+banner showing the user's name and email, above the sidebar and content.
 
 ## Files
 
 | File | Change |
 |---|---|
-| `backend/supabase/008_profiles.sql` | New |
+| `backend/supabase/009_profiles.sql` | New |
 | `frontend/src/profile.js`, `profile.test.js` | New |
 | `frontend/src/profileApi.js` | New |
 | `frontend/src/imageResize.js` | Add `resizeToSquareJpeg` |
@@ -305,7 +307,7 @@ when set (alt = the user's name), otherwise the initials as now.
   changes: a signed-in user opening `/app/profile` isn't redirected, so the
   email link's hash reaches the page.
 - **Manual (owner):**
-  1. Run `008_profiles.sql`; Table Editor shows a `profiles` row for every
+  1. Run `009_profiles.sql`; Table Editor shows a `profiles` row for every
      existing user; Storage shows a public `avatars` bucket. In Supabase
      Auth → URL Configuration, the site's `/app/profile` URL is an allowed
      redirect.
