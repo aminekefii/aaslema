@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { COUNTRIES, cleanProfile, profileChanged, profileForm } from '../profile.js'
-import { avatarUrl, fetchProfile, removeAvatar, saveProfile, uploadAvatar } from '../profileApi.js'
+import { COUNTRIES, cleanProfile, emailError, linkNotice, passwordError, profileChanged, profileForm } from '../profile.js'
+import { avatarUrl, changeEmail, changePassword, fetchProfile, removeAvatar, saveProfile, uploadAvatar } from '../profileApi.js'
 import { initials } from '../names.js'
 
 // Message under a card's button: { text, error? }
@@ -119,14 +119,100 @@ function DetailsCard({ user, profile, onSaved }) {
   )
 }
 
+function EmailCard({ user, initialNotice }) {
+  const [email, setEmail] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [notice, setNotice] = useState(initialNotice)
+
+  const submit = async (e) => {
+    e.preventDefault()
+    const error = emailError(user.email, email)
+    if (error) return setNotice({ text: error, error: true })
+    setBusy(true)
+    const result = await changeEmail(email.trim())
+    setBusy(false)
+    if (result.error) return setNotice({ text: result.error, error: true })
+    setEmail('')
+    setNotice({ text: 'We sent a confirmation link to both your old and new email. Your email changes once you open it.' })
+  }
+
+  return (
+    <section className="profile-card">
+      <h2>Email</h2>
+      <p className="profile-card__lead">Current email: <strong>{user.email}</strong></p>
+      {user.new_email && <p className="profile-card__lead">Waiting for you to confirm <strong>{user.new_email}</strong>.</p>}
+      <form onSubmit={submit} noValidate>
+        <fieldset className="auth-form" disabled={busy}>
+          <label className="auth-field">
+            New email
+            <input type="email" name="email" autoComplete="email" placeholder="you@example.com" value={email} onChange={(e) => { setEmail(e.target.value); setNotice(null) }} />
+          </label>
+          <button type="submit" className="btn btn--primary profile-card__submit">{busy ? 'Sending…' : 'Change email'}</button>
+        </fieldset>
+      </form>
+      <Notice notice={notice} />
+    </section>
+  )
+}
+
+function PasswordCard() {
+  const [password, setPassword] = useState('')
+  const [confirm, setConfirm] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [notice, setNotice] = useState(null)
+
+  const submit = async (e) => {
+    e.preventDefault()
+    const error = passwordError(password, confirm)
+    if (error) return setNotice({ text: error, error: true })
+    setBusy(true)
+    const result = await changePassword(password)
+    setBusy(false)
+    if (result.error) return setNotice({ text: result.error, error: true })
+    setPassword('')
+    setConfirm('')
+    setNotice({ text: 'Password updated.' })
+  }
+
+  const field = (setter) => (e) => { setter(e.target.value); setNotice(null) }
+
+  return (
+    <section className="profile-card">
+      <h2>Password</h2>
+      <form onSubmit={submit} noValidate>
+        <fieldset className="auth-form" disabled={busy}>
+          <label className="auth-field">
+            New password
+            <input type="password" name="new-password" autoComplete="new-password" value={password} onChange={field(setPassword)} />
+            <small>At least 8 characters.</small>
+          </label>
+          <label className="auth-field">
+            Confirm password
+            <input type="password" name="confirm-password" autoComplete="new-password" value={confirm} onChange={field(setConfirm)} />
+          </label>
+          <button type="submit" className="btn btn--primary profile-card__submit">{busy ? 'Updating…' : 'Update password'}</button>
+        </fieldset>
+      </form>
+      <Notice notice={notice} />
+    </section>
+  )
+}
+
 export default function EditProfile({ user }) {
   // undefined while loading, null if loading failed
   const [profile, setProfile] = useState(undefined)
   const userId = user.id
+  // Read once: email-change links land here with a message or an error in the hash
+  const [emailNotice] = useState(() => linkNotice(window.location.hash))
 
   useEffect(() => {
     document.title = 'Edit profile - Aaslema'
   }, [])
+
+  // Drop the link's hash so a refresh doesn't show the message again
+  useEffect(() => {
+    if (emailNotice) window.history.replaceState(null, '', window.location.pathname)
+  }, [emailNotice])
 
   useEffect(() => {
     let live = true
@@ -145,6 +231,8 @@ export default function EditProfile({ user }) {
         <div className="profile-cards">
           <PhotoCard user={user} profile={profile} onSaved={setProfile} />
           <DetailsCard user={user} profile={profile} onSaved={setProfile} />
+          <EmailCard user={user} initialNotice={emailNotice} />
+          <PasswordCard />
         </div>
       )}
     </>
