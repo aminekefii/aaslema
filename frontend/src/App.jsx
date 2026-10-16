@@ -19,7 +19,8 @@ import Festivals from './pages/Festivals.jsx'
 import Community from './pages/Community.jsx'
 import AppHome from './pages/AppHome.jsx'
 import Planner from './pages/Planner.jsx'
-import Profile from './pages/Profile.jsx'
+import EditProfile from './pages/EditProfile.jsx'
+import ProfileLayout from './sections/ProfileLayout.jsx'
 import Review from './pages/Review.jsx'
 import AdminLayout from './sections/AdminLayout.jsx'
 import AdminUsers from './pages/admin/AdminUsers.jsx'
@@ -34,9 +35,11 @@ import { supabase, useUser } from './supabase.js'
 
 // Tiny path-based page switch; any other public path shows the landing page.
 const pages = { '/faq': Faq, '/contact': Contact, '/destinations': Destinations, '/festivals': Festivals, '/community': Community, '/signin': SignIn, '/signup': SignUp, '/reset-password': ResetPassword }
+// Profile dashboard: sidebar layout around the active section
+const ProfilePage = (props) => <ProfileLayout {...props}><EditProfile {...props} /></ProfileLayout>
 // Signed-in area; keys must match appPagePaths in redirects.js
 const appPages = { '/app': AppHome, '/app/destinations': Destinations, '/app/festivals': Festivals, '/app/community': Community, '/app/review': Review, '/app/contact': Contact,
- '/app/planner': Planner, '/app/profile': Profile }
+ '/app/planner': Planner, '/app/profile': ProfilePage }
 // Admin area; keys must match adminPagePaths in redirects.js
 const adminPages = { '/admin': AdminUsers, '/admin/messages': AdminMessages, '/admin/reviews': AdminReviews, '/admin/moments': AdminMoments }
 
