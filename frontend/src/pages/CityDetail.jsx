@@ -14,14 +14,7 @@ import { fetchPublishedMoments, setMomentLike, uploadMoment } from '../momentsAp
 import { textLength } from '../reviews.js'
 
 // Port of aaslema-new's CityDetail page. Likes, visits (cityActivity.js) and moments
-// (momentsApi.js) live in Supabase; the plan still lives in the viewer's browser.
-const readList = (key) => {
-  try { return JSON.parse(localStorage.getItem(key) || '[]') } catch { return [] }
-}
-const writeList = (key, list) => {
-  try { localStorage.setItem(key, JSON.stringify(list)); return true } catch { return false }
-}
-const toggleIn = (list, item) => (list.includes(item) ? list.filter((x) => x !== item) : [...list, item])
+// (momentsApi.js) live in Supabase. Planning isn't live yet: "Add to plan" shows "Coming soon".
 
 const ACHIEVEMENTS = [
   { id: 'first_visit', title: 'First Contact', icon: '📍', desc: 'Arrived at the governorate.' },
@@ -40,8 +33,6 @@ const EMPTY_MOMENT = { file: null, preview: '', spot: '', caption: '' }
 export default function CityDetail({ id, user }) {
   const city = cities.find((c) => c.id === id)
   const [hasLiked, setHasLiked] = useState(false)
-  // Visitors can't plan, so a plan left in their browser from before isn't shown
-  const [isInPlan, setIsInPlan] = useState(() => Boolean(user && city && readList('planned_cities').includes(city.name)))
   const [isVisited, setIsVisited] = useState(false)
   // Like counts for everyone; null until loaded (or if loading failed)
   const [counts, setCounts] = useState(null)
@@ -66,6 +57,7 @@ export default function CityDetail({ id, user }) {
   const likingMoments = useRef(new Set())
   const [momentLikeError, setMomentLikeError] = useState(false)
   const [showShareModal, setShowShareModal] = useState(false)
+  const [showPlanModal, setShowPlanModal] = useState(false)
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
@@ -138,8 +130,7 @@ export default function CityDetail({ id, user }) {
   const handleAddToPlan = () => {
     if (!user) return setNote('signin')
     setNote(null)
-    writeList('planned_cities', toggleIn(readList('planned_cities'), city.name))
-    setIsInPlan(!isInPlan)
+    setShowPlanModal(true)
   }
 
   // Same idea for moments: flip the card right away, flip it back if saving fails
@@ -216,9 +207,8 @@ export default function CityDetail({ id, user }) {
                   <Heart size={16} fill={hasLiked ? 'currentColor' : 'none'} />
                   {hasLiked ? 'Liked' : 'Like'}{counts && ` · ${likeCount(counts, city.id)}`}
                 </button>
-                <button onClick={handleAddToPlan} aria-pressed={isInPlan} className={`city-btn ${isInPlan ? 'city-btn--soft' : ''}`}>
-                  {isInPlan ? <CheckCircle2 size={16} /> : <Calendar size={16} />}
-                  {isInPlan ? 'In your plan' : 'Add to plan'}
+                <button onClick={handleAddToPlan} className="city-btn">
+                  <Calendar size={16} /> Add to plan
                 </button>
                 <button onClick={handleToggleVisited} disabled={visitBusy || !mineLoaded} aria-pressed={isVisited} className={`city-btn ${isVisited ? 'city-btn--soft' : ''}`}>
                   {isVisited ? <CheckCircle2 size={16} /> : <MapPin size={16} />}
@@ -475,6 +465,13 @@ export default function CityDetail({ id, user }) {
             </button>
             </fieldset>
           </div>
+        </Modal>
+      )}
+
+      {/* Add to plan modal (signed-in users; planning isn't live yet) */}
+      {showPlanModal && (
+        <Modal title={`Add ${city.name} to your plan`} labelId="plan-dialog-title" onClose={() => setShowPlanModal(false)}>
+          <p className="soon-card">Coming soon</p>
         </Modal>
       )}
     </>
