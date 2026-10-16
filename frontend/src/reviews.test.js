@@ -73,10 +73,17 @@ describe('savedMessage', () => {
 })
 
 describe('cardsFromReviews', () => {
-  it('turns published rows into slider cards', () => {
-    expect(cardsFromReviews([{ id: 'r1', author_name: 'Leila', travel_style: 'Bikepacker', rating: 4, body: 'Great.' }])).toEqual([
-      { key: 'r1', quote: 'Great.', name: 'Leila', role: 'Bikepacker', rating: 4, avatar: null },
+  it('turns published rows into slider cards with the author photo', () => {
+    const row = { id: 'r1', author_name: 'Leila', travel_style: 'Bikepacker', rating: 4, body: 'Great.', author_avatar_url: 'https://x/a.jpg' }
+    expect(cardsFromReviews([row])).toEqual([
+      { key: 'r1', quote: 'Great.', name: 'Leila', role: 'Bikepacker', rating: 4, avatar: 'https://x/a.jpg' },
     ])
+  })
+
+  it('has no avatar when the author has no photo or the list predates 010', () => {
+    const row = { id: 'r1', author_name: 'Leila', travel_style: 'Bikepacker', rating: 4, body: 'Great.' }
+    expect(cardsFromReviews([row])[0].avatar).toBeNull()
+    expect(cardsFromReviews([{ ...row, author_avatar_url: null }])[0].avatar).toBeNull()
   })
 })
 

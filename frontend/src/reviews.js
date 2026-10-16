@@ -24,8 +24,9 @@ export function reviewFromForm({ rating, travelStyle, body }, user) {
 export const savedMessage = (row) =>
   row.approved_at ? 'Saved. Your review is still on the site.' : 'Thanks! Your review will appear on the site once an admin approves it.'
 
+// author_avatar_url is added by reviewsApi.js; missing until 010_author_photos.sql has been run
 export const cardsFromReviews = (rows) =>
-  rows.map((r) => ({ key: r.id, quote: r.body, name: r.author_name, role: r.travel_style, rating: r.rating, avatar: null }))
+  rows.map((r) => ({ key: r.id, quote: r.body, name: r.author_name, role: r.travel_style, rating: r.rating, avatar: r.author_avatar_url ?? null }))
 
 // The samples fill the slider until the first review is approved (and if loading fails)
 export const slideCards = (published, samples) => (published?.length ? cardsFromReviews(published) : samples)
