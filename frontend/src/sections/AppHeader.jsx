@@ -5,6 +5,7 @@ import Switcher from '../components/Switcher.jsx'
 import { currentPath } from '../route.js'
 import { isAdmin } from '../roles.js'
 import { initials } from '../names.js'
+import { avatarUrl } from '../profileApi.js'
 
 // Home is only active on /app itself; the other sections also cover their sub-pages.
 const isActive = (href) => href === currentPath || (href !== '/app' && currentPath.startsWith(`${href}/`))
@@ -13,6 +14,8 @@ export default function AppHeader({ user, onSignOut }) {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
   const name = user.user_metadata?.full_name || user.email
+  // Copied into the account by 009_profiles.sql whenever the profile photo changes
+  const photo = avatarUrl(user.user_metadata?.avatar_path)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 80)
@@ -39,8 +42,10 @@ export default function AppHeader({ user, onSignOut }) {
         </nav>
 
         <div className="header__actions">
-          <a href="/app/profile" className={`app-user ${currentPath === '/app/profile' ? 'app-user--active' : ''}`} title={name} aria-label={`Profile (${name})`}>
-            <span className="app-user__avatar" aria-hidden="true">{initials(name)}</span>
+          <a href="/app/profile" className={`app-user ${currentPath.startsWith('/app/profile') ? 'app-user--active' : ''}`} title={name} aria-label={`Profile (${name})`}>
+            {photo
+              ? <img src={photo} alt="" className="app-user__avatar app-user__avatar--img" />
+              : <span className="app-user__avatar" aria-hidden="true">{initials(name)}</span>}
           </a>
           <button type="button" className="btn btn--primary header__cta" onClick={onSignOut}>
             Sign Out <LogOut size={16} />

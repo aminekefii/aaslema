@@ -1039,6 +1039,12 @@ html.dark .feature-card:hover { border-color: var(--border); }
 .profile-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .profile-note { margin: 12px 0 0; font-size: 15px; color: var(--text); }
 .profile-note--error { color: #c0392b; }
+.profile-photo { display: flex; flex-wrap: wrap; align-items: center; gap: 20px; }
+.profile-photo__img, .profile-photo__initials { width: 96px; height: 96px; border-radius: 50%; flex-shrink: 0; }
+.profile-photo__img { object-fit: cover; background: var(--lighter); }
+.profile-photo__initials { display: grid; place-items: center; background: var(--primary); color: var(--white); font-size: 32px; font-weight: 700; }
+.profile-photo__actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.app-user__avatar--img { object-fit: cover; }
 @media (max-width: 991px) {
   .profile-dash { grid-template-columns: 1fr; gap: 20px; }
   .profile-side { position: static; }

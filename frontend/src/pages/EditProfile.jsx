@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { COUNTRIES, cleanProfile, profileChanged, profileForm } from '../profile.js'
-import { fetchProfile, saveProfile } from '../profileApi.js'
+import { avatarUrl, fetchProfile, removeAvatar, saveProfile, uploadAvatar } from '../profileApi.js'
+import { initials } from '../names.js'
 
 // Message under a card's button: { text, error? }
 function Notice({ notice }) {
@@ -9,6 +10,53 @@ function Notice({ notice }) {
     <p className={`profile-note ${notice.error ? 'profile-note--error' : ''}`} role={notice.error ? 'alert' : 'status'}>
       {notice.text}
     </p>
+  )
+}
+
+function PhotoCard({ user, profile, onSaved }) {
+  const input = useRef(null)
+  // 'upload' or 'remove' while saving
+  const [busy, setBusy] = useState(null)
+  const [notice, setNotice] = useState(null)
+  const url = avatarUrl(profile.avatar_path)
+
+  const run = async (kind, action) => {
+    setBusy(kind)
+    setNotice(null)
+    const result = await action()
+    setBusy(null)
+    if (result.error) return setNotice({ text: result.error, error: true })
+    onSaved(result.profile)
+  }
+
+  const pick = (e) => {
+    const file = e.target.files?.[0]
+    // Cleared so picking the same file again still uploads
+    e.target.value = ''
+    if (file) run('upload', () => uploadAvatar(user.id, file, profile.avatar_path))
+  }
+
+  return (
+    <section className="profile-card">
+      <h2>Profile photo</h2>
+      <div className="profile-photo">
+        {url
+          ? <img src={url} alt="Your profile photo" className="profile-photo__img" />
+          : <span className="profile-photo__initials" aria-hidden="true">{initials(profile.full_name)}</span>}
+        <div className="profile-photo__actions">
+          <button type="button" className="btn btn--primary btn--sm" onClick={() => input.current?.click()} disabled={busy !== null}>
+            {busy === 'upload' ? 'Uploading…' : 'Change photo'}
+          </button>
+          {profile.avatar_path && (
+            <button type="button" className="btn btn--sm admin-btn-outline" onClick={() => run('remove', () => removeAvatar(user.id, profile.avatar_path))} disabled={busy !== null}>
+              {busy === 'remove' ? 'Removing…' : 'Remove photo'}
+            </button>
+          )}
+          <input ref={input} type="file" accept="image/*,.heic,.heif" hidden onChange={pick} />
+        </div>
+      </div>
+      <Notice notice={notice} />
+    </section>
   )
 }
 
@@ -95,6 +143,7 @@ export default function EditProfile({ user }) {
       {profile === null && <p className="profile-note profile-note--error" role="alert">Couldn't load your profile. Please refresh the page.</p>}
       {profile && (
         <div className="profile-cards">
+          <PhotoCard user={user} profile={profile} onSaved={setProfile} />
           <DetailsCard user={user} profile={profile} onSaved={setProfile} />
         </div>
       )}
