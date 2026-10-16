@@ -20,8 +20,13 @@ $$;
 revoke all on function public.my_moments() from public;
 grant execute on function public.my_moments() to authenticated;
 
--- Uploaders see their own photos, pending ones included (adds to "Moment photos: admins, or published")
+-- Uploaders see their own photos, pending ones included (adds to "Moment photos: admins, or published").
+-- Only photos a moment uses: a file uploaded without a moment, or left after an admin deleted the
+-- moment, stays unreadable, so the bucket still can't host images nobody reviews.
 drop policy if exists "Moment photos: uploader reads their own" on storage.objects;
 create policy "Moment photos: uploader reads their own" on storage.objects
   for select to authenticated
-  using (bucket_id = 'moments' and (storage.foldername(name))[1] = auth.uid()::text);
+  using (
+    bucket_id = 'moments' and (storage.foldername(name))[1] = auth.uid()::text
+    and public.moment_photo_is_used(name)
+  );

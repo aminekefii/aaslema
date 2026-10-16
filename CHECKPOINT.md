@@ -1,11 +1,11 @@
 # Checkpoint
 
-Last updated: 2026-10-16 (branch `author-photos`)
+Last updated: 2026-10-16 (after My moments)
 
 ## State
 
-- `origin/main` is at `f971492`. Local `main` has the profile dashboard (merged) and the author-photos spec and plan, not pushed.
-- Author photos and the Rate your trip move are merged into `main`. Branch `my-moments` adds My moments to the profile dashboard.
+- Profile dashboard, author photos, the Rate your trip move and My moments are all merged into `main`.
+  Push `main` to update `origin/main`.
 - Frontend tests: 12 files, 209 tests, all passing (`npx vitest run` in `frontend/`).
 - Supabase SQL lives in `backend/supabase/` (`001`–`011`). Each file is run
   by hand in the Supabase SQL editor; check that `004_city_likes_visits.sql`,
@@ -16,7 +16,7 @@ Last updated: 2026-10-16 (branch `author-photos`)
 
 ## Waiting on you
 
-- Merge branch `my-moments` into `main`, then push `main`.
+- Push `main`.
 - In the Supabase SQL Editor run, in order: `006`–`008` if not done yet, then `009_profiles.sql`, then `010_author_photos.sql`, then `011_my_moments.sql`.
   If you ever re-run `006` or `008` later, run `010` again afterwards (they replace its review and moment lists).
 - Supabase Auth → URL Configuration: add `<site>/app/profile/edit` (and the localhost one) to Redirect URLs, so email-change links come back to Edit profile (not needed if a `/**` wildcard covers it).
@@ -59,8 +59,8 @@ Last updated: 2026-10-16 (branch `author-photos`)
 | City page: "Add to plan" shows a Coming soon popup for signed-in users | — | `f971492` |
 | Profile dashboard: sidebar layout, Edit profile with name, phone, city, country, photo, email, password; photo in the navbar (`009_profiles.sql`) | `2026-10-16-profile-dashboard` | `95ca377` – `6983d31` |
 | Author photos and live names on landing page reviews and destination moments (`010_author_photos.sql`) | `2026-10-16-author-photos` | `3c64d97` – `85ccc51` |
-| Rate your trip moved from the app navbar into the profile dashboard (`/app/profile/review`; `/app/review` redirects there) | — | `01fb4a2` |
-| My moments in the profile dashboard (`011_my_moments.sql`); Edit profile moved to `/app/profile/edit` | `2026-10-16-my-moments` | `571a705` – (branch `my-moments`) |
+| Rate your trip moved from the app navbar into the profile dashboard (`/app/profile/review`; `/app/review` redirects there) | — | `01fb4a2` |
+| My moments in the profile dashboard (`011_my_moments.sql`); Edit profile moved to `/app/profile/edit` | `2026-10-16-my-moments` | `571a705` – `6910603` + review fix |
 
 Specs and plans are in `docs/superpowers/specs/` and `docs/superpowers/plans/`.
 

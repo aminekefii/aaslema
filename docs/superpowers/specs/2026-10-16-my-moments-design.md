@@ -20,7 +20,7 @@ Builds on `moments` and the private `moments` bucket (`007_moments.sql`),
 | Question | Decision |
 |---|---|
 | Which moments | All of the user's moments, pending and approved, newest first (max 100) |
-| Pending photos | Shown to their uploader: a new storage policy lets users read files in their own folder of the `moments` bucket (1-hour signed links, as now) |
+| Pending photos | Shown to their uploader: a new storage policy lets users read files in their own folder of the `moments` bucket that a moment uses (the app asks for 1-hour signed links) |
 | Actions | None (view only) |
 | Like count | Shown on published moments |
 | Sidebar order | My moments, Edit profile, Rate your trip |
@@ -29,8 +29,11 @@ Builds on `moments` and the private `moments` bucket (`007_moments.sql`),
 | Email-change links | Come back to `/app/profile/edit` (was `/app/profile`) |
 
 Trade-off accepted: until now nobody but admins could link to an unapproved
-photo. With this change an uploader can make short-lived links to their own
-pending photos while signed in.
+photo. With this change an uploader can make signed links to their own
+pending photos while signed in (the link lifetime is chosen by the caller,
+so it can be long) until an admin approves or deletes the moment. Files no
+moment uses (uploaded without a moment, or left after an admin delete) stay
+unreadable.
 
 ## Database and storage
 
@@ -61,11 +64,16 @@ $$;
 revoke all on function public.my_moments() from public;
 grant execute on function public.my_moments() to authenticated;
 
--- Uploaders see their own photos, pending ones included (adds to "Moment photos: admins, or published")
+-- Uploaders see their own photos, pending ones included (adds to "Moment photos: admins, or published").
+-- Only photos a moment uses: a file uploaded without a moment, or left after an admin deleted the
+-- moment, stays unreadable, so the bucket still can't host images nobody reviews.
 drop policy if exists "Moment photos: uploader reads their own" on storage.objects;
 create policy "Moment photos: uploader reads their own" on storage.objects
   for select to authenticated
-  using (bucket_id = 'moments' and (storage.foldername(name))[1] = auth.uid()::text);
+  using (
+    bucket_id = 'moments' and (storage.foldername(name))[1] = auth.uid()::text
+    and public.moment_photo_is_used(name)
+  );
 ```
 
 Notes: storage policies for the same action are combined with OR, so the
