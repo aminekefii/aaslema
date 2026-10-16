@@ -27,7 +27,6 @@ export const appNavLinks = [
   ['Destinations', '/app/destinations'],
   ['Festivals', '/app/festivals'],
   ['Community', '/app/community'],
-  ['Rate Your Trip', '/app/review'],
   ['Contact', '/app/contact'],
 
   ['AI Planner', '/app/planner'],
@@ -46,6 +45,7 @@ export const adminNavLinks = [
 // Sidebar of the profile dashboard (/app/profile); sections are added as they're built.
 export const profileNavLinks = [
   ['Edit profile', '/app/profile'],
+  ['Rate your trip', '/app/profile/review'],
 ]
 
 export const faqs = [

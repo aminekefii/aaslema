@@ -2,7 +2,10 @@
 // Pure (no window) so it can be unit-tested; paths have no trailing slash, '' is the landing page.
 
 // Pages that exist under /app
-export const appPagePaths = ['/app', '/app/destinations', '/app/festivals', '/app/community', '/app/review', '/app/contact', '/app/planner', '/app/profile']
+export const appPagePaths = ['/app', '/app/destinations', '/app/festivals', '/app/community', '/app/contact', '/app/planner', '/app/profile', '/app/profile/review']
+
+// Pages that moved; old links keep working
+const moved = { '/app/review': '/app/profile/review' }
 
 // Pages that exist under /admin (admins only)
 export const adminPagePaths = ['/admin', '/admin/messages', '/admin/reviews', '/admin/moments']
@@ -23,6 +26,7 @@ export function redirectFor(path, signedIn, isAdmin = false) {
     return adminPagePaths.includes(path) ? null : '/admin'
   }
   if (isAppPath(path)) {
+    if (moved[path]) return moved[path]
     const rest = path.slice('/app'.length)
     return appPagePaths.includes(path) || isCityPath(rest) ? null : '/app'
   }

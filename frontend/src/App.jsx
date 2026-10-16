@@ -36,10 +36,10 @@ import { supabase, useUser } from './supabase.js'
 // Tiny path-based page switch; any other public path shows the landing page.
 const pages = { '/faq': Faq, '/contact': Contact, '/destinations': Destinations, '/festivals': Festivals, '/community': Community, '/signin': SignIn, '/signup': SignUp, '/reset-password': ResetPassword }
 // Profile dashboard: sidebar layout around the active section
-const ProfilePage = (props) => <ProfileLayout {...props}><EditProfile {...props} /></ProfileLayout>
+const inProfile = (Section) => (props) => <ProfileLayout {...props}><Section {...props} /></ProfileLayout>
 // Signed-in area; keys must match appPagePaths in redirects.js
-const appPages = { '/app': AppHome, '/app/destinations': Destinations, '/app/festivals': Festivals, '/app/community': Community, '/app/review': Review, '/app/contact': Contact,
- '/app/planner': Planner, '/app/profile': ProfilePage }
+const appPages = { '/app': AppHome, '/app/destinations': Destinations, '/app/festivals': Festivals, '/app/community': Community, '/app/contact': Contact,
+ '/app/planner': Planner, '/app/profile': inProfile(EditProfile), '/app/profile/review': inProfile(Review) }
 // Admin area; keys must match adminPagePaths in redirects.js
 const adminPages = { '/admin': AdminUsers, '/admin/messages': AdminMessages, '/admin/reviews': AdminReviews, '/admin/moments': AdminMoments }
 

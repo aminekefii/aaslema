@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { Menu, UserPen, X } from 'lucide-react'
+import { Menu, Star, UserPen, X } from 'lucide-react'
 import { profileNavLinks } from '../data.js'
 import { displayName } from '../names.js'
 import { currentPath } from '../route.js'
 
-const icons = { '/app/profile': UserPen }
+const icons = { '/app/profile': UserPen, '/app/profile/review': Star }
 
 // Sidebar + content for /app/profile pages, under the app navbar; on phones the links fold behind a button.
 export default function ProfileLayout({ user, children }) {

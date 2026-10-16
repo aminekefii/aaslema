@@ -1043,6 +1043,10 @@ html.dark .feature-card:hover { border-color: var(--border); }
 .profile-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .profile-note { margin: 12px 0 0; font-size: 15px; color: var(--text); }
 .profile-note--error { color: #c0392b; }
+/* Rate your trip inside the dashboard: same width and card size as Edit profile */
+.profile-main .review-page { max-width: 640px; margin-top: 20px; }
+.profile-main .contact__form { padding: 24px; border-radius: var(--radius); }
+.profile-main .contact__form h2 { font-size: 20px; }
 .profile-photo { display: flex; flex-wrap: wrap; align-items: center; gap: 20px; }
 .profile-photo__img, .profile-photo__initials { width: 96px; height: 96px; border-radius: 50%; flex-shrink: 0; }
 .profile-photo__img { object-fit: cover; background: var(--lighter); }

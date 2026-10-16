@@ -141,13 +141,19 @@ describe('redirectFor and /admin/messages', () => {
   })
 })
 
-describe('redirectFor and /app/review', () => {
-  it('is an app page', () => {
-    expect(appPagePaths).toContain('/app/review')
+describe('redirectFor and Rate your trip', () => {
+  it('lives in the profile dashboard', () => {
+    expect(appPagePaths).toContain('/app/profile/review')
+    expect(appPagePaths).not.toContain('/app/review')
   })
 
   it('is for signed-in users only', () => {
-    expect(redirectFor('/app/review', true)).toBe(null)
+    expect(redirectFor('/app/profile/review', true)).toBe(null)
+    expect(redirectFor('/app/profile/review', false)).toBe('/signin')
+  })
+
+  it('sends the old /app/review link to the dashboard page', () => {
+    expect(redirectFor('/app/review', true)).toBe('/app/profile/review')
     expect(redirectFor('/app/review', false)).toBe('/signin')
   })
 })
