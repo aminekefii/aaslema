@@ -1,24 +1,24 @@
 # Checkpoint
 
-Last updated: 2026-10-16 (after Visited destinations)
+Last updated: 2026-10-16 (after My plan)
 
 ## State
 
-- Profile dashboard, author photos, the Rate your trip move and My moments are merged into `main`.
-  Branch `visited-destinations` adds the Visited destinations section.
+- Profile dashboard, author photos, the Rate your trip move, My moments and Visited destinations are merged into `main`.
+  Branch `my-plan` makes Add to plan real and adds My plan to the dashboard.
   Push `main` to update `origin/main`.
-- Frontend tests: 12 files, 212 tests, all passing (`npx vitest run` in `frontend/`).
-- Supabase SQL lives in `backend/supabase/` (`001`–`011`). Each file is run
+- Frontend tests: 12 files, 213 tests, all passing (`npx vitest run` in `frontend/`).
+- Supabase SQL lives in `backend/supabase/` (`001`–`012`). Each file is run
   by hand in the Supabase SQL editor; check that `004_city_likes_visits.sql`,
   `005_city_visit_counts.sql`, `006_reviews.sql`, `007_moments.sql`,
-  `008_moment_likes.sql`, `009_profiles.sql`, `010_author_photos.sql` and `011_my_moments.sql` have been applied before testing
-  likes, visits, the Most Visited section, Rate Your Trip reviews, destination moments, moment likes, the profile
-  page, author photos and My moments.
+  `008_moment_likes.sql`, `009_profiles.sql`, `010_author_photos.sql`, `011_my_moments.sql` and `012_city_plans.sql` have been applied
+  before testing likes, visits, the Most Visited section, Rate Your Trip reviews, destination moments, moment likes,
+  the profile page, author photos, My moments and My plan.
 
 ## Waiting on you
 
 - Push `main`.
-- In the Supabase SQL Editor run, in order: `006`–`008` if not done yet, then `009_profiles.sql`, then `010_author_photos.sql`, then `011_my_moments.sql`.
+- In the Supabase SQL Editor run, in order: `006`–`008` if not done yet, then `009_profiles.sql`, then `010_author_photos.sql`, then `011_my_moments.sql`, then `012_city_plans.sql`.
   If you ever re-run `006` or `008` later, run `010` again afterwards (they replace its review and moment lists).
 - Supabase Auth → URL Configuration: add `<site>/app/profile/edit` (and the localhost one) to Redirect URLs, so email-change links come back to Edit profile (not needed if a `/**` wildcard covers it).
 - Browser checks nobody has done yet (no browser was available):
@@ -33,6 +33,7 @@ Last updated: 2026-10-16 (after Visited destinations)
     (the small photo on moment cards must be a 28px circle, not a big 4:3 picture).
   - My moments: the "Manual (owner)" list in `docs/superpowers/specs/2026-10-16-my-moments-design.md`;
     before `011` is run the page shows "Couldn't load your moments." with Try again.
+  - My plan: the "Manual (owner)" list in `docs/superpowers/specs/2026-10-16-my-plan-design.md`.
 
 ## Done
 
@@ -57,12 +58,13 @@ Last updated: 2026-10-16 (after Visited destinations)
 | Destination moments: photo upload to a private Supabase bucket, admin Moments page (approve / delete), approved moments in a carousel on each destination | `2026-10-15-city-moments` | `5c83124` – `266efbc` |
 | Moments: iPhone HEIC photos converted (also when named .JPG) | — | `8f9ac1a`, `4cb490c` |
 | Moment likes (`008_moment_likes.sql`); users can't like their own moment | — | `05a45ca`, `2d2f2e4` |
-| City page: "Add to plan" shows a Coming soon popup for signed-in users | — | `f971492` |
+| City page: "Add to plan" showed a Coming soon popup (replaced by My plan) | — | `f971492` |
 | Profile dashboard: sidebar layout, Edit profile with name, phone, city, country, photo, email, password; photo in the navbar (`009_profiles.sql`) | `2026-10-16-profile-dashboard` | `95ca377` – `6983d31` |
 | Author photos and live names on landing page reviews and destination moments (`010_author_photos.sql`) | `2026-10-16-author-photos` | `3c64d97` – `85ccc51` |
 | Rate your trip moved from the app navbar into the profile dashboard (`/app/profile/review`; `/app/review` redirects there) | — | `01fb4a2` |
 | My moments in the profile dashboard (`011_my_moments.sql`); Edit profile moved to `/app/profile/edit` | `2026-10-16-my-moments` | `571a705` – `6910603` + review fix |
-| Visited destinations in the profile dashboard (`/app/profile/visited`; no SQL) | — | (branch `visited-destinations`) |
+| Visited destinations in the profile dashboard (`/app/profile/visited`; no SQL) | — | `96b3e8a` |
+| My plan: Add to plan saves to Supabase; My plan section in the profile dashboard (`012_city_plans.sql`) | `2026-10-16-my-plan` | `0f4c737` – (branch `my-plan`) |
 
 Specs and plans are in `docs/superpowers/specs/` and `docs/superpowers/plans/`.
 
@@ -73,7 +75,7 @@ From the specs' "Future work" sections:
 1. **Admin part 3 / Feed:** Community posts in Supabase with moderation; real feed in `/app`.
 2. **Admin part 4:** move destinations, festivals and FAQs into the database.
 3. **Profile:** more sidebar sections (My reviews, My posts); delete/edit own moments; name + photo on Feed posts once they're in Supabase; photos on admin pages.
-4. **AI Planner:** needs an AI provider and a backend endpoint; "Add to plan" moves to Supabase with it.
+4. **AI Planner:** needs an AI provider and a backend endpoint; it can start from the user's plan (`city_plans`).
 5. **Moments: iPhone photos upload partly green (open bug, to fix later).** HEIC photos are converted with
    `heic-to` 1.6.5 (commit `8f9ac1a`). HEIC content in files named `.JPG` is also spotted (commit `4cb490c`:
    `hasHeicHeader` in `frontend/src/moments.js`, used in `frontend/src/imageResize.js`).

@@ -34,6 +34,11 @@ export default function CityDetail({ id, user }) {
   const city = cities.find((c) => c.id === id)
   const [hasLiked, setHasLiked] = useState(false)
   const [isVisited, setIsVisited] = useState(false)
+  const [isInPlan, setIsInPlan] = useState(false)
+  const [planBusy, setPlanBusy] = useState(false)
+  // The plan loads on its own, so a missing 012_city_plans.sql doesn't block likes and visits
+  const [planLoaded, setPlanLoaded] = useState(false)
+  const [planLoadError, setPlanLoadError] = useState(false)
   // Like counts for everyone; null until loaded (or if loading failed)
   const [counts, setCounts] = useState(null)
   const [likeBusy, setLikeBusy] = useState(false)
@@ -57,7 +62,6 @@ export default function CityDetail({ id, user }) {
   const likingMoments = useRef(new Set())
   const [momentLikeError, setMomentLikeError] = useState(false)
   const [showShareModal, setShowShareModal] = useState(false)
-  const [showPlanModal, setShowPlanModal] = useState(false)
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
@@ -81,6 +85,21 @@ export default function CityDetail({ id, user }) {
       setHasLiked(liked.includes(id))
       setIsVisited(visited.includes(id))
       setMineLoaded(true)
+    })
+    return () => { current = false }
+  }, [id, userId])
+
+  useEffect(() => {
+    setIsInPlan(false)
+    setPlanLoaded(false)
+    setPlanLoadError(false)
+    if (!userId) return
+    let current = true
+    fetchMyCityIds('city_plans').then((planned) => {
+      if (!current) return
+      if (!planned) return setPlanLoadError(true)
+      setIsInPlan(planned.includes(id))
+      setPlanLoaded(true)
     })
     return () => { current = false }
   }, [id, userId])
@@ -127,11 +146,7 @@ export default function CityDetail({ id, user }) {
   }
   const handleLike = () => toggleFlag('city_likes', hasLiked, setHasLiked, setLikeBusy, true)
   const handleToggleVisited = () => toggleFlag('city_visits', isVisited, setIsVisited, setVisitBusy, false)
-  const handleAddToPlan = () => {
-    if (!user) return setNote('signin')
-    setNote(null)
-    setShowPlanModal(true)
-  }
+  const handleAddToPlan = () => toggleFlag('city_plans', isInPlan, setIsInPlan, setPlanBusy, false)
 
   // Same idea for moments: flip the card right away, flip it back if saving fails
   const handleMomentLike = async (moment) => {
@@ -207,8 +222,9 @@ export default function CityDetail({ id, user }) {
                   <Heart size={16} fill={hasLiked ? 'currentColor' : 'none'} />
                   {hasLiked ? 'Liked' : 'Like'}{counts && ` · ${likeCount(counts, city.id)}`}
                 </button>
-                <button onClick={handleAddToPlan} className="city-btn">
-                  <Calendar size={16} /> Add to plan
+                <button onClick={handleAddToPlan} disabled={planBusy || (Boolean(user) && !planLoaded)} aria-pressed={isInPlan} className={`city-btn ${isInPlan ? 'city-btn--soft' : ''}`}>
+                  {isInPlan ? <CheckCircle2 size={16} /> : <Calendar size={16} />}
+                  {isInPlan ? 'In your plan' : 'Add to plan'}
                 </button>
                 <button onClick={handleToggleVisited} disabled={visitBusy || !mineLoaded} aria-pressed={isVisited} className={`city-btn ${isVisited ? 'city-btn--soft' : ''}`}>
                   {isVisited ? <CheckCircle2 size={16} /> : <MapPin size={16} />}
@@ -223,6 +239,7 @@ export default function CityDetail({ id, user }) {
               )}
               {note === 'error' && <p className="city-note city-note--error" role="alert">Couldn't save that. Please try again.</p>}
               {note === 'loadError' && <p className="city-note city-note--error" role="alert">Couldn't load your likes and visits. Please refresh the page.</p>}
+              {planLoadError && <p className="city-note city-note--error" role="alert">Couldn't load your plan. Please refresh the page.</p>}
             </div>
 
             <div className="city-hero__media">
@@ -465,13 +482,6 @@ export default function CityDetail({ id, user }) {
             </button>
             </fieldset>
           </div>
-        </Modal>
-      )}
-
-      {/* Add to plan modal (signed-in users; planning isn't live yet) */}
-      {showPlanModal && (
-        <Modal title={`Add ${city.name} to your plan`} labelId="plan-dialog-title" onClose={() => setShowPlanModal(false)}>
-          <p className="soon-card">Coming soon</p>
         </Modal>
       )}
     </>

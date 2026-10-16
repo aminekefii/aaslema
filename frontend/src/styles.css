@@ -643,10 +643,6 @@ button, input, select { font: inherit; }
   position: absolute; inset: 0; z-index: 1; display: grid; place-items: center; margin: 0;
   border: 1px dashed var(--border); border-radius: 12px; color: var(--title); font-size: 18px; font-weight: 600;
 }
-.soon-card {
-  display: grid; place-items: center; min-height: 140px; margin: 20px 0 0;
-  border: 1px dashed var(--border); border-radius: 12px; color: var(--title); font-size: 18px; font-weight: 600;
-}
 .moment-form { display: grid; gap: 16px; margin-top: 20px; }
 .moment-form label { display: grid; gap: 6px; font-size: 15px; font-weight: 500; color: var(--title); }
 .moment-form input[type='text'], .moment-form select, .moment-form textarea {
