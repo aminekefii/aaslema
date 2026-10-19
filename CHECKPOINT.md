@@ -1,12 +1,11 @@
 # Checkpoint
 
-Last updated: 2026-10-16 (after festivals in the plan)
+Last updated: 2026-10-19 (festivals in the plan merged and pushed)
 
 ## State
 
 - Profile dashboard, author photos, the Rate your trip move, My moments, Visited destinations, My plan and the AI Planner
-  move and the festivals sign-in note are merged into `main`. Branch `festival-plans` adds festivals to the plan.
-  Push `main` to update `origin/main`.
+  move, the festivals sign-in note and festivals in the plan are merged into `main` and pushed to `origin/main`.
 - Frontend tests: 13 files, 220 tests, all passing (`npx vitest run` in `frontend/`).
 - Supabase SQL lives in `backend/supabase/` (`001`–`013`). Each file is run
   by hand in the Supabase SQL editor; check that `004_city_likes_visits.sql`,
@@ -17,7 +16,6 @@ Last updated: 2026-10-16 (after festivals in the plan)
 
 ## Waiting on you
 
-- Push `main`.
 - In the Supabase SQL Editor run, in order: `006`–`008` if not done yet, then `009_profiles.sql`, then `010_author_photos.sql`, then `011_my_moments.sql`, then `012_city_plans.sql`, then `013_festival_plans.sql`.
   If you ever re-run `006` or `008` later, run `010` again afterwards (they replace its review and moment lists).
 - Supabase Auth → URL Configuration: add `<site>/app/profile/edit` (and the localhost one) to Redirect URLs, so email-change links come back to Edit profile (not needed if a `/**` wildcard covers it).
@@ -68,7 +66,7 @@ Last updated: 2026-10-16 (after festivals in the plan)
 | My plan: Add to plan saves to Supabase; My plan section in the profile dashboard (`012_city_plans.sql`) | `2026-10-16-my-plan` | `0f4c737` – `f3c2a3f` |
 | AI Planner moved from the app navbar into the profile dashboard (`/app/profile/planner`; `/app/planner` redirects there) | — | `de08e96` |
 | Festivals page: visitors see "Sign in to add festivals to your plan" | — | `0f8f0f4` |
-| Festivals in the plan: Add to plan on `/app/festivals`; My plan split into Destinations and Festivals (`013_festival_plans.sql`) | `2026-10-16-festival-plans` | `e11baa7` – (branch `festival-plans`) |
+| Festivals in the plan: Add to plan on `/app/festivals`; My plan split into Destinations and Festivals (`013_festival_plans.sql`) | `2026-10-16-festival-plans` | `e11baa7` – `67bf3ac` |
 
 Specs and plans are in `docs/superpowers/specs/` and `docs/superpowers/plans/`.
 
