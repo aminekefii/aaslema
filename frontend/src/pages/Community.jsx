@@ -1,14 +1,16 @@
 import { useEffect, useMemo, useState } from 'react'
-import { User, MessageSquare, Heart, Share2, Search, Plus, X, MoreHorizontal, ChevronLeft, ChevronRight, CheckCircle2 } from 'lucide-react'
+import { MessageSquare, Heart, Share2, Search, Plus, MoreHorizontal, CheckCircle2 } from 'lucide-react'
 import { cities } from '../cities.js'
 import { samplePosts } from '../community.js'
 import Modal from '../components/Modal.jsx'
+import { displayName, initials } from '../names.js'
+import { avatarUrl } from '../profileApi.js'
 
 // Port of aaslema-new's Community page. Aaslema stores posts, likes and reports in
 // Supabase; this template has no backend, so your own posts and likes stay in this browser.
 const POSTS_KEY = 'community_posts'
 const LIKES_KEY = 'community_likes'
-const EMPTY_POST = { title: '', content: '', cityId: '', tags: '', imageUrls: [] }
+const EMPTY_POST = { title: '', content: '', cityId: '' }
 
 const load = (key, fallback) => {
   try { return JSON.parse(localStorage.getItem(key)) ?? fallback } catch { return fallback }
@@ -31,47 +33,7 @@ function timeAgo(iso) {
   return date.toLocaleDateString()
 }
 
-// Shrinks a photo before keeping it, so a few posts fit in browser storage.
-function readPhoto(file) {
-  return new Promise((resolve, reject) => {
-    const img = new Image()
-    img.onload = () => {
-      const scale = Math.min(1, 1200 / Math.max(img.width, img.height))
-      const canvas = document.createElement('canvas')
-      canvas.width = Math.round(img.width * scale)
-      canvas.height = Math.round(img.height * scale)
-      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height)
-      URL.revokeObjectURL(img.src)
-      resolve(canvas.toDataURL('image/jpeg', 0.8))
-    }
-    img.onerror = reject
-    img.src = URL.createObjectURL(file)
-  })
-}
-
-function PostImageSlider({ images }) {
-  const [index, setIndex] = useState(0)
-  const step = (dir) => setIndex((prev) => (prev + dir + images.length) % images.length)
-
-  return (
-    <div className="cm-slider">
-      <img src={images[index]} alt="Post photo" loading="lazy" />
-      {images.length > 1 && (
-        <>
-          <button type="button" className="cm-slider__btn cm-slider__btn--prev" onClick={() => step(-1)} aria-label="Previous photo">
-            <ChevronLeft size={16} />
-          </button>
-          <button type="button" className="cm-slider__btn cm-slider__btn--next" onClick={() => step(1)} aria-label="Next photo">
-            <ChevronRight size={16} />
-          </button>
-          <span className="cm-slider__count">{index + 1}/{images.length}</span>
-        </>
-      )}
-    </div>
-  )
-}
-
-export default function Community() {
+export default function Community({ user }) {
   const [searchTerm, setSearchTerm] = useState('')
   const [activeForum, setActiveForum] = useState('global')
   const [myPosts, setMyPosts] = useState(() => load(POSTS_KEY, []))
@@ -111,7 +73,7 @@ export default function Community() {
   }
   const openEditModal = (post) => {
     setEditingPost(post)
-    setNewPost({ title: post.title, content: post.content, cityId: post.cityId, tags: post.tags.join(', '), imageUrls: post.imageUrls })
+    setNewPost({ title: post.title, content: post.content, cityId: post.cityId })
     setIsModalOpen(true)
   }
   const closeModal = () => setIsModalOpen(false)
@@ -130,12 +92,10 @@ export default function Community() {
       content: newPost.content.trim(),
       cityId: newPost.cityId,
       cityName: cities.find((c) => c.id === newPost.cityId)?.name || 'Tunisia',
-      tags: newPost.tags.split(',').map((t) => t.trim()).filter(Boolean),
-      imageUrls: newPost.imageUrls,
     }
     const updated = editingPost
       ? myPosts.map((p) => (p.id === editingPost.id ? { ...p, ...fields } : p))
-      : [{ id: `mine-${Date.now()}`, mine: true, userName: 'You', likes: 0, comments: 0, createdAt: new Date().toISOString(), ...fields }, ...myPosts]
+      : [{ id: `mine-${Date.now()}`, mine: true, ...author(), likes: 0, comments: 0, createdAt: new Date().toISOString(), ...fields }, ...myPosts]
     setMyPosts(updated)
     save(POSTS_KEY, updated)
     setIsModalOpen(false)
@@ -144,18 +104,10 @@ export default function Community() {
     setToast(editingPost ? 'Changes saved' : 'Post published')
   }
 
-  const handleAddPhotos = async (e) => {
-    const files = Array.from(e.target.files || [])
-    e.target.value = ''
-    for (const file of files) {
-      try {
-        const url = await readPhoto(file)
-        setNewPost((prev) => ({ ...prev, imageUrls: [...prev.imageUrls, url].slice(0, 5) }))
-      } catch {
-        setToast('That photo could not be read. Try a JPG or PNG.')
-      }
-    }
-  }
+  // Signed in: your name and profile photo; visitors post as "You"
+  const author = () => user
+    ? { userName: displayName(user), avatarUrl: avatarUrl(user.user_metadata?.avatar_path) }
+    : { userName: 'You', avatarUrl: null }
 
   const handleReportPost = (e) => {
     e.preventDefault()
@@ -229,10 +181,12 @@ export default function Community() {
                   return (
                     <article key={post.id} id={post.id} className="cm-card cm-post">
                       <div className="cm-post__head">
-                        <span className="cm-avatar"><User size={18} /></span>
+                        {post.avatarUrl
+                          ? <img src={post.avatarUrl} alt="" className="cm-avatar" loading="lazy" />
+                          : <span className="cm-avatar cm-avatar--initials" aria-hidden="true">{initials(post.userName)}</span>}
                         <div className="cm-post__who">
                           <strong>{post.userName}</strong>
-                          <small>{post.cityName}, {timeAgo(post.createdAt)}</small>
+                          <small>{timeAgo(post.createdAt)}</small>
                         </div>
                         <button onClick={() => setReportingPost(post)} className="cm-icon-btn" title="Report post" aria-label="Report post">
                           <MoreHorizontal size={18} />
@@ -241,14 +195,6 @@ export default function Community() {
 
                       <h3>{post.title}</h3>
                       <p className="cm-post__text">{post.content}</p>
-
-                      {post.imageUrls.length > 0 && <PostImageSlider images={post.imageUrls} />}
-
-                      {post.tags.length > 0 && (
-                        <div className="guide-card__chips">
-                          {post.tags.map((tag) => <span key={tag} className="chip">#{tag}</span>)}
-                        </div>
-                      )}
 
                       <div className="cm-post__actions">
                         <button onClick={() => handleLike(post)} className={`cm-action ${liked ? 'is-liked' : ''}`} aria-pressed={liked} aria-label={liked ? 'Unlike' : 'Like'}>
@@ -290,43 +236,17 @@ export default function Community() {
               Title
               <input required type="text" placeholder="e.g. The forgotten ruins of Dougga" value={newPost.title} onChange={(e) => setNewPost({ ...newPost, title: e.target.value })} />
             </label>
-            <div className="cm-form-row">
-              <label>
-                City
-                <select required value={newPost.cityId} onChange={(e) => setNewPost({ ...newPost, cityId: e.target.value })}>
-                  <option value="" disabled>Select a city</option>
-                  {cities.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-                </select>
-              </label>
-              <label>
-                Tags
-                <input type="text" placeholder="food, hike, solo" value={newPost.tags} onChange={(e) => setNewPost({ ...newPost, tags: e.target.value })} />
-              </label>
-            </div>
+            <label>
+              City
+              <select required value={newPost.cityId} onChange={(e) => setNewPost({ ...newPost, cityId: e.target.value })}>
+                <option value="" disabled>Select a city</option>
+                {cities.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+              </select>
+            </label>
             <label>
               Post
               <textarea required rows={5} placeholder="Write at least 20 characters" value={newPost.content} onChange={(e) => setNewPost({ ...newPost, content: e.target.value })} />
             </label>
-
-            <div className="cm-photos">
-              <span className="cm-photos__label">Photos <small>(up to 5)</small></span>
-              <div className="cm-photos__grid">
-                {newPost.imageUrls.map((url, i) => (
-                  <div key={i} className="cm-photos__item">
-                    <img src={url} alt="Preview" />
-                    <button type="button" onClick={() => setNewPost({ ...newPost, imageUrls: newPost.imageUrls.filter((_, idx) => idx !== i) })} aria-label="Remove photo">
-                      <X size={12} />
-                    </button>
-                  </div>
-                ))}
-                {newPost.imageUrls.length < 5 && (
-                  <label className="cm-photos__add" aria-label="Add photos">
-                    <Plus size={18} />
-                    <input type="file" multiple accept="image/*" hidden onChange={handleAddPhotos} />
-                  </label>
-                )}
-              </div>
-            </div>
 
             <div className="cm-form-actions">
               <button type="button" onClick={closeModal} className="cm-text-btn">Cancel</button>
