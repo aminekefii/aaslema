@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
-import { Camera, Compass, ExternalLink, LogOut, Mail, Menu, Star, Users, X } from 'lucide-react'
+import { Camera, Compass, ExternalLink, Flag, LogOut, Mail, Menu, Star, Users, X } from 'lucide-react'
 import { adminNavLinks, brand } from '../data.js'
 import Switcher from '../components/Switcher.jsx'
 import { currentPath } from '../route.js'
 import { supabase } from '../supabase.js'
 
-const icons = { '/admin': Users, '/admin/messages': Mail, '/admin/reviews': Star, '/admin/moments': Camera }
+const icons = { '/admin': Users, '/admin/messages': Mail, '/admin/reviews': Star, '/admin/moments': Camera, '/admin/reports': Flag }
 
 // Rows still waiting for an admin (column is null); reloads when a page fires the event
 function useAdminCount(table, column, event) {

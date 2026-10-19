@@ -4,9 +4,9 @@ import { cities } from '../cities.js'
 import { samplePosts } from '../community.js'
 import Modal from '../components/Modal.jsx'
 import { initials } from '../names.js'
-import { postFromForm } from '../communityPosts.js'
+import { postFromForm, reportFromForm } from '../communityPosts.js'
 import { DeletePostModal, PostFormModal } from '../components/PostDialogs.jsx'
-import { createPost, deletePost, fetchFeed, setPostLike, updatePost } from '../communityApi.js'
+import { createPost, deletePost, fetchFeed, reportPost, setPostLike, updatePost } from '../communityApi.js'
 import { toggleMomentLike } from '../moments.js'
 
 // Port of aaslema-new's Community page. Signed in (/app/community), posts and likes are saved
@@ -53,6 +53,8 @@ export default function Community({ user }) {
   const [reportingPost, setReportingPost] = useState(null)
   const [showShare, setShowShare] = useState(false)
   const [reportReason, setReportReason] = useState('')
+  const [reporting, setReporting] = useState(false)
+  const [reportError, setReportError] = useState('')
   const [toast, setToast] = useState(null)
   // Signed in only: the saved feed (null when it failed), likes being saved, form and delete state
   const [feed, setFeed] = useState(null)
@@ -196,8 +198,28 @@ export default function Community({ user }) {
     setToast(result.error ?? 'Post deleted')
   }
 
-  const handleReportPost = (e) => {
+  const openReport = (post) => {
+    setReportingPost(post)
+    setReportReason('')
+    setReportError('')
+  }
+  const closeReport = () => {
+    if (!reporting) setReportingPost(null)
+  }
+
+  // Signed in: saved for the admins' Post reports page. Visitors: only the thank-you, as before
+  const handleReportPost = async (e) => {
     e.preventDefault()
+    if (user) {
+      if (reporting) return
+      const { row, error } = reportFromForm(reportReason)
+      if (error) return setReportError(error)
+      setReporting(true)
+      setReportError('')
+      const result = await reportPost(reportingPost.id, row)
+      setReporting(false)
+      if (result.error) return setReportError(result.error)
+    }
     setReportingPost(null)
     setReportReason('')
     setToast('Report received. Thank you for keeping the community safe.')
@@ -269,9 +291,12 @@ export default function Community({ user }) {
                         <strong>{post.userName}</strong>
                         <small>{timeAgo(post.createdAt)}</small>
                       </div>
-                      <button onClick={() => setReportingPost(post)} className="cm-icon-btn" title="Report post" aria-label="Report post">
-                        <MoreHorizontal size={18} />
-                      </button>
+                      {/* Signed-in users can't report their own posts */}
+                      {!(user && post.mine) && (
+                        <button onClick={() => openReport(post)} className="cm-icon-btn" title="Report post" aria-label="Report post">
+                          <MoreHorizontal size={18} />
+                        </button>
+                      )}
                     </div>
 
                     <h3>{post.title}</h3>
@@ -324,13 +349,14 @@ export default function Community({ user }) {
 
       {/* Report */}
       {reportingPost && (
-        <Modal title="Report post" labelId="report-dialog-title" onClose={() => setReportingPost(null)} wide>
+        <Modal title="Report post" labelId="report-dialog-title" onClose={closeReport} wide>
           <p className="modal__sub">Tell us what's wrong with this post. Moderators will review it.</p>
           <form onSubmit={handleReportPost} className="moment-form">
             <textarea required rows={4} placeholder="Why are you reporting this post?" value={reportReason} onChange={(e) => setReportReason(e.target.value)} />
+            {reportError && <p className="contact__error" role="alert">{reportError}</p>}
             <div className="cm-form-actions">
-              <button type="button" onClick={() => setReportingPost(null)} className="cm-text-btn">Cancel</button>
-              <button type="submit" className="btn btn--primary">Submit report</button>
+              <button type="button" onClick={closeReport} disabled={reporting} className="cm-text-btn">Cancel</button>
+              <button type="submit" disabled={reporting} className="btn btn--primary">Submit report</button>
             </div>
           </form>
         </Modal>

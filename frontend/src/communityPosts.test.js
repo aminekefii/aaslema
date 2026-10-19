@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { myPostCard, postFromForm } from './communityPosts.js'
+import { myPostCard, postFromForm, reportFromForm } from './communityPosts.js'
 
 const user = { email: 'leila@x.com', user_metadata: { full_name: 'Leila Ben Ali' } }
 const valid = { title: '  Sunrise at Chebika ', cityId: 'tozeur', content: '  Leave Tozeur at 5am and you get the canyon to yourself. ' }
@@ -68,5 +68,21 @@ describe('myPostCard', () => {
 
   it('counts missing likes as zero', () => {
     expect(myPostCard({ ...row, likes: null }, []).likes).toBe(0)
+  })
+})
+
+describe('reportFromForm', () => {
+  it('returns the trimmed reason', () => {
+    expect(reportFromForm('  Spam: the same advert in every forum. ')).toEqual({ row: { reason: 'Spam: the same advert in every forum.' } })
+  })
+
+  it('needs 10 characters', () => {
+    expect(reportFromForm(`  ${'a'.repeat(9)}  `)).toEqual({ error: 'Please tell us a little more (at least 10 characters).' })
+    expect(reportFromForm('a'.repeat(10)).row).toBeDefined()
+  })
+
+  it('limits the reason', () => {
+    expect(reportFromForm('a'.repeat(1000)).row).toBeDefined()
+    expect(reportFromForm('a'.repeat(1001))).toEqual({ error: 'Your report is too long (1000 characters max).' })
   })
 })

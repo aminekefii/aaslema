@@ -31,6 +31,7 @@ import AdminUsers from './pages/admin/AdminUsers.jsx'
 import AdminMessages from './pages/admin/AdminMessages.jsx'
 import AdminReviews from './pages/admin/AdminReviews.jsx'
 import AdminMoments from './pages/admin/AdminMoments.jsx'
+import AdminPostReports from './pages/admin/AdminPostReports.jsx'
 import { useEffect, useState } from 'react'
 import { currentPath } from './route.js'
 import { isAdminPath, isAppPath, redirectFor, withHash } from './redirects.js'
@@ -45,7 +46,7 @@ const inProfile = (Section) => (props) => <ProfileLayout {...props}><Section {..
 const appPages = { '/app': AppHome, '/app/destinations': Destinations, '/app/festivals': Festivals, '/app/community': Community, '/app/contact': Contact,
  '/app/profile': inProfile(MyMoments), '/app/profile/plan': inProfile(MyPlan), '/app/profile/planner': inProfile(Planner), '/app/profile/visited': inProfile(VisitedDestinations), '/app/profile/posts': inProfile(MyPosts), '/app/profile/edit': inProfile(EditProfile), '/app/profile/review': inProfile(Review) }
 // Admin area; keys must match adminPagePaths in redirects.js
-const adminPages = { '/admin': AdminUsers, '/admin/messages': AdminMessages, '/admin/reviews': AdminReviews, '/admin/moments': AdminMoments }
+const adminPages = { '/admin': AdminUsers, '/admin/messages': AdminMessages, '/admin/reviews': AdminReviews, '/admin/moments': AdminMoments, '/admin/reports': AdminPostReports }
 
 
 const inApp = isAppPath(currentPath)

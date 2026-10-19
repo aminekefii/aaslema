@@ -8,7 +8,7 @@ export const appPagePaths = ['/app', '/app/destinations', '/app/festivals', '/ap
 const moved = { '/app/review': '/app/profile/review', '/app/planner': '/app/profile/planner' }
 
 // Pages that exist under /admin (admins only)
-export const adminPagePaths = ['/admin', '/admin/messages', '/admin/reviews', '/admin/moments']
+export const adminPagePaths = ['/admin', '/admin/messages', '/admin/reviews', '/admin/moments', '/admin/reports']
 
 
 // Public pages that have an /app twin

@@ -77,3 +77,28 @@ export async function fetchMyPosts() {
     return null
   }
 }
+
+const reportFailed = "Couldn't send your report. Please try again."
+
+// Report someone else's post (016_post_reports.sql); row comes from reportFromForm
+export async function reportPost(postId, row) {
+  if (!supabase) return { error: reportFailed }
+  try {
+    const { error } = await supabase.from('post_reports').insert({ post_id: postId, reason: row.reason })
+    if (!error) return { ok: true }
+    return { error: error.code === '23505' ? 'You already reported this post.' : reportFailed }
+  } catch {
+    return { error: reportFailed }
+  }
+}
+
+// Admins: every report with the reporter's name and the post's title; { error } carries the code (42501 = no admin rights)
+export async function fetchPostReports() {
+  if (!supabase) return { error: {} }
+  try {
+    const { data, error } = await supabase.rpc('admin_post_reports')
+    return error ? { error } : { reports: data ?? [] }
+  } catch (e) {
+    return { error: { message: e.message } }
+  }
+}

@@ -19,3 +19,16 @@ describe('015_my_posts.sql', () => {
     expect(mine).toMatch(/grant execute on function public\.my_posts\(\) to authenticated;/)
   })
 })
+
+describe('016_post_reports.sql', () => {
+  const reports = readFileSync(new URL('../../backend/supabase/016_post_reports.sql', import.meta.url), 'utf8')
+
+  it('lets only admins read reports', () => {
+    expect(reports).toMatch(/for select to authenticated using \(public\.is_admin\(\)\)/)
+    expect(reports).toMatch(/revoke all on function public\.admin_post_reports\(\) from public, anon;/)
+  })
+
+  it('stops people reporting their own posts or as someone else', () => {
+    expect(reports).toMatch(/with check \(user_id = auth\.uid\(\) and public\.post_can_be_reported\(post_id\)\)/)
+  })
+})

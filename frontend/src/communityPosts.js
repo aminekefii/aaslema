@@ -34,3 +34,14 @@ export function myPostCard(row, cityList) {
     likes: Number(row.likes ?? 0),
   }
 }
+
+const REPORT_MIN = 10
+export const REPORT_MAX = 1000
+
+// Report post form → the row to save, or the message to show
+export function reportFromForm(reason) {
+  const text = (reason ?? '').trim()
+  if (textLength(text) < REPORT_MIN) return { error: 'Please tell us a little more (at least 10 characters).' }
+  if (textLength(text) > REPORT_MAX) return { error: 'Your report is too long (1000 characters max).' }
+  return { row: { reason: text } }
+}

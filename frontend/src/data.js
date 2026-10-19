@@ -37,6 +37,7 @@ export const adminNavLinks = [
   ['Messages', '/admin/messages'],
   ['Reviews', '/admin/reviews'],
   ['Moments', '/admin/moments'],
+  ['Post reports', '/admin/reports'],
 
 
 ]
