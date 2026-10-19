@@ -42,6 +42,7 @@ export default function Community({ user }) {
   const [editingPost, setEditingPost] = useState(null)
   const [newPost, setNewPost] = useState(EMPTY_POST)
   const [reportingPost, setReportingPost] = useState(null)
+  const [showShare, setShowShare] = useState(false)
   const [reportReason, setReportReason] = useState('')
   const [toast, setToast] = useState(null)
 
@@ -114,16 +115,6 @@ export default function Community({ user }) {
     setReportingPost(null)
     setReportReason('')
     setToast('Report received. Thank you for keeping the community safe.')
-  }
-
-  const handleShare = async (post) => {
-    const url = `${window.location.origin}/community#${post.id}`
-    try {
-      await navigator.clipboard.writeText(url)
-      setToast('Link copied')
-    } catch {
-      setToast('Copy failed. Your browser blocked clipboard access.')
-    }
   }
 
   const likesFor = (post) => post.likes + (likedIds.has(post.id) ? 1 : 0)
@@ -201,7 +192,7 @@ export default function Community({ user }) {
                           <Heart size={16} fill={liked ? 'currentColor' : 'none'} /> {likesFor(post)}
                         </button>
                         <span className="cm-action cm-action--static"><MessageSquare size={16} /> {post.comments}</span>
-                        <button onClick={() => handleShare(post)} className="cm-action" title="Copy post link">
+                        <button onClick={() => setShowShare(true)} className="cm-action">
                           <Share2 size={16} /> Share
                         </button>
                         {post.mine && <button onClick={() => openEditModal(post)} className="cm-action cm-action--end">Edit</button>}
@@ -269,6 +260,15 @@ export default function Community({ user }) {
               <button type="submit" className="btn btn--primary">Submit report</button>
             </div>
           </form>
+        </Modal>
+      )}
+
+      {/* Sharing isn't live yet */}
+      {showShare && (
+        <Modal title="Share post" labelId="share-dialog-title" onClose={() => setShowShare(false)}>
+          <p className="cm-soon"><Share2 size={20} /> Coming soon</p>
+          <p className="modal__sub">Soon you'll be able to share posts with your friends.</p>
+          <button type="button" className="btn btn--primary moment-review__close" onClick={() => setShowShare(false)}>Close</button>
         </Modal>
       )}
 
