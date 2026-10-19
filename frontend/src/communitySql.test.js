@@ -32,3 +32,13 @@ describe('016_post_reports.sql', () => {
     expect(reports).toMatch(/with check \(user_id = auth\.uid\(\) and public\.post_can_be_reported\(post_id\)\)/)
   })
 })
+
+describe('017_feed_moments.sql', () => {
+  const feed = readFileSync(new URL('../../backend/supabase/017_feed_moments.sql', import.meta.url), 'utf8')
+
+  it('lists only approved moments, for signed-in users only', () => {
+    expect(feed).toMatch(/where m\.approved_at is not null/)
+    expect(feed).toMatch(/revoke all on function public\.feed_moments\(\) from public, anon;/)
+    expect(feed).toMatch(/grant execute on function public\.feed_moments\(\) to authenticated;/)
+  })
+})

@@ -1187,3 +1187,22 @@ a.my-moment:hover { border-color: var(--primary); }
   .cta-card { min-height: 320px; padding: 30px; }
   .scroll-top { right: 16px; }
 }
+
+/* Feed at /app: Moments grid and Posts list (plain for now; design comes later) */
+.feed__title { margin: 0 0 16px; font-size: 24px; }
+.feed__title:not(:first-child) { margin-top: 48px; }
+.feed__more { display: inline-flex; align-items: center; gap: 6px; margin-top: 16px; color: var(--primary); font-weight: 600; }
+.feed-moments { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.feed-moments .feed-moment { padding: 0; color: inherit; }
+.feed-moment .moment-card__inner { transition: border-color 0.2s; }
+.feed-moment:hover .moment-card__inner { border-color: var(--primary); }
+.feed-moment__body { display: grid; gap: 6px; padding: 14px 16px 16px; }
+.feed-moment__city { display: flex; align-items: center; gap: 4px; margin: 0; font-size: 13px; }
+.feed-moment__time { font-size: 13px; }
+.feed-posts { display: grid; gap: 16px; }
+@media (max-width: 991px) {
+  .feed-moments { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 575px) {
+  .feed-moments { grid-template-columns: 1fr; }
+}

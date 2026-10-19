@@ -58,3 +58,10 @@ export function myMomentCard(row, cityList) {
     likes: Number(row.likes ?? 0),
   }
 }
+
+// A feed_moments() row (plus its photo link) → a Feed card that opens its destination
+export const feedMomentCard = (row, cityList) => ({
+  ...row,
+  cityName: cityList.find((c) => c.id === row.city_id)?.name ?? row.city_id,
+  href: `/app/destinations/${row.city_id}`,
+})

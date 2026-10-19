@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { PHOTO_MAX_BYTES, canApprove, hasHeicHeader, isHeic, momentFromForm, momentPath, myMomentCard, spotMoments, toggleMomentLike } from './moments.js'
+import { PHOTO_MAX_BYTES, canApprove, feedMomentCard, hasHeicHeader, isHeic, momentFromForm, momentPath, myMomentCard, spotMoments, toggleMomentLike } from './moments.js'
 
 const user = { email: 'leila@x.com', user_metadata: { full_name: 'Leila Ben Ali' } }
 const city = { id: 'tozeur', highlights: ['Chott el Djerid', 'Dar Cherait'] }
@@ -144,5 +144,17 @@ describe('myMomentCard', () => {
     expect(card.cityName).toBe('gone')
     expect(card.url).toBeNull()
     expect(card.likes).toBe(0)
+  })
+})
+
+describe('feedMomentCard', () => {
+  const row = { id: 'm1', city_id: 'tozeur', caption: 'Salt lake at dawn', url: 'https://x/m1.jpg' }
+
+  it('adds the destination name and link', () => {
+    expect(feedMomentCard(row, [{ id: 'tozeur', name: 'Tozeur' }])).toEqual({ ...row, cityName: 'Tozeur', href: '/app/destinations/tozeur' })
+  })
+
+  it('shows the city id when the destination is no longer listed', () => {
+    expect(feedMomentCard(row, []).cityName).toBe('tozeur')
   })
 })

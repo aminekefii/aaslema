@@ -43,6 +43,22 @@ export async function fetchPublishedMoments(cityId) {
   }
 }
 
+// Newest approved moments from every destination for the Feed (017_feed_moments.sql); null if loading failed
+export async function fetchFeedMoments() {
+  if (!supabase) return null
+  try {
+    const { data, error } = await supabase.rpc('feed_moments')
+    if (error) return null
+    const rows = data ?? []
+    const urls = await photoUrls(rows.map((r) => r.image_path))
+    return rows
+      .filter((r) => urls[r.image_path])
+      .map((r) => ({ ...r, url: urls[r.image_path], author_avatar_url: avatarUrl(r.author_avatar) }))
+  } catch {
+    return null
+  }
+}
+
 // The signed-in user's moments, pending ones too, with photo links; null if loading failed
 export async function fetchMyMoments() {
   if (!supabase) return null
