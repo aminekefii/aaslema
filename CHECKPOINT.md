@@ -1,22 +1,23 @@
 # Checkpoint
 
-Last updated: 2026-10-19 (festivals in the plan merged and pushed)
+Last updated: 2026-10-19 (community posts built on branch `community-posts`)
 
 ## State
 
 - Profile dashboard, author photos, the Rate your trip move, My moments, Visited destinations, My plan and the AI Planner
   move, the festivals sign-in note and festivals in the plan are merged into `main` and pushed to `origin/main`.
-- Frontend tests: 13 files, 220 tests, all passing (`npx vitest run` in `frontend/`).
-- Supabase SQL lives in `backend/supabase/` (`001`–`013`). Each file is run
+- Community posts (publish, edit, delete, like on `/app/community`) are on branch `community-posts`, not merged yet.
+- Frontend tests: 14 files, 230 tests, all passing (`npx vitest run` in `frontend/`).
+- Supabase SQL lives in `backend/supabase/` (`001`–`014`). Each file is run
   by hand in the Supabase SQL editor; check that `004_city_likes_visits.sql`,
   `005_city_visit_counts.sql`, `006_reviews.sql`, `007_moments.sql`,
-  `008_moment_likes.sql`, `009_profiles.sql`, `010_author_photos.sql`, `011_my_moments.sql`, `012_city_plans.sql` and `013_festival_plans.sql` have been
+  `008_moment_likes.sql`, `009_profiles.sql`, `010_author_photos.sql`, `011_my_moments.sql`, `012_city_plans.sql`, `013_festival_plans.sql` and `014_community_posts.sql` have been
   applied before testing likes, visits, the Most Visited section, Rate Your Trip reviews, destination moments, moment
-  likes, the profile page, author photos, My moments and My plan (destinations and festivals).
+  likes, the profile page, author photos, My moments, My plan (destinations and festivals) and community posts.
 
 ## Waiting on you
 
-- In the Supabase SQL Editor run, in order: `006`–`008` if not done yet, then `009_profiles.sql`, then `010_author_photos.sql`, then `011_my_moments.sql`, then `012_city_plans.sql`, then `013_festival_plans.sql`.
+- In the Supabase SQL Editor run, in order: `006`–`008` if not done yet, then `009_profiles.sql`, then `010_author_photos.sql`, then `011_my_moments.sql`, then `012_city_plans.sql`, then `013_festival_plans.sql`, then `014_community_posts.sql`.
   If you ever re-run `006` or `008` later, run `010` again afterwards (they replace its review and moment lists).
 - Supabase Auth → URL Configuration: add `<site>/app/profile/edit` (and the localhost one) to Redirect URLs, so email-change links come back to Edit profile (not needed if a `/**` wildcard covers it).
 - Continue with Google (to do later). The code is ready on branch `google-sign-in` (`372cc21`, not merged; `main`
@@ -45,6 +46,8 @@ Last updated: 2026-10-19 (festivals in the plan merged and pushed)
     before `011` is run the page shows "Couldn't load your moments." with Try again.
   - My plan: the "Manual (owner)" list in `docs/superpowers/specs/2026-10-16-my-plan-design.md`.
   - Festivals in the plan: the "Manual (owner)" list in `docs/superpowers/specs/2026-10-16-festival-plans-design.md`.
+  - Community posts: the "Manual (owner)" list in `docs/superpowers/specs/2026-10-19-community-posts-design.md`;
+    before `014` is run `/app/community` shows "Couldn't load posts." with Try again.
 
 ## Done
 
@@ -79,6 +82,8 @@ Last updated: 2026-10-19 (festivals in the plan merged and pushed)
 | AI Planner moved from the app navbar into the profile dashboard (`/app/profile/planner`; `/app/planner` redirects there) | — | `de08e96` |
 | Festivals page: visitors see "Sign in to add festivals to your plan" | — | `0f8f0f4` |
 | Festivals in the plan: Add to plan on `/app/festivals`; My plan split into Destinations and Festivals (`013_festival_plans.sql`) | `2026-10-16-festival-plans` | `e11baa7` – `67bf3ac` |
+| Community page: photos and tags removed; cards show photo, name, date, title, post; Share shows "Coming soon" | — | `1fc7a99`, `d00efe6` |
+| Community posts on `/app/community`: publish, edit, delete own, like any post (`014_community_posts.sql`); `/community` unchanged | `2026-10-19-community-posts` | `fdebbd4` – (branch `community-posts`) |
 
 Specs and plans are in `docs/superpowers/specs/` and `docs/superpowers/plans/`.
 
@@ -86,7 +91,7 @@ Specs and plans are in `docs/superpowers/specs/` and `docs/superpowers/plans/`.
 
 From the specs' "Future work" sections:
 
-1. **Admin part 3 / Feed:** Community posts in Supabase with moderation; real feed in `/app`.
+1. **Community follow-ups:** comments, reporting posts, admin moderation (admins can't delete posts yet: only by hand in Supabase), visitors reading real posts, sharing, real feed in `/app`.
 2. **Admin part 4:** move destinations, festivals and FAQs into the database.
 3. **Profile:** more sidebar sections (My reviews, My posts); delete/edit own moments; name + photo on Feed posts once they're in Supabase; photos on admin pages.
 4. **AI Planner:** needs an AI provider and a backend endpoint; it can start from the user's plan (`city_plans`).
