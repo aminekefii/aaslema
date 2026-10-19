@@ -19,6 +19,18 @@ Last updated: 2026-10-19 (festivals in the plan merged and pushed)
 - In the Supabase SQL Editor run, in order: `006`–`008` if not done yet, then `009_profiles.sql`, then `010_author_photos.sql`, then `011_my_moments.sql`, then `012_city_plans.sql`, then `013_festival_plans.sql`.
   If you ever re-run `006` or `008` later, run `010` again afterwards (they replace its review and moment lists).
 - Supabase Auth → URL Configuration: add `<site>/app/profile/edit` (and the localhost one) to Redirect URLs, so email-change links come back to Edit profile (not needed if a `/**` wildcard covers it).
+- Continue with Google (to do later). The code is ready on branch `google-sign-in` (`372cc21`, not merged; `main`
+  still shows "Google sign-in isn't available yet"). Before merging:
+  - Google Cloud Console: OAuth consent screen (External; scopes email, profile, openid; Publish app so everyone
+    can sign in, not only test users), then Credentials → OAuth client ID → Web application with redirect URI
+    `https://<project-ref>.supabase.co/auth/v1/callback`.
+  - Supabase → Authentication → Sign In / Providers → Google: turn on, paste the Client ID and Client secret (the
+    secret never goes in the frontend).
+  - Supabase → URL Configuration → Redirect URLs: `http://localhost:5500/**` and every site address (e.g. Netlify).
+  - Test at `/signin`: Google should bring you back to `/app` signed in, admins to `/admin`.
+- Netlify (later): add `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` in Netlify's environment variables,
+  and a `netlify.toml` (build from `frontend`, publish `dist`, send every path to `index.html`) so `/app` and
+  `/signin` don't show "Page not found".
 - Browser checks nobody has done yet (no browser was available):
   - Reviews: the "Manual (owner)" list in `docs/superpowers/specs/2026-10-15-trip-reviews-design.md`, plus the
     "Read more" popup with a long review.
