@@ -796,6 +796,8 @@ button, input, select { font: inherit; }
 .cm-action--static { cursor: default; }
 .cm-action--static:hover { background: none; color: var(--text); }
 .cm-action--end { margin-left: auto; }
+.cm-action:disabled { opacity: 0.6; cursor: default; }
+.cm-delete-actions { margin-top: 20px; }
 .cm-empty { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 44px 20px; text-align: center; }
 .cm-empty h3 { font-size: 20px; margin: 6px 0 0; }
 .cm-empty p { margin: 0 0 12px; font-size: 15px; }
