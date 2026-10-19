@@ -7,7 +7,7 @@ Last updated: 2026-10-19 (community posts built on branch `community-posts`)
 - Profile dashboard, author photos, the Rate your trip move, My moments, Visited destinations, My plan and the AI Planner
   move, the festivals sign-in note and festivals in the plan are merged into `main` and pushed to `origin/main`.
 - Community posts (publish, edit, delete, like on `/app/community`) are on branch `community-posts`, not merged yet.
-- Frontend tests: 14 files, 230 tests, all passing (`npx vitest run` in `frontend/`).
+- Frontend tests: 15 files, 231 tests, all passing (`npx vitest run` in `frontend/`).
 - Supabase SQL lives in `backend/supabase/` (`001`–`014`). Each file is run
   by hand in the Supabase SQL editor; check that `004_city_likes_visits.sql`,
   `005_city_visit_counts.sql`, `006_reviews.sql`, `007_moments.sql`,

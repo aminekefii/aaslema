@@ -277,7 +277,7 @@ export default function Community({ user }) {
                     <p className="cm-post__text">{post.content}</p>
 
                     <div className="cm-post__actions">
-                      <button onClick={() => handleLike(post)} disabled={likesSaving.has(post.id)} className={`cm-action ${post.liked ? 'is-liked' : ''}`} aria-pressed={post.liked} aria-label={post.liked ? 'Unlike' : 'Like'}>
+                      <button onClick={() => handleLike(post)} aria-disabled={likesSaving.has(post.id)} className={`cm-action ${post.liked ? 'is-liked' : ''}`} aria-pressed={post.liked} aria-label={post.liked ? 'Unlike' : 'Like'}>
                         <Heart size={16} fill={post.liked ? 'currentColor' : 'none'} /> {post.likes}
                       </button>
                       {/* Comments come later for saved posts */}

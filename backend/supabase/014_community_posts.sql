@@ -86,12 +86,12 @@ as $$
   select c.id, coalesce(p.full_name, c.author_name), p.avatar_path, c.city_id, c.title, c.body, c.created_at,
     (select count(*) from public.community_post_likes l where l.post_id = c.id),
     exists (select 1 from public.community_post_likes l where l.post_id = c.id and l.user_id = auth.uid()),
-    c.user_id = auth.uid()
+    coalesce(c.user_id = auth.uid(), false)
   from public.community_posts c
   left join public.profiles p on p.id = c.user_id
   order by c.created_at desc
   limit 100
 $$;
 
-revoke all on function public.community_feed() from public;
+revoke all on function public.community_feed() from public, anon;
 grant execute on function public.community_feed() to authenticated;
