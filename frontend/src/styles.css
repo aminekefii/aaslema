@@ -798,6 +798,10 @@ button, input, select { font: inherit; }
 .cm-action--end { margin-left: auto; }
 .cm-action:disabled, .cm-action[aria-disabled='true'] { opacity: 0.6; cursor: default; }
 .cm-delete-actions { margin-top: 20px; }
+.my-posts { display: grid; gap: 16px; margin-top: 20px; }
+.my-post h3 { margin-top: 0; }
+.my-post__meta { display: flex; align-items: center; gap: 6px; margin: 0 0 10px; font-size: 13px; }
+.my-post__text { margin: 0; font-size: 15px; line-height: 1.55; white-space: pre-line; overflow-wrap: anywhere; }
 .cm-empty { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 44px 20px; text-align: center; }
 .cm-empty h3 { font-size: 20px; margin: 6px 0 0; }
 .cm-empty p { margin: 0 0 12px; font-size: 15px; }

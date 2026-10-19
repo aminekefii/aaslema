@@ -4,7 +4,8 @@ import { cities } from '../cities.js'
 import { samplePosts } from '../community.js'
 import Modal from '../components/Modal.jsx'
 import { initials } from '../names.js'
-import { BODY_MIN, postFromForm } from '../communityPosts.js'
+import { postFromForm } from '../communityPosts.js'
+import { DeletePostModal, PostFormModal } from '../components/PostDialogs.jsx'
 import { createPost, deletePost, fetchFeed, setPostLike, updatePost } from '../communityApi.js'
 import { toggleMomentLike } from '../moments.js'
 
@@ -310,35 +311,15 @@ export default function Community({ user }) {
 
       {/* New / edit post */}
       {isModalOpen && (
-        <Modal title={editingPost ? 'Edit post' : 'New post'} labelId="post-dialog-title" onClose={closeModal} wide>
-          <p className="modal__sub">{editingPost ? 'Update your post for the community.' : 'Share a tip, question or story with other travellers.'}</p>
-          <form onSubmit={handleSavePost} className="moment-form">
-            <label>
-              Title
-              <input required type="text" placeholder="e.g. The forgotten ruins of Dougga" value={newPost.title} onChange={(e) => setNewPost({ ...newPost, title: e.target.value })} />
-            </label>
-            <label>
-              City
-              <select required value={newPost.cityId} onChange={(e) => setNewPost({ ...newPost, cityId: e.target.value })}>
-                <option value="" disabled>Select a city</option>
-                {cities.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </select>
-            </label>
-            <label>
-              Post
-              <textarea required rows={5} placeholder="Write at least 20 characters" value={newPost.content} onChange={(e) => setNewPost({ ...newPost, content: e.target.value })} />
-            </label>
-
-            {formError && <p className="contact__error" role="alert">{formError}</p>}
-
-            <div className="cm-form-actions">
-              <button type="button" onClick={closeModal} disabled={saving} className="cm-text-btn">Cancel</button>
-              <button type="submit" disabled={saving || newPost.content.trim().length < BODY_MIN} className="btn btn--primary">
-                {editingPost ? 'Save changes' : 'Publish post'}
-              </button>
-            </div>
-          </form>
-        </Modal>
+        <PostFormModal
+          editing={Boolean(editingPost)}
+          post={newPost}
+          onChange={setNewPost}
+          onSubmit={handleSavePost}
+          onClose={closeModal}
+          saving={saving}
+          error={formError}
+        />
       )}
 
       {/* Report */}
@@ -357,12 +338,7 @@ export default function Community({ user }) {
 
       {/* Delete your own saved post */}
       {deletingPost && (
-        <Modal title="Delete this post?" labelId="delete-dialog-title" onClose={() => !deleting && setDeletingPost(null)}>
-          <div className="cm-form-actions cm-delete-actions">
-            <button type="button" onClick={() => setDeletingPost(null)} disabled={deleting} className="cm-text-btn">Cancel</button>
-            <button type="button" onClick={handleDeletePost} disabled={deleting} className="btn btn--primary">Delete</button>
-          </div>
-        </Modal>
+        <DeletePostModal onConfirm={handleDeletePost} onClose={() => setDeletingPost(null)} deleting={deleting} />
       )}
 
       {/* Sharing isn't live yet */}

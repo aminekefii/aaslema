@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { postFromForm } from './communityPosts.js'
+import { myPostCard, postFromForm } from './communityPosts.js'
 
 const user = { email: 'leila@x.com', user_metadata: { full_name: 'Leila Ben Ali' } }
 const valid = { title: '  Sunrise at Chebika ', cityId: 'tozeur', content: '  Leave Tozeur at 5am and you get the canyon to yourself. ' }
@@ -50,5 +50,23 @@ describe('postFromForm', () => {
   it('cuts the author name to 100 characters', () => {
     const long = { user_metadata: { full_name: 'L'.repeat(150) } }
     expect(postFromForm(valid, long).row.author_name).toBe('L'.repeat(100))
+  })
+})
+
+describe('myPostCard', () => {
+  const row = { id: 'p1', city_id: 'tozeur', title: 'Sunrise', body: 'Leave at 5am.', created_at: '2026-10-19T08:00:00Z', likes: '12' }
+
+  it('maps a my_posts() row to a card', () => {
+    expect(myPostCard(row, [{ id: 'tozeur', name: 'Tozeur' }])).toEqual({
+      id: 'p1', cityId: 'tozeur', cityName: 'Tozeur', title: 'Sunrise', content: 'Leave at 5am.', postedAt: '2026-10-19T08:00:00Z', likes: 12,
+    })
+  })
+
+  it('shows the city id when the city is no longer listed', () => {
+    expect(myPostCard(row, []).cityName).toBe('tozeur')
+  })
+
+  it('counts missing likes as zero', () => {
+    expect(myPostCard({ ...row, likes: null }, []).likes).toBe(0)
   })
 })

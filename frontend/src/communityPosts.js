@@ -21,3 +21,16 @@ export function postFromForm({ title, cityId, content }, user) {
   const name = Array.from(displayName(user)).slice(0, NAME_MAX).join('')
   return { row: { title: heading, city_id: cityId, body, author_name: name } }
 }
+
+// A my_posts() row → a My posts card
+export function myPostCard(row, cityList) {
+  return {
+    id: row.id,
+    cityId: row.city_id,
+    cityName: cityList.find((c) => c.id === row.city_id)?.name ?? row.city_id,
+    title: row.title,
+    content: row.body,
+    postedAt: row.created_at,
+    likes: Number(row.likes ?? 0),
+  }
+}

@@ -66,3 +66,14 @@ export async function setPostLike(postId, on) {
     return false
   }
 }
+
+// The signed-in user's own posts with like counts (015_my_posts.sql); null if loading failed
+export async function fetchMyPosts() {
+  if (!supabase) return null
+  try {
+    const { data, error } = await supabase.rpc('my_posts')
+    return error ? null : data ?? []
+  } catch {
+    return null
+  }
+}
