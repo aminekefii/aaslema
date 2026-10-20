@@ -7,7 +7,11 @@
   publish = "dist"
 
 [build.environment]
-  NODE_VERSION = "20"
+  # @supabase/supabase-js 2.117 needs Node 22 or newer
+  NODE_VERSION = "22"
+  # Both values end up in the browser on purpose (the publishable key is meant to be public;
+  # Supabase row level security protects the data), so Netlify's secret scan must skip them
+  SECRETS_SCAN_OMIT_KEYS = "VITE_SUPABASE_URL,VITE_SUPABASE_PUBLISHABLE_KEY"
 
 # Pages are routed client-side by pathname, so unknown paths get index.html
 # (real files such as /assets/* are still served first)
