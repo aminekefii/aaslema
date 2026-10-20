@@ -1,6 +1,6 @@
 # Checkpoint
 
-Last updated: 2026-10-20 (community posts, My posts, post reports and Feed merged and pushed)
+Last updated: 2026-10-20 (Netlify config added)
 
 ## State
 
@@ -31,9 +31,14 @@ Last updated: 2026-10-20 (community posts, My posts, post reports and Feed merge
     secret never goes in the frontend).
   - Supabase → URL Configuration → Redirect URLs: `http://localhost:5500/**` and every site address (e.g. Netlify).
   - Test at `/signin`: Google should bring you back to `/app` signed in, admins to `/admin`.
-- Netlify (later): add `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` in Netlify's environment variables,
-  and a `netlify.toml` (build from `frontend`, publish `dist`, send every path to `index.html`) so `/app` and
-  `/signin` don't show "Page not found".
+- Netlify: `netlify.toml` is in the repo (builds `frontend/`, publishes `dist`, sends every path to `index.html`).
+  To deploy:
+  - Netlify → Add new site → Import from Git → pick the repo; the build settings come from `netlify.toml`.
+  - Site configuration → Environment variables: add `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`
+    (same values as `frontend/.env.local`) before the first deploy, or redeploy after; without them accounts are off.
+  - Supabase → Authentication → URL Configuration: Site URL = the Netlify address, and add
+    `https://<site>.netlify.app/**` to Redirect URLs (password reset and email change come back there).
+  - Check on the live site: refreshing `/app`, `/signin`, `/admin` loads the page (not "Page not found"); sign in works.
 - Browser checks nobody has done yet (no browser was available):
   - Reviews: the "Manual (owner)" list in `docs/superpowers/specs/2026-10-15-trip-reviews-design.md`, plus the
     "Read more" popup with a long review.

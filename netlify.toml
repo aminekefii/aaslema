@@ -1,0 +1,29 @@
+# Netlify builds the site from frontend/ and serves frontend/dist.
+# Supabase keys are not in git: set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY
+# in Netlify (Site configuration -> Environment variables) before deploying.
+[build]
+  base = "frontend"
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Pages are routed client-side by pathname, so unknown paths get index.html
+# (real files such as /assets/* are still served first)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Browsers must re-check index.html so a new deploy shows up without a hard refresh;
+# the hashed files in /assets can be cached for good
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
