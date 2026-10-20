@@ -1,22 +1,21 @@
 # Checkpoint
 
-Last updated: 2026-10-19 (Feed at /app)
+Last updated: 2026-10-20 (community posts, My posts, post reports and Feed merged and pushed)
 
 ## State
 
 - Profile dashboard, author photos, the Rate your trip move, My moments, Visited destinations, My plan and the AI Planner
-  move, the festivals sign-in note and festivals in the plan are merged into `main` and pushed to `origin/main`.
-- Community posts (publish, edit, delete, like on `/app/community`) are merged into `main`, not pushed yet.
-- My posts (`/app/profile/posts`: your posts with likes, edit, delete) is merged into `main`.
-- Post reports (users report posts on `/app/community`; admin Post reports page `/admin/reports`, read only) are merged into `main`.
-- Feed at `/app` (newest moments and posts, view only) is on branch `feed`.
+  move, the festivals sign-in note, festivals in the plan, community posts (publish, edit, delete, like on
+  `/app/community`), My posts (`/app/profile/posts`), post reports (admin page `/admin/reports`, read only) and the
+  Feed at `/app` (newest moments and posts, view only) are merged into `main` and pushed to `origin/main` (`bd2aae7`).
+- Only other branch: `google-sign-in` (not merged, see below).
 - Frontend tests: 15 files, 245 tests, all passing (`npx vitest run` in `frontend/`).
 - Supabase SQL lives in `backend/supabase/` (`001`–`017`). Each file is run
   by hand in the Supabase SQL editor; check that `004_city_likes_visits.sql`,
   `005_city_visit_counts.sql`, `006_reviews.sql`, `007_moments.sql`,
   `008_moment_likes.sql`, `009_profiles.sql`, `010_author_photos.sql`, `011_my_moments.sql`, `012_city_plans.sql`, `013_festival_plans.sql`, `014_community_posts.sql`, `015_my_posts.sql`, `016_post_reports.sql` and `017_feed_moments.sql` have been
   applied before testing likes, visits, the Most Visited section, Rate Your Trip reviews, destination moments, moment
-  likes, the profile page, author photos, My moments, My plan (destinations and festivals) community posts, My posts, post reports and the Feed.
+  likes, the profile page, author photos, My moments, My plan (destinations and festivals), community posts, My posts, post reports and the Feed.
 
 ## Waiting on you
 
@@ -99,7 +98,7 @@ Last updated: 2026-10-19 (Feed at /app)
 | Community posts on `/app/community`: publish, edit, delete own, like any post (`014_community_posts.sql`); `/community` unchanged | `2026-10-19-community-posts` | `fdebbd4` – `e81f478` |
 | My posts in the profile dashboard: your posts with likes, edit and delete (`015_my_posts.sql`) | — (designed in chat) | `9c2d59d` |
 | Post reports: users report other people's posts; admin Post reports page, read only, See post "Coming soon" (`016_post_reports.sql`) | — (designed in chat) | `c85a1d7` |
-| Feed at `/app`: newest moments and posts, view only (`017_feed_moments.sql`) | — (designed in chat) | branch `feed` |
+| Feed at `/app`: newest moments and posts, view only (`017_feed_moments.sql`) | — (designed in chat) | `bd2aae7` |
 
 Specs and plans are in `docs/superpowers/specs/` and `docs/superpowers/plans/`.
 
