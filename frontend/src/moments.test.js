@@ -151,7 +151,14 @@ describe('feedMomentCard', () => {
   const row = { id: 'm1', city_id: 'tozeur', caption: 'Salt lake at dawn', url: 'https://x/m1.jpg' }
 
   it('adds the destination name and link', () => {
-    expect(feedMomentCard(row, [{ id: 'tozeur', name: 'Tozeur' }])).toEqual({ ...row, cityName: 'Tozeur', href: '/app/destinations/tozeur' })
+    expect(feedMomentCard(row, [{ id: 'tozeur', name: 'Tozeur' }])).toEqual({
+      ...row, cityName: 'Tozeur', href: '/app/destinations/tozeur', likes: 0, liked: false, mine: false,
+    })
+  })
+
+  it('turns the like fields into a number and true / false', () => {
+    const card = feedMomentCard({ ...row, likes: '3', liked: true, mine: null }, [])
+    expect([card.likes, card.liked, card.mine]).toEqual([3, true, false])
   })
 
   it('shows the city id when the destination is no longer listed', () => {

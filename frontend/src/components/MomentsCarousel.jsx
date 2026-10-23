@@ -6,7 +6,7 @@ import { initials } from '../names.js'
 
 // Visitors (no onLike) get a sign-in link showing the count instead of a button;
 // on their own moments users only see the count (they can't like their own)
-function LikeButton({ moment, onLike }) {
+export function LikeButton({ moment, onLike }) {
   const content = (
     <>
       <Heart size={16} fill={moment.liked ? 'currentColor' : 'none'} />

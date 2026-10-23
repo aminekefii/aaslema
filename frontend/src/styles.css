@@ -1275,7 +1275,9 @@ a.my-moment:hover { border-color: var(--primary); }
 .feed-moment .moment-card__inner { transition: border-color 0.2s; }
 .feed-moment:hover .moment-card__inner { border-color: var(--primary); }
 .feed-moment__body { display: grid; gap: 6px; padding: 14px 16px 16px; }
-.feed-moment__city { display: flex; align-items: center; gap: 4px; margin: 0; font-size: 13px; }
+.feed-moment__photo { display: block; }
+.feed-moment__city { display: flex; align-items: center; gap: 4px; justify-self: start; margin: 0; font-size: 13px; color: inherit; }
+.feed-moment__city:hover { color: var(--primary); }
 .feed-moment__time { font-size: 13px; }
 .feed-posts { display: grid; gap: 16px; }
 @media (max-width: 991px) {

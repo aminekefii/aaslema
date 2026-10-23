@@ -80,4 +80,8 @@ export const feedMomentCard = (row, cityList) => ({
   ...row,
   cityName: cityList.find((c) => c.id === row.city_id)?.name ?? row.city_id,
   href: `/app/destinations/${row.city_id}`,
+  // Like fields come from 020_feed_moment_likes.sql; before it is run they are missing
+  likes: Number(row.likes ?? 0),
+  liked: Boolean(row.liked),
+  mine: Boolean(row.mine),
 })

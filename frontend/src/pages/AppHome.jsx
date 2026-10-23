@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
-import { ArrowRight, MapPin, Navigation, SlidersHorizontal } from 'lucide-react'
+import { ArrowRight, CheckCircle2, Heart, MapPin, MessageSquare, Navigation, SlidersHorizontal } from 'lucide-react'
 import { cities } from '../cities.js'
-import { feedMomentCard } from '../moments.js'
-import { fetchFeedMoments } from '../momentsApi.js'
-import { fetchFeed } from '../communityApi.js'
+import { feedMomentCard, toggleMomentLike } from '../moments.js'
+import { fetchFeedMoments, setMomentLike } from '../momentsApi.js'
+import { fetchFeed, setPostLike } from '../communityApi.js'
+import { LikeButton } from '../components/MomentsCarousel.jsx'
+import PostComments from '../components/PostComments.jsx'
 import { initials } from '../names.js'
 import { timeAgo } from '../timeAgo.js'
 
@@ -11,12 +13,17 @@ const POSTS_SHOWN = 10
 // Sidebar choice: [value, label]
 const SHOW = [['all', 'Everything'], ['moments', 'Moments'], ['posts', 'Posts']]
 
-// Feed at /app: newest shared moments and community posts, view only. Each part loads on its own.
-export default function AppHome() {
+// Feed at /app: newest shared moments and community posts. Each part loads on its own; moments and
+// posts can be liked here and posts commented on.
+export default function AppHome({ user }) {
   // undefined while loading, null if loading failed
   const [moments, setMoments] = useState(undefined)
   const [posts, setPosts] = useState(undefined)
   const [show, setShow] = useState('all')
+  // Likes being saved ('m:<id>' / 'p:<id>'), posts whose comments are open, the short message at the bottom
+  const [likesSaving, setLikesSaving] = useState(() => new Set())
+  const [openComments, setOpenComments] = useState(() => new Set())
+  const [toast, setToast] = useState(null)
 
   const loadMoments = useCallback(async () => {
     setMoments(undefined)
@@ -38,6 +45,39 @@ export default function AppHome() {
     loadMoments()
     loadPosts()
   }, [loadMoments, loadPosts])
+
+  useEffect(() => {
+    if (!toast) return
+    const id = setTimeout(() => setToast(null), 2600)
+    return () => clearTimeout(id)
+  }, [toast])
+
+  // Flips straight away; a failed save flips it back
+  const like = async (key, item, setItems, save) => {
+    if (likesSaving.has(key)) return
+    const flip = () => setItems((prev) => prev?.map((x) => (x.id === item.id ? toggleMomentLike(x) : x)))
+    setLikesSaving((prev) => new Set(prev).add(key))
+    flip()
+    if (!(await save(item.id, !item.liked))) {
+      flip()
+      setToast("Couldn't save your like. Please try again.")
+    }
+    setLikesSaving((prev) => {
+      const next = new Set(prev)
+      next.delete(key)
+      return next
+    })
+  }
+  const likeMoment = (m) => like(`m:${m.id}`, m, setMoments, setMomentLike)
+  const likePost = (p) => like(`p:${p.id}`, p, setPosts, setPostLike)
+
+  const toggleComments = (id) => setOpenComments((prev) => {
+    const next = new Set(prev)
+    next.has(id) ? next.delete(id) : next.add(id)
+    return next
+  })
+  const changeCommentCount = (id, delta) =>
+    setPosts((prev) => prev?.map((p) => (p.id === id ? { ...p, comments: p.comments + delta } : p)))
 
   return (
     <>
@@ -74,9 +114,9 @@ export default function AppHome() {
               {moments?.length > 0 && (
                 <div className="feed-moments">
                   {moments.map((m) => (
-                    <a key={m.id} href={m.href} className="moment-card feed-moment">
+                    <article key={m.id} className="moment-card feed-moment">
                       <div className="moment-card__inner">
-                        <img src={m.url} alt={m.caption} loading="lazy" />
+                        <a href={m.href} className="feed-moment__photo"><img src={m.url} alt={m.caption} loading="lazy" /></a>
                         <div className="feed-moment__body">
                           <div className="moment-card__by">
                             {m.author_avatar_url
@@ -84,13 +124,16 @@ export default function AppHome() {
                               : <span className="moment-card__avatar moment-card__avatar--initials" aria-hidden="true">{initials(m.author_name)}</span>}
                             <strong>{m.author_name}</strong>
                           </div>
-                          <p className="feed-moment__city"><MapPin size={12} /> {m.cityName}</p>
+                          <a href={m.href} className="feed-moment__city"><MapPin size={12} /> {m.cityName}</a>
                           <p className="moment-card__caption">{m.caption}</p>
                           {m.spot && <p className="moment-card__spot"><Navigation size={12} /> {m.spot}</p>}
-                          <time dateTime={m.created_at} className="feed-moment__time">{timeAgo(m.created_at)}</time>
+                          <div className="moment-card__footer">
+                            <time dateTime={m.created_at} className="feed-moment__time">{timeAgo(m.created_at)}</time>
+                            <LikeButton moment={m} onLike={likesSaving.has(`m:${m.id}`) ? () => {} : likeMoment} />
+                          </div>
                         </div>
                       </div>
-                    </a>
+                    </article>
                   ))}
                 </div>
               )}
@@ -115,6 +158,19 @@ export default function AppHome() {
                       </div>
                       <h3>{p.title}</h3>
                       <p className="cm-post__text">{p.body}</p>
+
+                      <div className="cm-post__actions">
+                        <button onClick={() => likePost(p)} aria-disabled={likesSaving.has(`p:${p.id}`)} className={`cm-action ${p.liked ? 'is-liked' : ''}`} aria-pressed={p.liked} aria-label={p.liked ? 'Unlike' : 'Like'}>
+                          <Heart size={16} fill={p.liked ? 'currentColor' : 'none'} /> {p.likes}
+                        </button>
+                        <button onClick={() => toggleComments(p.id)} className={`cm-action ${openComments.has(p.id) ? 'is-open' : ''}`} aria-expanded={openComments.has(p.id)} aria-label={`Comments (${p.comments})`}>
+                          <MessageSquare size={16} /> {p.comments}
+                        </button>
+                      </div>
+
+                      {openComments.has(p.id) && (
+                        <PostComments postId={p.id} user={user} onCountChange={(delta) => changeCommentCount(p.id, delta)} />
+                      )}
                     </article>
                   ))}
                 </div>
@@ -124,6 +180,12 @@ export default function AppHome() {
           </div>
         </div>
       </section>
+
+      {toast && (
+        <div className="cm-toast" role="status">
+          <CheckCircle2 size={18} /> {toast}
+        </div>
+      )}
     </>
   )
 }

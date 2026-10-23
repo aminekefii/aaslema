@@ -68,3 +68,14 @@ describe('019_post_comments.sql', () => {
     expect(comments).toMatch(/grant execute on function public\.community_feed\(\) to anon, authenticated;/)
   })
 })
+
+describe('020_feed_moment_likes.sql', () => {
+  const likes = readFileSync(new URL('../../backend/supabase/020_feed_moment_likes.sql', import.meta.url), 'utf8')
+
+  it('adds likes but keeps the feed moments approved-only and for signed-in users only', () => {
+    expect(likes).toMatch(/where m\.approved_at is not null/)
+    expect(likes).toMatch(/l\.user_id = auth\.uid\(\)/)
+    expect(likes).toMatch(/revoke all on function public\.feed_moments\(\) from public, anon;/)
+    expect(likes).toMatch(/grant execute on function public\.feed_moments\(\) to authenticated;/)
+  })
+})
