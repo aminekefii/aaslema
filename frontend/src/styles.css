@@ -850,10 +850,18 @@ button, input, select { font: inherit; }
 .post-tags__tag { display: inline-block; padding: 3px 10px; border: 0; border-radius: 20px; background: var(--tint); color: var(--primary); font: inherit; font-size: 13px; font-weight: 600; }
 button.post-tags__tag { cursor: pointer; }
 button.post-tags__tag:hover, .post-tags__tag.is-active { background: var(--primary); color: var(--white); }
-.cm-filters__tag {
-  display: inline-flex; align-items: center; gap: 6px; justify-self: start; padding: 5px 12px; border: 0; border-radius: 20px;
-  background: var(--primary); color: var(--white); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+/* Sidebar Hashtag field, with a clear button once something is typed */
+.cm-filters__tag-field { position: relative; }
+.cm-filters__tag-field input {
+  width: 100%; padding: 10px 38px 10px 14px; border-radius: 10px; font: inherit; font-size: 15px; outline: 0;
+  border: 1px solid var(--border); background: var(--bg); color: var(--title);
 }
+.cm-filters__tag-field input:focus { border-color: var(--primary); }
+.cm-filters__clear {
+  position: absolute; top: 50%; right: 8px; display: grid; place-items: center; width: 24px; height: 24px; padding: 0;
+  border: 0; border-radius: 50%; background: var(--lighter); color: var(--text); cursor: pointer; transform: translateY(-50%);
+}
+.cm-filters__clear:hover { color: var(--title); }
 /* Photo picker in the post form */
 .post-picker { display: grid; gap: 6px; font-size: 15px; font-weight: 500; color: var(--title); }
 .post-picker__label small { font-weight: 400; color: var(--text); }
@@ -1240,7 +1248,7 @@ a.my-moment:hover { border-color: var(--primary); }
   .cm-about { display: none; }
   .cm-filters { grid-template-columns: 1fr 1fr; gap: 16px 24px; }
   .cm-filters__head { grid-column: 1 / -1; }
-  .cm-filters fieldset { display: flex; flex-wrap: wrap; gap: 4px 18px; }
+  .cm-filters fieldset { display: flex; flex-wrap: wrap; gap: 4px 18px; grid-column: 1 / -1; }
   .cm-filters legend { width: 100%; margin-bottom: 8px; }
   .guide__grid { grid-template-columns: repeat(2, 1fr); }
   .city-overview { grid-template-columns: 1fr; }

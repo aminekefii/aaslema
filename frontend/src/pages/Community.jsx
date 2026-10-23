@@ -3,7 +3,7 @@ import { MessageSquare, Heart, Search, Plus, MoreHorizontal, CheckCircle2, Slide
 import { cities } from '../cities.js'
 import Modal from '../components/Modal.jsx'
 import { initials } from '../names.js'
-import { photoChanges, postFromForm, postMatches, reportFromForm, savedPhotoItems, sortPosts, tagsText } from '../communityPosts.js'
+import { photoChanges, postFromForm, postHasTag, postMatches, tagFilterText, reportFromForm, savedPhotoItems, sortPosts, tagsText } from '../communityPosts.js'
 import { DeletePostModal, PostFormModal } from '../components/PostDialogs.jsx'
 import PostComments from '../components/PostComments.jsx'
 import { AuthorButton, useProfileCard } from '../components/ProfileCard.jsx'
@@ -43,8 +43,9 @@ export default function Community({ user }) {
   const [searchTerm, setSearchTerm] = useState('')
   const [activeForum, setActiveForum] = useState('global')
   const [sort, setSort] = useState('latest')
-  // Hashtag the posts are filtered by (clicked on a post), or null
-  const [tag, setTag] = useState(null)
+  // Sidebar Hashtag field: typed, or filled by clicking a hashtag on a post ('' for none)
+  const [tag, setTag] = useState('')
+  const activeTag = tagFilterText(tag)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingPost, setEditingPost] = useState(null)
   const [newPost, setNewPost] = useState(EMPTY_POST)
@@ -98,18 +99,20 @@ export default function Community({ user }) {
 
   const filteredPosts = sortPosts(posts.filter((p) =>
     (activeForum === 'global' || p.cityId === activeForum) &&
-    (!tag || p.tags.includes(tag)) &&
+    postHasTag(p, tag) &&
     postMatches(p, searchTerm),
   ), sort)
   const sortLabel = SORTS.find(([value]) => value === sort)[1]
-  const filtered = activeForum !== 'global' || sort !== 'latest' || tag !== null
+  const filtered = activeForum !== 'global' || sort !== 'latest' || activeTag !== ''
   const resetFilters = () => {
     setActiveForum('global')
     setSort('latest')
-    setTag(null)
+    setTag('')
   }
+  // Every hashtag in the loaded posts, for the field's suggestions
+  const allTags = [...new Set(posts.flatMap((p) => p.tags))].sort()
   // Clicking the active hashtag again clears it
-  const pickTag = (t) => setTag((now) => (now === t ? null : t))
+  const pickTag = (t) => setTag((now) => (tagFilterText(now) === t ? '' : `#${t}`))
   const activeCityName = cities.find((c) => c.id === activeForum)?.name
 
   const openNewPost = () => {
@@ -252,6 +255,18 @@ export default function Community({ user }) {
                     {cities.map((city) => <option key={city.id} value={city.id}>{city.name}</option>)}
                   </select>
                 </label>
+                <div className="cm-filters__group">
+                  <label htmlFor="cm-tag" className="cm-filters__label">Hashtag</label>
+                  <div className="cm-filters__tag-field">
+                    <input id="cm-tag" type="text" list="cm-tag-list" placeholder="#sahara" autoComplete="off" value={tag} onChange={(e) => setTag(e.target.value)} />
+                    {tag && (
+                      <button type="button" onClick={() => setTag('')} className="cm-filters__clear" aria-label="Clear the hashtag filter"><X size={14} /></button>
+                    )}
+                  </div>
+                  <datalist id="cm-tag-list">
+                    {allTags.map((t) => <option key={t} value={`#${t}`} />)}
+                  </datalist>
+                </div>
                 <fieldset className="cm-filters__group">
                   <legend className="cm-filters__label">Sort by</legend>
                   {SORTS.map(([value, label]) => (
@@ -261,14 +276,6 @@ export default function Community({ user }) {
                     </label>
                   ))}
                 </fieldset>
-                {tag && (
-                  <div className="cm-filters__group">
-                    <span className="cm-filters__label">Hashtag</span>
-                    <button type="button" onClick={() => setTag(null)} className="cm-filters__tag" aria-label={`Stop filtering by #${tag}`}>
-                      #{tag} <X size={14} />
-                    </button>
-                  </div>
-                )}
               </div>
 
               <div className="cm-card cm-about">
@@ -283,7 +290,7 @@ export default function Community({ user }) {
 
             {/* Feed */}
             <div className="cm-feed">
-              <h2 className="cm-feed__title">{sortLabel} posts{activeForum === 'global' ? '' : ` in ${activeCityName}`}{tag ? ` tagged #${tag}` : ''}</h2>
+              <h2 className="cm-feed__title">{sortLabel} posts{activeForum === 'global' ? '' : ` in ${activeCityName}`}{activeTag ? ` tagged #${activeTag}` : ''}</h2>
 
               {feedLoading ? (
                 <div className="cm-card cm-empty"><p>Loading posts…</p></div>
@@ -324,7 +331,7 @@ export default function Community({ user }) {
                     <h3>{post.title}</h3>
                     <p className="cm-post__text">{post.content}</p>
                     <PostPhotos urls={post.photoUrls} title={post.title} />
-                    <PostTags tags={post.tags} onTag={pickTag} active={tag} />
+                    <PostTags tags={post.tags} onTag={pickTag} active={activeTag} />
 
                     <div className="cm-post__actions">
                       <button onClick={() => handleLike(post)} aria-disabled={likesSaving.has(post.id)} className={`cm-action ${post.liked ? 'is-liked' : ''}`} aria-pressed={post.liked} aria-label={post.liked ? 'Unlike' : 'Like'}>

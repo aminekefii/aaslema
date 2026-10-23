@@ -107,3 +107,12 @@ export function postMatches(post, search) {
   const tagQuery = query.replace(/^#+/, '')
   return post.title.toLowerCase().includes(query) || post.content.toLowerCase().includes(query) || tags.some((t) => t.includes(tagQuery))
 }
+
+// Sidebar Hashtag field → the hashtag to filter by (lower case, no #), '' for none
+export const tagFilterText = (text) => (text ?? '').trim().replace(/^#+/, '').toLowerCase()
+
+// Sidebar Hashtag filter: matches while typing ("sah" finds #sahara); an empty field matches every post
+export function postHasTag(post, text) {
+  const wanted = tagFilterText(text)
+  return !wanted || (post.tags ?? []).some((t) => t.includes(wanted))
+}

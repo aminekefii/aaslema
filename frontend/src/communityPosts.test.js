@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { commentFromForm, myPostCard, parseTags, photoChanges, postMatches, postFromForm, reportFromForm, savedPhotoItems, sortPosts, tagsText } from './communityPosts.js'
+import { commentFromForm, myPostCard, parseTags, photoChanges, postHasTag, postMatches, tagFilterText, postFromForm, reportFromForm, savedPhotoItems, sortPosts, tagsText } from './communityPosts.js'
 
 const user = { email: 'leila@x.com', user_metadata: { full_name: 'Leila Ben Ali' } }
 const valid = { title: '  Sunrise at Chebika ', cityId: 'tozeur', content: '  Leave Tozeur at 5am and you get the canyon to yourself. ' }
@@ -215,5 +215,27 @@ describe('postMatches', () => {
   it('shows every post with a hashtag for just "#"', () => {
     expect(postMatches(post, '#')).toBe(true)
     expect(postMatches(plain, '#')).toBe(false)
+  })
+})
+
+describe('postHasTag', () => {
+  const post = { tags: ['sahara', 'oasis_trip'] }
+
+  it('matches every post when the field is empty', () => {
+    expect(postHasTag({ tags: [] }, '  ')).toBe(true)
+    expect(postHasTag({ tags: [] }, '#')).toBe(true)
+  })
+
+  it('matches while typing, with or without #, in any case', () => {
+    expect(postHasTag(post, '#Sah')).toBe(true)
+    expect(postHasTag(post, 'oasis')).toBe(true)
+    expect(postHasTag(post, '#food')).toBe(false)
+  })
+})
+
+describe('tagFilterText', () => {
+  it('turns the field into a hashtag without # or spaces', () => {
+    expect(tagFilterText('  #Sahara ')).toBe('sahara')
+    expect(tagFilterText('##')).toBe('')
   })
 })
