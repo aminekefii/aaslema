@@ -1,14 +1,20 @@
-import { hasHeicHeader, isHeic } from './moments.js'
+import { hasHeicHeader, heifIsIncomplete, isHeic } from './moments.js'
+
+// Thrown for a HEIC file that is cut short: it would decode with green blocks where data is missing
+export class IncompletePhotoError extends Error {}
+export const incompletePhotoMessage = 'This photo file is incomplete (part of it is missing), so it would show green blocks. Copy it from your phone again, or choose another photo.'
 
 // Opens the photo; iPhone HEIC photos only open natively in Safari, so other browsers
 // convert them with heic-to (about 3 MB, so it is loaded only when needed).
 // Some iPhone exports are HEIC named .JPG, so the file's content is checked too.
 async function openPhoto(file) {
+  const header = new Uint8Array(await file.slice(0, 12).arrayBuffer())
+  const heic = isHeic(file) || hasHeicHeader(header)
+  if (heic && await heifIsIncomplete(file)) throw new IncompletePhotoError()
   try {
     return await createImageBitmap(file)
   } catch (error) {
-    const header = new Uint8Array(await file.slice(0, 12).arrayBuffer())
-    if (!isHeic(file) && !hasHeicHeader(header)) throw error
+    if (!heic) throw error
     const { heicTo } = await import('heic-to')
     return heicTo({ blob: file, type: 'bitmap' })
   }

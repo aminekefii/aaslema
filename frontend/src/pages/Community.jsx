@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { MessageSquare, Heart, Share2, Search, Plus, MoreHorizontal, CheckCircle2, SlidersHorizontal } from 'lucide-react'
+import { MessageSquare, Heart, Search, Plus, MoreHorizontal, CheckCircle2, SlidersHorizontal } from 'lucide-react'
 import { cities } from '../cities.js'
 import Modal from '../components/Modal.jsx'
 import { initials } from '../names.js'
@@ -44,7 +44,6 @@ export default function Community({ user }) {
   const [editingPost, setEditingPost] = useState(null)
   const [newPost, setNewPost] = useState(EMPTY_POST)
   const [reportingPost, setReportingPost] = useState(null)
-  const [showShare, setShowShare] = useState(false)
   const [reportReason, setReportReason] = useState('')
   const [reporting, setReporting] = useState(false)
   const [reportError, setReportError] = useState('')
@@ -309,9 +308,6 @@ export default function Community({ user }) {
                       <button onClick={() => toggleComments(post.id)} className={`cm-action ${openComments.has(post.id) ? 'is-open' : ''}`} aria-expanded={openComments.has(post.id)} aria-label={`Comments (${post.comments})`}>
                         <MessageSquare size={16} /> {post.comments}
                       </button>
-                      <button onClick={() => setShowShare(true)} className="cm-action">
-                        <Share2 size={16} /> Share
-                      </button>
                       {post.mine && <button onClick={() => openEditModal(post)} className="cm-action cm-action--end">Edit</button>}
                       {post.mine && <button onClick={() => setDeletingPost(post)} className="cm-action">Delete</button>}
                     </div>
@@ -358,15 +354,6 @@ export default function Community({ user }) {
       {/* Delete your own saved post */}
       {deletingPost && (
         <DeletePostModal onConfirm={handleDeletePost} onClose={() => setDeletingPost(null)} deleting={deleting} />
-      )}
-
-      {/* Sharing isn't live yet */}
-      {showShare && (
-        <Modal title="Share post" labelId="share-dialog-title" onClose={() => setShowShare(false)}>
-          <p className="cm-soon"><Share2 size={20} /> Coming soon</p>
-          <p className="modal__sub">Soon you'll be able to share posts with your friends.</p>
-          <button type="button" className="btn btn--primary moment-review__close" onClick={() => setShowShare(false)}>Close</button>
-        </Modal>
       )}
 
       {toast && (

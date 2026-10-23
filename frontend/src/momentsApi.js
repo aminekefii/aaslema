@@ -1,5 +1,5 @@
 import { supabase } from './supabase.js'
-import { resizeToJpeg } from './imageResize.js'
+import { IncompletePhotoError, incompletePhotoMessage, resizeToJpeg } from './imageResize.js'
 import { avatarUrl } from './profileApi.js'
 import { momentPath } from './moments.js'
 
@@ -94,7 +94,8 @@ export async function uploadMoment(file, row, userId) {
   try {
     blob = await resizeToJpeg(file)
     if (blob.size > MAX_BYTES) blob = await resizeToJpeg(file, 1600, 0.7)
-  } catch {
+  } catch (error) {
+    if (error instanceof IncompletePhotoError) return { error: incompletePhotoMessage }
     // e.g. HEIC photos in browsers that can't decode them
     return { error: "Couldn't read this photo. Try another one." }
   }

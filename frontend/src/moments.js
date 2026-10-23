@@ -20,6 +20,22 @@ export function hasHeicHeader(bytes) {
   return text.startsWith('ftyp') && HEIC_BRANDS.includes(text.slice(4))
 }
 
+// A HEIC file cut short (some copies from an iPhone are): a top-level box claims to run past the
+// end of the file, so part of the photo is missing and would decode as green blocks.
+export async function heifIsIncomplete(blob) {
+  let p = 0
+  while (p + 8 <= blob.size) {
+    const view = new DataView(await blob.slice(p, p + 16).arrayBuffer())
+    let size = view.getUint32(0)
+    if (size === 1 && view.byteLength >= 16) size = Number(view.getBigUint64(8))
+    if (size === 0) return false
+    if (size < 8) return true
+    if (p + size > blob.size) return true
+    p += size
+  }
+  return false
+}
+
 export function momentFromForm({ file, caption, spot }, user, city) {
   if (!file) return { error: 'Please choose a photo.' }
   if (!file.type?.startsWith('image/') && !isHeic(file)) return { error: 'Please choose an image file.' }

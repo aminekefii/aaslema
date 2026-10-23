@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { PHOTO_MAX_BYTES, canApprove, feedMomentCard, hasHeicHeader, isHeic, momentFromForm, momentPath, myMomentCard, spotMoments, toggleMomentLike } from './moments.js'
+import { PHOTO_MAX_BYTES, canApprove, feedMomentCard, hasHeicHeader, heifIsIncomplete, isHeic, momentFromForm, momentPath, myMomentCard, spotMoments, toggleMomentLike } from './moments.js'
 
 const user = { email: 'leila@x.com', user_metadata: { full_name: 'Leila Ben Ali' } }
 const city = { id: 'tozeur', highlights: ['Chott el Djerid', 'Dar Cherait'] }
@@ -156,5 +156,37 @@ describe('feedMomentCard', () => {
 
   it('shows the city id when the destination is no longer listed', () => {
     expect(feedMomentCard(row, []).cityName).toBe('tozeur')
+  })
+})
+
+describe('heifIsIncomplete', () => {
+  // A top-level box: 4-byte size, 4-byte type, then filler
+  const box = (type, size, filled = size) => {
+    const b = new Uint8Array(filled)
+    new DataView(b.buffer).setUint32(0, size)
+    b.set([...type].map((ch) => ch.charCodeAt(0)), 4)
+    return b
+  }
+  const blob = (...parts) => new Blob(parts)
+
+  it('passes a file whose boxes all fit', async () => {
+    expect(await heifIsIncomplete(blob(box('ftyp', 24), box('meta', 100), box('mdat', 5000)))).toBe(false)
+  })
+
+  it('flags a file cut off inside its image data', async () => {
+    expect(await heifIsIncomplete(blob(box('ftyp', 24), box('meta', 100), box('mdat', 5000, 1200)))).toBe(true)
+  })
+
+  it('reads 64-bit box sizes', async () => {
+    const big = new Uint8Array(40)
+    const view = new DataView(big.buffer)
+    view.setUint32(0, 1)
+    big.set([...'mdat'].map((ch) => ch.charCodeAt(0)), 4)
+    view.setBigUint64(8, 9000n)
+    expect(await heifIsIncomplete(blob(box('ftyp', 24), big))).toBe(true)
+  })
+
+  it('treats a size of 0 (box runs to the end of the file) as complete', async () => {
+    expect(await heifIsIncomplete(blob(box('ftyp', 24), box('mdat', 0, 300)))).toBe(false)
   })
 })

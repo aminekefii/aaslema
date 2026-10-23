@@ -1,5 +1,5 @@
 import { supabase } from './supabase.js'
-import { resizeToSquareJpeg } from './imageResize.js'
+import { IncompletePhotoError, incompletePhotoMessage, resizeToSquareJpeg } from './imageResize.js'
 import { avatarPath } from './profile.js'
 
 // Profile row, photo and account changes in Supabase. None of these throw: pages get a plain value back.
@@ -53,7 +53,8 @@ export async function uploadAvatar(userId, file, oldPath) {
   let blob
   try {
     blob = await resizeToSquareJpeg(file)
-  } catch {
+  } catch (error) {
+    if (error instanceof IncompletePhotoError) return { error: incompletePhotoMessage }
     // Not an image, a damaged file, or HEIC the browser can't convert
     return { error: "Couldn't read that photo." }
   }

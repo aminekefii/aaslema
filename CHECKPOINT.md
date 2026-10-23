@@ -9,7 +9,7 @@ Last updated: 2026-10-20 (Netlify config added)
   `/app/community`), My posts (`/app/profile/posts`), post reports (admin page `/admin/reports`, read only) and the
   Feed at `/app` (newest moments and posts, view only) are merged into `main` and pushed to `origin/main` (`bd2aae7`).
 - Only other branch: `google-sign-in` (not merged, see below).
-- Frontend tests: 16 files, 259 tests, all passing (`npx vitest run` in `frontend/`).
+- Frontend tests: 16 files, 263 tests, all passing (`npx vitest run` in `frontend/`).
 - Supabase SQL lives in `backend/supabase/` (`001`–`019`). Each file is run
   by hand in the Supabase SQL editor; check that `004_city_likes_visits.sql`,
   `005_city_visit_counts.sql`, `006_reviews.sql`, `007_moments.sql`,
@@ -117,14 +117,14 @@ From the specs' "Future work" sections:
 2. **Admin part 4:** move destinations, festivals and FAQs into the database.
 3. **Profile:** more sidebar sections (My reviews); delete/edit own moments; name + photo on Feed posts once they're in Supabase; photos on admin pages.
 4. **AI Planner:** needs an AI provider and a backend endpoint; it can start from the user's plan (`city_plans`).
-5. **Moments: iPhone photos upload partly green (open bug, to fix later).** HEIC photos are converted with
-   `heic-to` 1.6.5 (commit `8f9ac1a`). HEIC content in files named `.JPG` is also spotted (commit `4cb490c`:
-   `hasHeicHeader` in `frontend/src/moments.js`, used in `frontend/src/imageResize.js`).
-   With it, `C:\Users\amine\Pictures\14\IMG_0823.JPG` uploads, but about 40% of it is green (whole 512px blocks).
-   Found so far: that file looks incomplete (libheif-js 1.19.8 says "Extent in iloc box references data outside of
-   file bounds"); heic-to's libheif 1.23.5 decodes what is there and leaves the rest green. The owner reports the
-   same issue still happens, so it may not only be damaged files: check with a photo taken straight from an iPhone,
-   and try converting to JPEG in heic-to instead of `type: 'bitmap'`, another libheif build, or rejecting damaged photos.
+5. **Moments: iPhone photos upload partly green: cause found, uploads now refused (not committed yet).**
+   The photos are incomplete files: in `C:\Users\amine\Pictures\14` 226 of the 607 HEIC files end before the
+   image data their own box/iloc tables point to (e.g. `IMG_E8790.HEIC` is 571,529 bytes but needs 3,045,564); the
+   missing tiles decode as green and no decoder can bring them back. `heifIsIncomplete` (`frontend/src/moments.js`)
+   now spots them before decoding and the upload shows "This photo file is incomplete…" (moments and profile photo).
+   Moments already uploaded from such files stay broken: delete them in Supabase (or once users can delete their
+   own moments) and re-upload from a complete copy (straight from the iPhone, or with Settings → Photos →
+   Transfer to Mac or PC → Keep Originals).
 6. **Moments follow-ups:** users delete their own moments; unpublish; comments; the small fixes deferred in review (frozen upload on plain-http LAN testing, padded captions, links expiring after an hour, files left when a user is deleted).
 7. **Reviews follow-ups:** show the user's review on Profile; users delete their own review; per-destination reviews (Community Voice); the small fixes deferred in review (form after an admin delete, emoji initials, rename sends a review back to pending, stale success message).
 
