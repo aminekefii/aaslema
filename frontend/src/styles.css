@@ -415,7 +415,16 @@ button, input, select { font: inherit; }
 .blog-card__image .btn { position: absolute; left: 20px; bottom: 20px; }
 
 /* ---------- Page banner + FAQ section ---------- */
-.page-banner { background: var(--heading); padding: 180px 0 90px; text-align: center; color: var(--dark-muted); }
+.page-banner {
+  position: relative; isolation: isolate; overflow: hidden; background: var(--heading);
+  padding: 180px 0 90px; text-align: center; color: rgba(255, 255, 255, 0.85);
+}
+/* "I ♥ Tunis" photo behind the banner; it is small (480px), so it is softened to hide the pixels */
+.page-banner::before {
+  content: ''; position: absolute; inset: -24px; z-index: -2;
+  background: url('/images/i-love-tunis.jpg') center 60% / cover no-repeat; filter: blur(5px);
+}
+.page-banner::after { content: ''; position: absolute; inset: 0; z-index: -1; background: rgba(28, 35, 31, 0.72); }
 .page-banner h1 { color: var(--white); font-size: 56px; letter-spacing: -1px; margin-bottom: 10px; }
 .page-banner p { margin: 0; }
 .faq__grid { display: grid; grid-template-columns: 1fr 2fr; gap: 60px; align-items: start; }
