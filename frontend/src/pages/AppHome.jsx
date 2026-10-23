@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { ArrowRight, MapPin, Navigation } from 'lucide-react'
+import { ArrowRight, MapPin, Navigation, SlidersHorizontal } from 'lucide-react'
 import { cities } from '../cities.js'
 import { feedMomentCard } from '../moments.js'
 import { fetchFeedMoments } from '../momentsApi.js'
@@ -8,12 +8,15 @@ import { initials } from '../names.js'
 import { timeAgo } from '../timeAgo.js'
 
 const POSTS_SHOWN = 10
+// Sidebar choice: [value, label]
+const SHOW = [['all', 'Everything'], ['moments', 'Moments'], ['posts', 'Posts']]
 
 // Feed at /app: newest shared moments and community posts, view only. Each part loads on its own.
 export default function AppHome() {
   // undefined while loading, null if loading failed
   const [moments, setMoments] = useState(undefined)
   const [posts, setPosts] = useState(undefined)
+  const [show, setShow] = useState('all')
 
   const loadMoments = useCallback(async () => {
     setMoments(undefined)
@@ -45,57 +48,80 @@ export default function AppHome() {
         </div>
       </section>
 
-      <section className="section feed">
-        <div className="container">
-          <h2 className="feed__title">Moments</h2>
-          <FeedState items={moments} onRetry={loadMoments} loading="Loading moments…" failed="Couldn't load moments." empty="No moments shared yet." />
-          {moments?.length > 0 && (
-            <div className="feed-moments">
-              {moments.map((m) => (
-                <a key={m.id} href={m.href} className="moment-card feed-moment">
-                  <div className="moment-card__inner">
-                    <img src={m.url} alt={m.caption} loading="lazy" />
-                    <div className="feed-moment__body">
-                      <div className="moment-card__by">
-                        {m.author_avatar_url
-                          ? <img src={m.author_avatar_url} alt="" className="moment-card__avatar" />
-                          : <span className="moment-card__avatar moment-card__avatar--initials" aria-hidden="true">{initials(m.author_name)}</span>}
-                        <strong>{m.author_name}</strong>
-                      </div>
-                      <p className="feed-moment__city"><MapPin size={12} /> {m.cityName}</p>
-                      <p className="moment-card__caption">{m.caption}</p>
-                      {m.spot && <p className="moment-card__spot"><Navigation size={12} /> {m.spot}</p>}
-                      <time dateTime={m.created_at} className="feed-moment__time">{timeAgo(m.created_at)}</time>
-                    </div>
-                  </div>
-                </a>
-              ))}
+      <section className="section feed cm">
+        <div className="container cm-layout feed__layout">
+          <aside className="cm-sidebar">
+            <div className="cm-card cm-filters">
+              <div className="cm-filters__head">
+                <h3><SlidersHorizontal size={16} /> Filters</h3>
+              </div>
+              <fieldset className="cm-filters__group">
+                <legend className="cm-filters__label">Show</legend>
+                {SHOW.map(([value, label]) => (
+                  <label key={value} className="cm-filters__option">
+                    <input type="radio" name="feed-show" value={value} checked={show === value} onChange={() => setShow(value)} />
+                    {label}
+                  </label>
+                ))}
+              </fieldset>
             </div>
-          )}
-          <a href="/app/destinations" className="feed__more">Explore destinations <ArrowRight size={16} /></a>
+          </aside>
 
-          <h2 className="feed__title">Posts</h2>
-          <FeedState items={posts} onRetry={loadPosts} loading="Loading posts…" failed="Couldn't load posts." empty="No posts yet." />
-          {posts?.length > 0 && (
-            <div className="feed-posts">
-              {posts.map((p) => (
-                <article key={p.id} className="cm-card cm-post">
-                  <div className="cm-post__head">
-                    {p.author_avatar_url
-                      ? <img src={p.author_avatar_url} alt="" className="cm-avatar" loading="lazy" />
-                      : <span className="cm-avatar cm-avatar--initials" aria-hidden="true">{initials(p.author_name)}</span>}
-                    <div className="cm-post__who">
-                      <strong>{p.author_name}</strong>
-                      <small>{timeAgo(p.created_at)}</small>
-                    </div>
-                  </div>
-                  <h3>{p.title}</h3>
-                  <p className="cm-post__text">{p.body}</p>
-                </article>
-              ))}
-            </div>
-          )}
-          <a href="/app/community" className="feed__more">See all in Community <ArrowRight size={16} /></a>
+          <div className="feed__main">
+            {show !== 'posts' && <>
+              <h2 className="feed__title">Moments</h2>
+              <FeedState items={moments} onRetry={loadMoments} loading="Loading moments…" failed="Couldn't load moments." empty="No moments shared yet." />
+              {moments?.length > 0 && (
+                <div className="feed-moments">
+                  {moments.map((m) => (
+                    <a key={m.id} href={m.href} className="moment-card feed-moment">
+                      <div className="moment-card__inner">
+                        <img src={m.url} alt={m.caption} loading="lazy" />
+                        <div className="feed-moment__body">
+                          <div className="moment-card__by">
+                            {m.author_avatar_url
+                              ? <img src={m.author_avatar_url} alt="" className="moment-card__avatar" />
+                              : <span className="moment-card__avatar moment-card__avatar--initials" aria-hidden="true">{initials(m.author_name)}</span>}
+                            <strong>{m.author_name}</strong>
+                          </div>
+                          <p className="feed-moment__city"><MapPin size={12} /> {m.cityName}</p>
+                          <p className="moment-card__caption">{m.caption}</p>
+                          {m.spot && <p className="moment-card__spot"><Navigation size={12} /> {m.spot}</p>}
+                          <time dateTime={m.created_at} className="feed-moment__time">{timeAgo(m.created_at)}</time>
+                        </div>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              )}
+              <a href="/app/destinations" className="feed__more">Explore destinations <ArrowRight size={16} /></a>
+            </>}
+
+            {show !== 'moments' && <>
+              <h2 className="feed__title">Posts</h2>
+              <FeedState items={posts} onRetry={loadPosts} loading="Loading posts…" failed="Couldn't load posts." empty="No posts yet." />
+              {posts?.length > 0 && (
+                <div className="feed-posts">
+                  {posts.map((p) => (
+                    <article key={p.id} className="cm-card cm-post">
+                      <div className="cm-post__head">
+                        {p.author_avatar_url
+                          ? <img src={p.author_avatar_url} alt="" className="cm-avatar" loading="lazy" />
+                          : <span className="cm-avatar cm-avatar--initials" aria-hidden="true">{initials(p.author_name)}</span>}
+                        <div className="cm-post__who">
+                          <strong>{p.author_name}</strong>
+                          <small>{timeAgo(p.created_at)}</small>
+                        </div>
+                      </div>
+                      <h3>{p.title}</h3>
+                      <p className="cm-post__text">{p.body}</p>
+                    </article>
+                  ))}
+                </div>
+              )}
+              <a href="/app/community" className="feed__more">See all in Community <ArrowRight size={16} /></a>
+            </>}
+          </div>
         </div>
       </section>
     </>
