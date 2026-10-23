@@ -203,7 +203,7 @@ export default function CityDetail({ id, user }) {
     <>
       {/* Header */}
       <section className="city-hero">
-        <img src={city.image} alt="" className="city-hero__bg" />
+        <img src={city.cover ?? city.image} alt="" className="city-hero__bg" />
         {isVisited && <span className="city-hero__visited"><CheckCircle2 size={18} /> Visited</span>}
         <div className="container">
           <a href={`${base}/destinations`} className="city-hero__back"><ArrowLeft size={16} /> Back to destinations</a>
