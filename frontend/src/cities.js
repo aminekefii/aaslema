@@ -577,3 +577,8 @@ export const cities = [
   }
 ];
 
+// The cities before and after this one in the list, wrapping around at both ends
+export function cityNeighbours(id) {
+  const i = cities.findIndex((c) => c.id === id)
+  return { prev: cities.at(i - 1), next: cities[(i + 1) % cities.length] }
+}

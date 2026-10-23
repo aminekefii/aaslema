@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import {
   Heart, MapPin, ArrowLeft, Utensils, History, Sparkles, Calendar, Share2,
-  Navigation, Star, CheckCircle2, Map as MapIcon, Camera, Facebook, Twitter,
+  Navigation, Star, CheckCircle2, Map as MapIcon, Camera, Facebook, Twitter, ChevronLeft, ChevronRight,
 } from 'lucide-react'
-import { cities } from '../cities.js'
+import { cities, cityNeighbours } from '../cities.js'
 import Modal from '../components/Modal.jsx'
 import { base } from '../route.js'
 import { adjustCount, likeCount } from '../cityCounts.js'
@@ -198,6 +198,7 @@ export default function CityDetail({ id, user }) {
     }
   }
   const pageUrl = encodeURIComponent(window.location.href)
+  const { prev, next } = cityNeighbours(city.id)
 
   return (
     <>
@@ -205,6 +206,14 @@ export default function CityDetail({ id, user }) {
       <section className="city-hero">
         <img src={city.cover ?? city.image} alt="" className="city-hero__bg" />
         {isVisited && <span className="city-hero__visited"><CheckCircle2 size={18} /> Visited</span>}
+        <nav className="city-hero__nav" aria-label="Other destinations">
+          <a href={`${base}/destinations/${prev.id}`} className="city-hero__arrow city-hero__arrow--prev" aria-label={`Previous destination: ${prev.name}`} title={prev.name}>
+            <ChevronLeft strokeWidth={1.25} />
+          </a>
+          <a href={`${base}/destinations/${next.id}`} className="city-hero__arrow city-hero__arrow--next" aria-label={`Next destination: ${next.name}`} title={next.name}>
+            <ChevronRight strokeWidth={1.25} />
+          </a>
+        </nav>
         <div className="container">
           <a href={`${base}/destinations`} className="city-hero__back"><ArrowLeft size={16} /> Back to destinations</a>
 
