@@ -5,6 +5,7 @@ import Modal from '../components/Modal.jsx'
 import { initials } from '../names.js'
 import { postFromForm, reportFromForm, sortPosts } from '../communityPosts.js'
 import { DeletePostModal, PostFormModal } from '../components/PostDialogs.jsx'
+import PostComments from '../components/PostComments.jsx'
 import { createPost, deletePost, fetchFeed, reportPost, setPostLike, updatePost } from '../communityApi.js'
 import { toggleMomentLike } from '../moments.js'
 
@@ -32,7 +33,7 @@ function timeAgo(iso) {
 // A community_feed() row → the card fields the visitor posts already use
 const feedCard = (r) => ({
   id: r.id, userName: r.author_name, avatarUrl: r.author_avatar_url, createdAt: r.created_at,
-  title: r.title, content: r.body, cityId: r.city_id, likes: r.likes, liked: r.liked, mine: r.mine,
+  title: r.title, content: r.body, cityId: r.city_id, likes: r.likes, liked: r.liked, mine: r.mine, comments: r.comments,
 })
 
 export default function Community({ user }) {
@@ -56,6 +57,8 @@ export default function Community({ user }) {
   const [formError, setFormError] = useState('')
   const [deletingPost, setDeletingPost] = useState(null)
   const [deleting, setDeleting] = useState(false)
+  // Posts whose comments are open
+  const [openComments, setOpenComments] = useState(() => new Set())
 
   const loadFeed = useCallback(async () => {
     setFeedLoading(true)
@@ -134,6 +137,15 @@ export default function Community({ user }) {
       return next
     })
   }
+
+  const toggleComments = (id) => setOpenComments((prev) => {
+    const next = new Set(prev)
+    next.has(id) ? next.delete(id) : next.add(id)
+    return next
+  })
+
+  const changeCommentCount = (id, delta) =>
+    setFeed((prev) => prev?.map((p) => (p.id === id ? { ...p, comments: p.comments + delta } : p)))
 
   const handleSavePost = async (e) => {
     e.preventDefault()
@@ -294,12 +306,19 @@ export default function Community({ user }) {
                       <button onClick={() => handleLike(post)} aria-disabled={likesSaving.has(post.id)} className={`cm-action ${post.liked ? 'is-liked' : ''}`} aria-pressed={post.liked} aria-label={post.liked ? 'Unlike' : 'Like'}>
                         <Heart size={16} fill={post.liked ? 'currentColor' : 'none'} /> {post.likes}
                       </button>
+                      <button onClick={() => toggleComments(post.id)} className={`cm-action ${openComments.has(post.id) ? 'is-open' : ''}`} aria-expanded={openComments.has(post.id)} aria-label={`Comments (${post.comments})`}>
+                        <MessageSquare size={16} /> {post.comments}
+                      </button>
                       <button onClick={() => setShowShare(true)} className="cm-action">
                         <Share2 size={16} /> Share
                       </button>
                       {post.mine && <button onClick={() => openEditModal(post)} className="cm-action cm-action--end">Edit</button>}
                       {post.mine && <button onClick={() => setDeletingPost(post)} className="cm-action">Delete</button>}
                     </div>
+
+                    {openComments.has(post.id) && (
+                      <PostComments postId={post.id} user={user} onCountChange={(delta) => changeCommentCount(post.id, delta)} />
+                    )}
                   </article>
                 ))
               )}

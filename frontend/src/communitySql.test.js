@@ -50,3 +50,21 @@ describe('018_public_community_feed.sql', () => {
     expect(open).toMatch(/grant execute on function public\.community_feed\(\) to anon;/)
   })
 })
+
+describe('019_post_comments.sql', () => {
+  const comments = readFileSync(new URL('../../backend/supabase/019_post_comments.sql', import.meta.url), 'utf8')
+
+  it('lets everyone read comments but only signed-in users write them, as themselves', () => {
+    expect(comments).toMatch(/grant execute on function public\.post_comments\(uuid\) to anon, authenticated;/)
+    expect(comments).toMatch(/grant insert \(post_id, author_name, body\) on public\.community_post_comments to authenticated;/)
+    expect(comments).toMatch(/for insert to authenticated with check \(user_id = auth\.uid\(\)\)/)
+  })
+
+  it('lets people delete only their own comments', () => {
+    expect(comments).toMatch(/for delete to authenticated using \(user_id = auth\.uid\(\)\)/)
+  })
+
+  it('keeps the feed open to visitors after adding the comment count', () => {
+    expect(comments).toMatch(/grant execute on function public\.community_feed\(\) to anon, authenticated;/)
+  })
+})

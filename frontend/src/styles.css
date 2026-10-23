@@ -829,6 +829,33 @@ button, input, select { font: inherit; }
 .cm-action.is-liked { color: var(--primary); }
 .cm-action--end { margin-left: auto; }
 .cm-action:disabled, .cm-action[aria-disabled='true'] { opacity: 0.6; cursor: default; }
+.cm-action.is-open { background: var(--lighter); color: var(--title); }
+/* Comments under a post */
+.cm-comments { display: grid; gap: 14px; margin-top: 12px; padding-top: 14px; border-top: 1px solid var(--border); }
+.cm-comments__list { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
+.cm-comment { display: flex; gap: 10px; }
+.cm-avatar--sm { width: 32px; height: 32px; font-size: 12px; }
+.cm-comment__body { min-width: 0; flex: 1; padding: 10px 14px; border-radius: 4px 14px 14px 14px; background: var(--lighter); }
+.cm-comment__head { display: flex; align-items: baseline; gap: 8px; margin: 0; font-size: 14px; }
+.cm-comment__head strong { color: var(--title); font-weight: 600; }
+.cm-comment__head time { font-size: 12px; }
+.cm-comment__text { margin: 2px 0 0; font-size: 15px; line-height: 1.5; white-space: pre-line; overflow-wrap: anywhere; color: var(--title); }
+.cm-comment__confirm { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 6px 0 0; font-size: 13px; }
+.cm-comments__note { margin: 0; font-size: 14px; }
+.cm-comments__note--error { color: #e57373; }
+.cm-comments__link { padding: 0; border: 0; background: none; color: var(--primary); font-size: 13px; font-weight: 600; cursor: pointer; }
+.cm-comments__note .cm-comments__link { font-size: inherit; }
+.cm-comments__link:hover { text-decoration: underline; }
+.cm-comments__link--muted { color: var(--text); }
+.cm-comment__body > .cm-comments__link { margin-top: 4px; }
+.cm-comments__form { display: grid; gap: 8px; justify-items: end; }
+.cm-comments__form textarea {
+  width: 100%; padding: 10px 14px; border-radius: 12px; font: inherit; font-size: 15px; resize: vertical; outline: 0;
+  border: 1px solid var(--border); background: var(--bg); color: var(--text);
+}
+.cm-comments__form textarea:focus { border-color: var(--primary); }
+.cm-comments__form .cm-comments__note { justify-self: start; }
+.cm-comments__form .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .cm-delete-actions { margin-top: 20px; }
 .my-posts { display: grid; gap: 16px; margin-top: 20px; }
 .my-post h3 { margin-top: 0; }

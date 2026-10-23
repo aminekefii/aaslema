@@ -46,6 +46,17 @@ export function reportFromForm(reason) {
   return { row: { reason: text } }
 }
 
+export const COMMENT_MAX = 1000
+
+// Comment box → the row to save, or the message to show
+export function commentFromForm(text, user) {
+  const body = (text ?? '').trim()
+  if (!body) return { error: 'Please write a comment.' }
+  if (textLength(body) > COMMENT_MAX) return { error: 'Your comment is too long (1000 characters max).' }
+  const name = Array.from(displayName(user)).slice(0, NAME_MAX).join('')
+  return { row: { body, author_name: name } }
+}
+
 // Community sidebar "Sort by": 'latest', 'oldest' or 'liked' (newest first on a tie); returns a new list
 const newestFirst = (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
 const sorters = {

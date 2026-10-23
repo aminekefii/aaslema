@@ -13,7 +13,7 @@ export async function fetchFeed() {
     const { data, error } = await supabase.rpc('community_feed')
     if (error) return null
     return (data ?? []).map((r) => ({
-      ...r, likes: Number(r.likes ?? 0), liked: Boolean(r.liked), mine: Boolean(r.mine),
+      ...r, likes: Number(r.likes ?? 0), liked: Boolean(r.liked), mine: Boolean(r.mine), comments: Number(r.comments ?? 0),
       author_avatar_url: avatarUrl(r.author_avatar),
     }))
   } catch {
@@ -75,6 +75,43 @@ export async function fetchMyPosts() {
     return error ? null : data ?? []
   } catch {
     return null
+  }
+}
+
+const commentFailed = "Couldn't post your comment. Please try again."
+const commentDeleteFailed = "Couldn't delete your comment. Please try again."
+
+// One post's comments, oldest first, with the author's current name and photo (019_post_comments.sql); null if loading failed
+export async function fetchComments(postId) {
+  if (!supabase) return null
+  try {
+    const { data, error } = await supabase.rpc('post_comments', { p_post_id: postId })
+    if (error) return null
+    return (data ?? []).map((r) => ({ ...r, mine: Boolean(r.mine), author_avatar_url: avatarUrl(r.author_avatar) }))
+  } catch {
+    return null
+  }
+}
+
+// row comes from commentFromForm (communityPosts.js)
+export async function createComment(postId, row) {
+  if (!supabase) return { error: commentFailed }
+  try {
+    const { error } = await supabase.from('community_post_comments').insert({ post_id: postId, ...row })
+    return error ? { error: commentFailed } : { ok: true }
+  } catch {
+    return { error: commentFailed }
+  }
+}
+
+// No row back means the comment is already gone, which is a failure too
+export async function deleteComment(id) {
+  if (!supabase) return { error: commentDeleteFailed }
+  try {
+    const { data, error } = await supabase.from('community_post_comments').delete().eq('id', id).select('id')
+    return error || !data?.length ? { error: commentDeleteFailed } : { ok: true }
+  } catch {
+    return { error: commentDeleteFailed }
   }
 }
 

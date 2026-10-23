@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { myPostCard, postFromForm, reportFromForm, sortPosts } from './communityPosts.js'
+import { commentFromForm, myPostCard, postFromForm, reportFromForm, sortPosts } from './communityPosts.js'
 
 const user = { email: 'leila@x.com', user_metadata: { full_name: 'Leila Ben Ali' } }
 const valid = { title: '  Sunrise at Chebika ', cityId: 'tozeur', content: '  Leave Tozeur at 5am and you get the canyon to yourself. ' }
@@ -109,5 +109,20 @@ describe('sortPosts', () => {
     const list = [a, b, c]
     sortPosts(list, 'oldest')
     expect(ids(list)).toEqual(['a', 'b', 'c'])
+  })
+})
+
+describe('commentFromForm', () => {
+  it('returns the trimmed row with the author name', () => {
+    expect(commentFromForm('  Go at sunrise!  ', user)).toEqual({ row: { body: 'Go at sunrise!', author_name: 'Leila Ben Ali' } })
+  })
+
+  it('refuses an empty comment', () => {
+    expect(commentFromForm('   ', user).error).toBe('Please write a comment.')
+  })
+
+  it('refuses a comment over 1000 characters', () => {
+    expect(commentFromForm('a'.repeat(1001), user).error).toBe('Your comment is too long (1000 characters max).')
+    expect(commentFromForm('a'.repeat(1000), user).row.body).toHaveLength(1000)
   })
 })
