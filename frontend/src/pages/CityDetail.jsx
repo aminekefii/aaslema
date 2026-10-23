@@ -206,6 +206,11 @@ export default function CityDetail({ id, user }) {
       <section className="city-hero">
         <img src={city.cover ?? city.image} alt="" className="city-hero__bg" />
         {isVisited && <span className="city-hero__visited"><CheckCircle2 size={18} /> Visited</span>}
+        {city.coverCredit && (
+          <a href={city.coverCredit.url} target="_blank" rel="noreferrer" className="city-hero__credit">
+            Photo: {city.coverCredit.author}, {city.coverCredit.license}
+          </a>
+        )}
         <nav className="city-hero__nav" aria-label="Other destinations">
           <a href={`${base}/destinations/${prev.id}`} className="city-hero__arrow city-hero__arrow--prev" aria-label={`Previous destination: ${prev.name}`} title={prev.name}>
             <ChevronLeft strokeWidth={1.25} />

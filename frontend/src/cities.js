@@ -1,5 +1,6 @@
 // Copied from aaslema-new (frontend/src/data/cities.ts), types removed.
 // cover: a bigger photo for the full-width city header, where image is too small to stay sharp
+// coverCredit: photographer and licence for a cover taken from Wikimedia Commons, shown on the header
 export const cities = [
   {
     id: 'tunis',
@@ -126,7 +127,8 @@ export const cities = [
     title: 'Ceramics & Citrus Capital',
     desc: "The artistic gateway to the Cap Bon, where orange blossom scents mix with the vibrant colors of handcrafted pottery.",
     image: '/images/cities/nabeul-1.jpg',
-    cover: '/images/cities/nabeul-2.jpg',
+    cover: '/images/cities/nabeul-cover.jpg',
+    coverCredit: { author: 'SouthAngel:)', license: 'CC BY-SA 2.0', url: 'https://commons.wikimedia.org/wiki/File:Potteries_in_Nabeul.jpg' },
     vibe: 'Artistic & Fragrant',
     bestTime: 'April (Blossom) & Summer',
     population: '787,000+',
@@ -390,7 +392,8 @@ export const cities = [
     title: 'Cradle of the Revolution',
     desc: "A vast agricultural heartland and the historical spark of the Arab Spring, surrounded by the steppes of Central Tunisia.",
     image: '/images/cities/sidi-bouzid-1.jpg',
-    cover: '/images/cities/sidi-bouzid-2.jpg',
+    cover: '/images/cities/sidi-bouzid-cover.jpg',
+    coverCredit: { author: 'El Golli Mohamed', license: 'CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:Parc_national_de_Bouhedma.jpg' },
     vibe: 'Pioneering & Earthy',
     bestTime: 'Autumn',
     population: '429,912+',
@@ -414,7 +417,8 @@ export const cities = [
     title: 'The Commercial Giant',
     desc: "A bustling industrial powerhouse with a 9th-century Medina that remains the beating heart of local life and craft.",
     image: '/images/cities/sfax-1.jpg',
-    cover: '/images/cities/sfax-2.jpg',
+    cover: '/images/cities/sfax-cover.jpg',
+    coverCredit: { author: 'IssamBarhoumi', license: 'CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:Grande_Mosqu%C3%A9e_de_Sfax_09.jpg' },
     vibe: 'Authentic & Industrious',
     bestTime: 'October to April',
     population: '955,000+',

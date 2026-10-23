@@ -504,6 +504,8 @@ button, input, select { font: inherit; }
   display: inline-flex; align-items: center; gap: 8px; padding: 8px 18px; border-radius: 999px;
   background: rgba(28, 35, 31, 0.75); color: var(--white); font-weight: 600;
 }
+.city-hero__credit { position: absolute; left: 16px; bottom: 10px; z-index: 1; font-size: 12px; color: rgba(255, 255, 255, 0.6); }
+.city-hero__credit:hover { color: var(--white); text-decoration: underline; }
 /* Previous / next destination: thin chevrons on the header's edges, a pair of round buttons
    in its bottom-right corner once the edges get too close to the text */
 .city-hero__arrow {
