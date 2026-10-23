@@ -45,3 +45,12 @@ export function reportFromForm(reason) {
   if (textLength(text) > REPORT_MAX) return { error: 'Your report is too long (1000 characters max).' }
   return { row: { reason: text } }
 }
+
+// Community sidebar "Sort by": 'latest', 'oldest' or 'liked' (newest first on a tie); returns a new list
+const newestFirst = (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+const sorters = {
+  latest: newestFirst,
+  oldest: (a, b) => -newestFirst(a, b),
+  liked: (a, b) => b.likes - a.likes || newestFirst(a, b),
+}
+export const sortPosts = (posts, sort) => [...posts].sort(sorters[sort] ?? newestFirst)

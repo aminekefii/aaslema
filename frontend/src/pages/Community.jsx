@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
-import { MessageSquare, Heart, Share2, Search, Plus, MoreHorizontal, CheckCircle2 } from 'lucide-react'
+import { MessageSquare, Heart, Share2, Search, Plus, MoreHorizontal, CheckCircle2, SlidersHorizontal } from 'lucide-react'
 import { cities } from '../cities.js'
 import Modal from '../components/Modal.jsx'
 import { initials } from '../names.js'
-import { postFromForm, reportFromForm } from '../communityPosts.js'
+import { postFromForm, reportFromForm, sortPosts } from '../communityPosts.js'
 import { DeletePostModal, PostFormModal } from '../components/PostDialogs.jsx'
 import { createPost, deletePost, fetchFeed, reportPost, setPostLike, updatePost } from '../communityApi.js'
 import { toggleMomentLike } from '../moments.js'
@@ -11,6 +11,8 @@ import { toggleMomentLike } from '../moments.js'
 // Port of aaslema-new's Community page. Everyone sees the saved posts from Supabase; visitors
 // (/community) are sent to sign in to post, like or report, signed-in users (/app/community) do it here.
 const EMPTY_POST = { title: '', content: '', cityId: '' }
+// [value for sortPosts, label]
+const SORTS = [['latest', 'Latest'], ['oldest', 'Oldest'], ['liked', 'Most liked']]
 const toSignIn = () => window.location.assign('/signin')
 
 function timeAgo(iso) {
@@ -36,6 +38,7 @@ const feedCard = (r) => ({
 export default function Community({ user }) {
   const [searchTerm, setSearchTerm] = useState('')
   const [activeForum, setActiveForum] = useState('global')
+  const [sort, setSort] = useState('latest')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingPost, setEditingPost] = useState(null)
   const [newPost, setNewPost] = useState(EMPTY_POST)
@@ -84,10 +87,16 @@ export default function Community({ user }) {
 
   const posts = (feed ?? []).map(feedCard)
 
-  const filteredPosts = posts.filter((p) =>
+  const filteredPosts = sortPosts(posts.filter((p) =>
     (activeForum === 'global' || p.cityId === activeForum) &&
     (p.title.toLowerCase().includes(searchTerm.toLowerCase()) || p.content.toLowerCase().includes(searchTerm.toLowerCase())),
-  )
+  ), sort)
+  const sortLabel = SORTS.find(([value]) => value === sort)[1]
+  const filtered = activeForum !== 'global' || sort !== 'latest'
+  const resetFilters = () => {
+    setActiveForum('global')
+    setSort('latest')
+  }
   const activeCityName = cities.find((c) => c.id === activeForum)?.name
 
   const openNewPost = () => {
@@ -204,19 +213,45 @@ export default function Community({ user }) {
             <button onClick={openNewPost} className="btn btn--primary"><Plus size={18} /> New post</button>
           </div>
 
-          <div className="cm-pills" role="group" aria-label="Filter by city">
-            <button onClick={() => setActiveForum('global')} className={activeForum === 'global' ? 'is-active' : ''} aria-pressed={activeForum === 'global'}>All</button>
-            {cities.map((city) => (
-              <button key={city.id} onClick={() => setActiveForum(city.id)} className={activeForum === city.id ? 'is-active' : ''} aria-pressed={activeForum === city.id}>
-                {city.name}
-              </button>
-            ))}
-          </div>
-
           <div className="cm-layout">
+            {/* Sidebar */}
+            <aside className="cm-sidebar">
+              <div className="cm-card cm-filters">
+                <div className="cm-filters__head">
+                  <h3><SlidersHorizontal size={16} /> Filters</h3>
+                  {filtered && <button onClick={resetFilters} className="cm-filters__reset">Reset</button>}
+                </div>
+                <label className="cm-filters__group">
+                  <span className="cm-filters__label">Location</span>
+                  <select value={activeForum} onChange={(e) => setActiveForum(e.target.value)}>
+                    <option value="global">All of Tunisia</option>
+                    {cities.map((city) => <option key={city.id} value={city.id}>{city.name}</option>)}
+                  </select>
+                </label>
+                <fieldset className="cm-filters__group">
+                  <legend className="cm-filters__label">Sort by</legend>
+                  {SORTS.map(([value, label]) => (
+                    <label key={value} className="cm-filters__option">
+                      <input type="radio" name="cm-sort" value={value} checked={sort === value} onChange={() => setSort(value)} />
+                      {label}
+                    </label>
+                  ))}
+                </fieldset>
+              </div>
+
+              <div className="cm-card cm-about">
+                <h3>About the forum</h3>
+                <dl>
+                  <div><dt>Posts</dt><dd>{posts.length}</dd></div>
+                  <div><dt>City forums</dt><dd>{cities.length}</dd></div>
+                </dl>
+                <button onClick={openNewPost} className="cm-outline-btn">Share a spot</button>
+              </div>
+            </aside>
+
             {/* Feed */}
             <div className="cm-feed">
-              <h2 className="cm-feed__title">{activeForum === 'global' ? 'Latest posts' : `Latest in ${activeCityName}`}</h2>
+              <h2 className="cm-feed__title">{sortLabel} posts{activeForum === 'global' ? '' : ` in ${activeCityName}`}</h2>
 
               {feedLoading ? (
                 <div className="cm-card cm-empty"><p>Loading posts…</p></div>
@@ -269,18 +304,6 @@ export default function Community({ user }) {
                 ))
               )}
             </div>
-
-            {/* Sidebar */}
-            <aside className="cm-sidebar">
-              <div className="cm-card cm-about">
-                <h3>About the forum</h3>
-                <dl>
-                  <div><dt>Posts</dt><dd>{posts.length}</dd></div>
-                  <div><dt>City forums</dt><dd>{cities.length}</dd></div>
-                </dl>
-                <button onClick={openNewPost} className="cm-outline-btn">Share a spot</button>
-              </div>
-            </aside>
           </div>
         </div>
       </section>

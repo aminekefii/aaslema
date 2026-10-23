@@ -9,7 +9,7 @@ Last updated: 2026-10-20 (Netlify config added)
   `/app/community`), My posts (`/app/profile/posts`), post reports (admin page `/admin/reports`, read only) and the
   Feed at `/app` (newest moments and posts, view only) are merged into `main` and pushed to `origin/main` (`bd2aae7`).
 - Only other branch: `google-sign-in` (not merged, see below).
-- Frontend tests: 15 files, 246 tests, all passing (`npx vitest run` in `frontend/`).
+- Frontend tests: 15 files, 250 tests, all passing (`npx vitest run` in `frontend/`).
 - Supabase SQL lives in `backend/supabase/` (`001`–`018`). Each file is run
   by hand in the Supabase SQL editor; check that `004_city_likes_visits.sql`,
   `005_city_visit_counts.sql`, `006_reviews.sql`, `007_moments.sql`,
@@ -104,7 +104,8 @@ Last updated: 2026-10-20 (Netlify config added)
 | My posts in the profile dashboard: your posts with likes, edit and delete (`015_my_posts.sql`) | — (designed in chat) | `9c2d59d` |
 | Post reports: users report other people's posts; admin Post reports page, read only, See post "Coming soon" (`016_post_reports.sql`) | — (designed in chat) | `c85a1d7` |
 | Feed at `/app`: newest moments and posts, view only (`017_feed_moments.sql`) | — (designed in chat) | `bd2aae7` |
-| Landing page FAQ at `/#faq` (FAQ page and nav link removed, `b2c444d`); `/community` shows the real posts to visitors, who are sent to sign in to post, like or report (`018_public_community_feed.sql`) | — (designed in chat) | next commit |
+| Landing page FAQ at `/#faq` (FAQ page and nav link removed, `b2c444d`); `/community` shows the real posts to visitors, who are sent to sign in to post, like or report (`018_public_community_feed.sql`) | — (designed in chat) | `6703abe` |
+| Community filters sidebar: Location dropdown, Sort by Latest / Oldest / Most liked (`sortPosts`), replaces the city buttons; shown above the posts on tablets and phones | — (designed in chat) | next commit |
 
 Specs and plans are in `docs/superpowers/specs/` and `docs/superpowers/plans/`.
 

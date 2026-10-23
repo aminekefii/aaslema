@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { myPostCard, postFromForm, reportFromForm } from './communityPosts.js'
+import { myPostCard, postFromForm, reportFromForm, sortPosts } from './communityPosts.js'
 
 const user = { email: 'leila@x.com', user_metadata: { full_name: 'Leila Ben Ali' } }
 const valid = { title: '  Sunrise at Chebika ', cityId: 'tozeur', content: '  Leave Tozeur at 5am and you get the canyon to yourself. ' }
@@ -84,5 +84,30 @@ describe('reportFromForm', () => {
   it('limits the reason', () => {
     expect(reportFromForm('a'.repeat(1000)).row).toBeDefined()
     expect(reportFromForm('a'.repeat(1001))).toEqual({ error: 'Your report is too long (1000 characters max).' })
+  })
+})
+
+describe('sortPosts', () => {
+  const a = { id: 'a', createdAt: '2026-10-01T10:00:00Z', likes: 2 }
+  const b = { id: 'b', createdAt: '2026-10-03T10:00:00Z', likes: 5 }
+  const c = { id: 'c', createdAt: '2026-10-02T10:00:00Z', likes: 5 }
+  const ids = (posts) => posts.map((p) => p.id)
+
+  it('puts the newest first for latest', () => {
+    expect(ids(sortPosts([a, b, c], 'latest'))).toEqual(['b', 'c', 'a'])
+  })
+
+  it('puts the oldest first for oldest', () => {
+    expect(ids(sortPosts([a, b, c], 'oldest'))).toEqual(['a', 'c', 'b'])
+  })
+
+  it('puts the most liked first, newest first on a tie', () => {
+    expect(ids(sortPosts([a, c, b], 'liked'))).toEqual(['b', 'c', 'a'])
+  })
+
+  it('leaves the list it was given alone', () => {
+    const list = [a, b, c]
+    sortPosts(list, 'oldest')
+    expect(ids(list)).toEqual(['a', 'b', 'c'])
   })
 })
