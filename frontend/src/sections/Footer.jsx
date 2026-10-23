@@ -1,13 +1,7 @@
-import { ArrowUp, Compass, Facebook, Instagram, Twitter } from 'lucide-react'
+import { ArrowUp, Compass } from 'lucide-react'
 import { brand, footerColumns, images } from '../data.js'
 import { isAppPath, redirectFor } from '../redirects.js'
 import { currentPath } from '../route.js'
-
-const socials = [
-  { icon: Instagram, label: 'Instagram', href: 'https://www.instagram.com/' },
-  { icon: Twitter, label: 'Twitter', href: 'https://twitter.com/' },
-  { icon: Facebook, label: 'Facebook', href: 'https://www.facebook.com/' },
-]
 
 // Inside the app, point internal links at their /app twin to skip a redirect
 const appHref = (href) => (isAppPath(currentPath) && redirectFor(href, true)) || href
@@ -31,11 +25,6 @@ export default function Footer() {
 
         <div className="footer__bottom">
           <p>© {new Date().getFullYear()} {brand.name} Tunisia</p>
-          <div className="socials">
-            {socials.map(({ icon: Icon, label, href }) => (
-              <a key={label} href={href} target="_blank" rel="noreferrer" aria-label={label}><Icon size={16} /></a>
-            ))}
-          </div>
         </div>
       </div>
       <a href="#" className="scroll-top" aria-label="Back to top"><ArrowUp size={18} /></a>
