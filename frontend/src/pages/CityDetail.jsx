@@ -29,8 +29,6 @@ const TABS = [
 ]
 
 const EMPTY_MOMENT = { file: null, preview: '', spot: '', caption: '' }
-// Cities whose header photo fills the whole header instead of sitting beside the text (trying it on Tunis first)
-const COVER_HEROES = new Set(['tunis'])
 
 export default function CityDetail({ id, user }) {
   const city = cities.find((c) => c.id === id)
@@ -200,14 +198,13 @@ export default function CityDetail({ id, user }) {
     }
   }
   const pageUrl = encodeURIComponent(window.location.href)
-  const cover = COVER_HEROES.has(city.id)
 
   return (
     <>
       {/* Header */}
-      <section className={`city-hero ${cover ? 'city-hero--cover' : ''}`}>
-        {cover && <img src={city.image} alt="" className="city-hero__bg" />}
-        {cover && isVisited && <span className="city-hero__visited"><CheckCircle2 size={18} /> Visited</span>}
+      <section className="city-hero">
+        <img src={city.image} alt="" className="city-hero__bg" />
+        {isVisited && <span className="city-hero__visited"><CheckCircle2 size={18} /> Visited</span>}
         <div className="container">
           <a href={`${base}/destinations`} className="city-hero__back"><ArrowLeft size={16} /> Back to destinations</a>
 
@@ -246,13 +243,6 @@ export default function CityDetail({ id, user }) {
               {note === 'loadError' && <p className="city-note city-note--error" role="alert">Couldn't load your likes and visits. Please refresh the page.</p>}
               {planLoadError && <p className="city-note city-note--error" role="alert">Couldn't load your plan. Please refresh the page.</p>}
             </div>
-
-            {!cover && (
-              <div className="city-hero__media">
-                <img src={city.image} alt={city.name} className="city-hero__image" />
-                {isVisited && <span className="city-hero__visited"><CheckCircle2 size={18} /> Visited</span>}
-              </div>
-            )}
           </div>
         </div>
       </section>
