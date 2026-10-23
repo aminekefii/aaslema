@@ -414,7 +414,7 @@ button, input, select { font: inherit; }
 .blog-card__image { position: relative; overflow: hidden; border-radius: 14px; height: 250px; margin-top: 10px; }
 .blog-card__image .btn { position: absolute; left: 20px; bottom: 20px; }
 
-/* ---------- FAQ page ---------- */
+/* ---------- Page banner + FAQ section ---------- */
 .page-banner { background: var(--heading); padding: 180px 0 90px; text-align: center; color: var(--dark-muted); }
 .page-banner h1 { color: var(--white); font-size: 56px; letter-spacing: -1px; margin-bottom: 10px; }
 .page-banner p { margin: 0; }

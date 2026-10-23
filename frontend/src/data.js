@@ -18,7 +18,6 @@ export const navLinks = [
   ['Festivals', '/festivals'],
   ['Community', '/community'],
   ['Contact', '/contact'],
-  ['FAQ', '/faq'],
 ]
 
 // Navbar of the signed-in area; Profile and Sign Out sit on the right of the header.
@@ -153,7 +152,7 @@ export const posts = [
 export const footerColumns = [
   { title: 'Explore', links: [['Destinations', '/destinations'], ['Trip planner', '/app/profile/planner'], ['Community', '/community']] },
   { title: 'Travel Styles', links: [['Backpacking', '#'], ['Bikepacking', '#'], ['History', '#']] },
-  { title: 'About', links: [['Contact', '/contact'], ['FAQ', '/faq'], ['Legal notice', '#'], ['Privacy', '#']] },
+  { title: 'About', links: [['Contact', '/contact'], ['FAQ', '/#faq'], ['Legal notice', '#'], ['Privacy', '#']] },
 ]
 
 export const images = {

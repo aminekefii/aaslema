@@ -10,7 +10,7 @@ import Testimonials from './sections/Testimonials.jsx'
 import Cta from './sections/Cta.jsx'
 import Blog from './sections/Blog.jsx'
 import Footer from './sections/Footer.jsx'
-import Faq from './pages/Faq.jsx'
+import Faq from './sections/Faq.jsx'
 import Contact from './pages/Contact.jsx'
 import Destinations from './pages/Destinations.jsx'
 import CityDetail from './pages/CityDetail.jsx'
@@ -39,7 +39,7 @@ import { isAdmin } from './roles.js'
 import { supabase, useUser } from './supabase.js'
 
 // Tiny path-based page switch; any other public path shows the landing page.
-const pages = { '/faq': Faq, '/contact': Contact, '/destinations': Destinations, '/festivals': Festivals, '/community': Community, '/signin': SignIn, '/signup': SignUp, '/reset-password': ResetPassword }
+const pages = { '/contact': Contact, '/destinations': Destinations, '/festivals': Festivals, '/community': Community, '/signin': SignIn, '/signup': SignUp, '/reset-password': ResetPassword }
 // Profile dashboard: sidebar layout around the active section
 const inProfile = (Section) => (props) => <ProfileLayout {...props}><Section {...props} /></ProfileLayout>
 // Signed-in area; keys must match appPagePaths in redirects.js
@@ -98,6 +98,7 @@ export default function App() {
         <Testimonials />
         <Cta />
         <Blog />
+        <Faq />
       </main>}
       <Footer />
     </>
