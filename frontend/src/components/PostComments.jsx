@@ -3,10 +3,11 @@ import { commentFromForm, COMMENT_MAX } from '../communityPosts.js'
 import { createComment, deleteComment, fetchComments } from '../communityApi.js'
 import { initials } from '../names.js'
 import { timeAgo } from '../timeAgo.js'
+import { AuthorButton } from './ProfileCard.jsx'
 
 // Comments under one community post: everyone reads them, signed-in users write and delete their own.
-// onCountChange(+1 / -1) keeps the post's comment count in step.
-export default function PostComments({ postId, user, onCountChange }) {
+// onCountChange(+1 / -1) keeps the post's comment count in step; openCard (signed in) opens an author's card.
+export default function PostComments({ postId, user, onCountChange, openCard = null }) {
   // undefined while loading, null if loading failed
   const [comments, setComments] = useState(undefined)
   const [text, setText] = useState('')
@@ -68,12 +69,16 @@ export default function PostComments({ postId, user, onCountChange }) {
         <ul className="cm-comments__list">
           {comments.map((c) => (
             <li key={c.id} className="cm-comment">
-              {c.author_avatar_url
-                ? <img src={c.author_avatar_url} alt="" className="cm-avatar cm-avatar--sm" loading="lazy" />
-                : <span className="cm-avatar cm-avatar--sm cm-avatar--initials" aria-hidden="true">{initials(c.author_name)}</span>}
+              <AuthorButton name={c.author_name} onOpen={openCard && (() => openCard('comment', c.id, c.author_name))} className="cm-comment__avatar">
+                {c.author_avatar_url
+                  ? <img src={c.author_avatar_url} alt="" className="cm-avatar cm-avatar--sm" loading="lazy" />
+                  : <span className="cm-avatar cm-avatar--sm cm-avatar--initials" aria-hidden="true">{initials(c.author_name)}</span>}
+              </AuthorButton>
               <div className="cm-comment__body">
                 <p className="cm-comment__head">
-                  <strong>{c.author_name}</strong>
+                  {openCard
+                    ? <button type="button" className="author-btn cm-comment__name" onClick={() => openCard('comment', c.id, c.author_name)}>{c.author_name}</button>
+                    : <strong>{c.author_name}</strong>}
                   <time dateTime={c.created_at}>{timeAgo(c.created_at)}</time>
                 </p>
                 <p className="cm-comment__text">{c.body}</p>

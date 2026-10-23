@@ -110,6 +110,26 @@ export async function fetchProfileStats() {
   }
 }
 
+// Someone's public card, found from their post, moment or comment (022_public_card.sql);
+// { card } or { error } (no card when the item or profile is gone)
+export async function fetchPublicCard(kind, id) {
+  if (!supabase) return { error: true }
+  try {
+    const { data, error } = await supabase.rpc('public_card', { p_kind: kind, p_id: id })
+    const row = data?.[0]
+    if (error || !row) return { error: true }
+    return {
+      card: {
+        ...row,
+        avatar_url: avatarUrl(row.avatar_path),
+        stats: { visited: Number(row.visited ?? 0), moments: Number(row.moments ?? 0), posts: Number(row.posts ?? 0) },
+      },
+    }
+  } catch {
+    return { error: true }
+  }
+}
+
 // Supabase's own messages explain rate limits and "same password", so they are shown as they are
 export async function changeEmail(email) {
   if (!supabase) return { error: accountFailed }

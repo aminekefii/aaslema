@@ -9,6 +9,7 @@ import { base } from '../route.js'
 import { adjustCount, likeCount } from '../cityCounts.js'
 import { fetchLikeCounts, fetchMyCityIds, setCityFlag } from '../cityActivity.js'
 import MomentsCarousel from '../components/MomentsCarousel.jsx'
+import { useProfileCard } from '../components/ProfileCard.jsx'
 import { CAPTION_MAX, momentFromForm, spotMoments, toggleMomentLike } from '../moments.js'
 import { fetchPublishedMoments, setMomentLike, uploadMoment } from '../momentsApi.js'
 import { textLength } from '../reviews.js'
@@ -62,6 +63,8 @@ export default function CityDetail({ id, user }) {
   const likingMoments = useRef(new Set())
   const [momentLikeError, setMomentLikeError] = useState(false)
   const [showShareModal, setShowShareModal] = useState(false)
+  // Signed in: clicking a moment's author opens their public card
+  const { openCard, cardDialog } = useProfileCard(user)
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
@@ -392,7 +395,7 @@ export default function CityDetail({ id, user }) {
                 </div>
               ) : (
                 <>
-                  <MomentsCarousel moments={moments} onLike={user ? handleMomentLike : null} />
+                  <MomentsCarousel moments={moments} onLike={user ? handleMomentLike : null} openCard={openCard} />
                   {momentLikeError && <p className="city-note">Couldn't save your like. Please try again.</p>}
                 </>
               )}
@@ -473,6 +476,8 @@ export default function CityDetail({ id, user }) {
       )}
 
       {/* Share modal */}
+      {cardDialog}
+
       {showShareModal && (
         <Modal title={`Share ${city.name}`} labelId="share-dialog-title" onClose={() => setShowShareModal(false)}>
           {/* Sharing isn't live yet: the buttons stay hidden underneath so the card keeps its size */}

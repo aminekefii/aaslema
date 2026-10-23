@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, Heart, Navigation } from 'lucide-react'
 import usePerView from '../usePerView.js'
 import { timeAgo } from '../timeAgo.js'
 import { initials } from '../names.js'
+import { AuthorButton } from './ProfileCard.jsx'
 
 // Visitors (no onLike) get a sign-in link showing the count instead of a button;
 // on their own moments users only see the count (they can't like their own)
@@ -33,7 +34,8 @@ export function LikeButton({ moment, onLike }) {
 }
 
 // Approved moments of a destination: arrows and swipe, 3 / 2 / 1 cards, no autoplay.
-export default function MomentsCarousel({ moments, onLike }) {
+// openCard (signed-in users) opens an author's public card.
+export default function MomentsCarousel({ moments, onLike, openCard = null }) {
   const perView = usePerView()
   const positions = Math.max(1, moments.length - perView + 1)
   const [index, setIndex] = useState(0)
@@ -65,12 +67,12 @@ export default function MomentsCarousel({ moments, onLike }) {
               <div className="moment-card__inner">
                 <img src={m.url} alt={m.caption} draggable="false" />
                 <figcaption>
-                  <div className="moment-card__by">
+                  <AuthorButton name={m.author_name} onOpen={openCard && (() => openCard('moment', m.id, m.author_name))} className="moment-card__by">
                     {m.author_avatar_url
                       ? <img src={m.author_avatar_url} alt="" className="moment-card__avatar" draggable="false" />
                       : <span className="moment-card__avatar moment-card__avatar--initials" aria-hidden="true">{initials(m.author_name)}</span>}
                     <strong>{m.author_name}</strong>
-                  </div>
+                  </AuthorButton>
                   <p className="moment-card__caption">{m.caption}</p>
                   {m.spot && <p className="moment-card__spot"><Navigation size={12} /> {m.spot}</p>}
                   <div className="moment-card__footer">

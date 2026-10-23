@@ -6,6 +6,7 @@ import { fetchFeedMoments, setMomentLike } from '../momentsApi.js'
 import { fetchFeed, setPostLike } from '../communityApi.js'
 import { LikeButton } from '../components/MomentsCarousel.jsx'
 import PostComments from '../components/PostComments.jsx'
+import { AuthorButton, useProfileCard } from '../components/ProfileCard.jsx'
 import { initials } from '../names.js'
 import { timeAgo } from '../timeAgo.js'
 
@@ -24,6 +25,8 @@ export default function AppHome({ user }) {
   const [likesSaving, setLikesSaving] = useState(() => new Set())
   const [openComments, setOpenComments] = useState(() => new Set())
   const [toast, setToast] = useState(null)
+  // Clicking an author opens their public card
+  const { openCard, cardDialog } = useProfileCard(user)
 
   const loadMoments = useCallback(async () => {
     setMoments(undefined)
@@ -118,12 +121,12 @@ export default function AppHome({ user }) {
                       <div className="moment-card__inner">
                         <a href={m.href} className="feed-moment__photo"><img src={m.url} alt={m.caption} loading="lazy" /></a>
                         <div className="feed-moment__body">
-                          <div className="moment-card__by">
+                          <AuthorButton name={m.author_name} onOpen={openCard && (() => openCard('moment', m.id, m.author_name))} className="moment-card__by">
                             {m.author_avatar_url
                               ? <img src={m.author_avatar_url} alt="" className="moment-card__avatar" />
                               : <span className="moment-card__avatar moment-card__avatar--initials" aria-hidden="true">{initials(m.author_name)}</span>}
                             <strong>{m.author_name}</strong>
-                          </div>
+                          </AuthorButton>
                           <a href={m.href} className="feed-moment__city"><MapPin size={12} /> {m.cityName}</a>
                           <p className="moment-card__caption">{m.caption}</p>
                           {m.spot && <p className="moment-card__spot"><Navigation size={12} /> {m.spot}</p>}
@@ -148,13 +151,15 @@ export default function AppHome({ user }) {
                   {posts.map((p) => (
                     <article key={p.id} className="cm-card cm-post">
                       <div className="cm-post__head">
-                        {p.author_avatar_url
-                          ? <img src={p.author_avatar_url} alt="" className="cm-avatar" loading="lazy" />
-                          : <span className="cm-avatar cm-avatar--initials" aria-hidden="true">{initials(p.author_name)}</span>}
-                        <div className="cm-post__who">
-                          <strong>{p.author_name}</strong>
-                          <small>{timeAgo(p.created_at)}</small>
-                        </div>
+                        <AuthorButton name={p.author_name} onOpen={openCard && (() => openCard('post', p.id, p.author_name))} className="cm-post__author">
+                          {p.author_avatar_url
+                            ? <img src={p.author_avatar_url} alt="" className="cm-avatar" loading="lazy" />
+                            : <span className="cm-avatar cm-avatar--initials" aria-hidden="true">{initials(p.author_name)}</span>}
+                          <div className="cm-post__who">
+                            <strong>{p.author_name}</strong>
+                            <small>{timeAgo(p.created_at)}</small>
+                          </div>
+                        </AuthorButton>
                       </div>
                       <h3>{p.title}</h3>
                       <p className="cm-post__text">{p.body}</p>
@@ -169,7 +174,7 @@ export default function AppHome({ user }) {
                       </div>
 
                       {openComments.has(p.id) && (
-                        <PostComments postId={p.id} user={user} onCountChange={(delta) => changeCommentCount(p.id, delta)} />
+                        <PostComments postId={p.id} user={user} onCountChange={(delta) => changeCommentCount(p.id, delta)} openCard={openCard} />
                       )}
                     </article>
                   ))}
@@ -180,6 +185,8 @@ export default function AppHome({ user }) {
           </div>
         </div>
       </section>
+
+      {cardDialog}
 
       {toast && (
         <div className="cm-toast" role="status">

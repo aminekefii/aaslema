@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import { Compass, MapPin } from 'lucide-react'
 import {
-  COUNTRIES, PROFILE_LIMITS, TRAVEL_STYLES, cleanProfile, emailError, linkNotice, passwordError, profileChanged, profileForm, travelStyleLabel,
+  COUNTRIES, PROFILE_LIMITS, TRAVEL_STYLES, cleanProfile, emailError, linkNotice, passwordError, profileChanged, profileForm,
 } from '../profile.js'
+import { ProfileCard } from '../components/ProfileCard.jsx'
 import { avatarUrl, changeEmail, changePassword, fetchProfile, fetchProfileStats, removeAvatar, saveProfile, uploadAvatar } from '../profileApi.js'
 import { textLength } from '../reviews.js'
 import { initials } from '../names.js'
@@ -19,36 +19,20 @@ function Notice({ notice }) {
 
 // What other travellers will see; follows the Personal details form as it is typed (form = its values)
 function PublicCard({ profile, form, stats }) {
-  const url = avatarUrl(profile.avatar_path)
-  const name = form.full_name.trim() || profile.full_name
-  const place = [form.city.trim(), form.country.trim()].filter(Boolean).join(', ')
-  const style = travelStyleLabel(form.travel_style)
-  const bio = form.bio.trim()
-  const count = (key) => (stats ? stats[key] : '–')
-
   return (
     <section className="profile-card">
       <h2>Your public card</h2>
       <p className="profile-card__lead">Other travellers will see this card. Your phone and email are never shown.</p>
-      <article className="public-card" aria-label="Preview of your public card">
-        <div className="public-card__band" />
-        <div className="public-card__body">
-          {url
-            ? <img src={url} alt="" className="public-card__photo" />
-            : <span className="public-card__photo public-card__photo--initials" aria-hidden="true">{initials(name)}</span>}
-          <h3>{name}</h3>
-          {place && <p className="public-card__place"><MapPin size={14} /> {place}</p>}
-          {style && <p className="public-card__style"><Compass size={14} /> {style}</p>}
-          {bio
-            ? <p className="public-card__bio">{bio}</p>
-            : <p className="public-card__bio public-card__bio--empty">Add a few words about yourself in Personal details.</p>}
-          <dl className="public-card__stats">
-            <div><dt>Destinations visited</dt><dd>{count('visited')}</dd></div>
-            <div><dt>Moments shared</dt><dd>{count('moments')}</dd></div>
-            <div><dt>Posts</dt><dd>{count('posts')}</dd></div>
-          </dl>
-        </div>
-      </article>
+      <ProfileCard
+        name={form.full_name.trim() || profile.full_name}
+        avatarUrl={avatarUrl(profile.avatar_path)}
+        city={form.city.trim()}
+        country={form.country.trim()}
+        travelStyle={form.travel_style}
+        bio={form.bio.trim()}
+        stats={stats}
+        emptyBio="Add a few words about yourself in Personal details."
+      />
     </section>
   )
 }

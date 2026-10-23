@@ -831,6 +831,13 @@ button, input, select { font: inherit; }
 .cm-action--end { margin-left: auto; }
 .cm-action:disabled, .cm-action[aria-disabled='true'] { opacity: 0.6; cursor: default; }
 .cm-action.is-open { background: var(--lighter); color: var(--title); }
+/* Author photo + name that opens their public card (signed-in users) */
+.author-btn { padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.author-btn:hover strong, .author-btn.cm-comment__name:hover { color: var(--primary); text-decoration: underline; }
+.author-btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; border-radius: 8px; }
+.cm-post__author { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.cm-comment__avatar { flex-shrink: 0; align-self: flex-start; display: block; border-radius: 50%; }
+.cm-comment__name { color: var(--title); font-weight: 600; }
 /* Comments under a post */
 .cm-comments { display: grid; gap: 14px; margin-top: 12px; padding-top: 14px; border-top: 1px solid var(--border); }
 .cm-comments__list { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }

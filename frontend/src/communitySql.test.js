@@ -94,3 +94,21 @@ describe('021_profile_card.sql', () => {
     expect(card).toMatch(/c\.user_id = auth\.uid\(\)/)
   })
 })
+
+describe('022_public_card.sql', () => {
+  const card = readFileSync(new URL('../../backend/supabase/022_public_card.sql', import.meta.url), 'utf8')
+
+  it('is for signed-in users only', () => {
+    expect(card).toMatch(/revoke all on function public\.public_card\(text, uuid\) from public, anon;/)
+    expect(card).toMatch(/grant execute on function public\.public_card\(text, uuid\) to authenticated;/)
+  })
+
+  it('never sends the phone or any id', () => {
+    const returns = card.match(/returns table \(([^)]*)\)/)[1]
+    expect(returns).not.toMatch(/phone|email|\bid\b|user_id/)
+  })
+
+  it('finds moment authors only through approved moments', () => {
+    expect(card).toMatch(/m\.id = p_id and m\.approved_at is not null/)
+  })
+})

@@ -6,6 +6,7 @@ import { initials } from '../names.js'
 import { postFromForm, reportFromForm, sortPosts } from '../communityPosts.js'
 import { DeletePostModal, PostFormModal } from '../components/PostDialogs.jsx'
 import PostComments from '../components/PostComments.jsx'
+import { AuthorButton, useProfileCard } from '../components/ProfileCard.jsx'
 import { createPost, deletePost, fetchFeed, reportPost, setPostLike, updatePost } from '../communityApi.js'
 import { toggleMomentLike } from '../moments.js'
 
@@ -58,6 +59,8 @@ export default function Community({ user }) {
   const [deleting, setDeleting] = useState(false)
   // Posts whose comments are open
   const [openComments, setOpenComments] = useState(() => new Set())
+  // Signed in: clicking an author opens their public card
+  const { openCard, cardDialog } = useProfileCard(user)
 
   const loadFeed = useCallback(async () => {
     setFeedLoading(true)
@@ -283,13 +286,15 @@ export default function Community({ user }) {
                 filteredPosts.map((post) => (
                   <article key={post.id} id={post.id} className="cm-card cm-post">
                     <div className="cm-post__head">
-                      {post.avatarUrl
-                        ? <img src={post.avatarUrl} alt="" className="cm-avatar" loading="lazy" />
-                        : <span className="cm-avatar cm-avatar--initials" aria-hidden="true">{initials(post.userName)}</span>}
-                      <div className="cm-post__who">
-                        <strong>{post.userName}</strong>
-                        <small>{timeAgo(post.createdAt)}</small>
-                      </div>
+                      <AuthorButton name={post.userName} onOpen={openCard && (() => openCard('post', post.id, post.userName))} className="cm-post__author">
+                        {post.avatarUrl
+                          ? <img src={post.avatarUrl} alt="" className="cm-avatar" loading="lazy" />
+                          : <span className="cm-avatar cm-avatar--initials" aria-hidden="true">{initials(post.userName)}</span>}
+                        <div className="cm-post__who">
+                          <strong>{post.userName}</strong>
+                          <small>{timeAgo(post.createdAt)}</small>
+                        </div>
+                      </AuthorButton>
                       {/* Nobody reports their own posts */}
                       {!post.mine && (
                         <button onClick={() => openReport(post)} className="cm-icon-btn" title="Report post" aria-label="Report post">
@@ -313,7 +318,7 @@ export default function Community({ user }) {
                     </div>
 
                     {openComments.has(post.id) && (
-                      <PostComments postId={post.id} user={user} onCountChange={(delta) => changeCommentCount(post.id, delta)} />
+                      <PostComments postId={post.id} user={user} onCountChange={(delta) => changeCommentCount(post.id, delta)} openCard={openCard} />
                     )}
                   </article>
                 ))
@@ -355,6 +360,8 @@ export default function Community({ user }) {
       {deletingPost && (
         <DeletePostModal onConfirm={handleDeletePost} onClose={() => setDeletingPost(null)} deleting={deleting} />
       )}
+
+      {cardDialog}
 
       {toast && (
         <div className="cm-toast" role="status">
