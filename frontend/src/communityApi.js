@@ -1,10 +1,47 @@
 import { supabase } from './supabase.js'
 import { avatarUrl } from './profileApi.js'
+import { IncompletePhotoError, incompletePhotoMessage, resizeToJpeg } from './imageResize.js'
 
 // Community posts and likes in Supabase (014_community_posts.sql). None of these throw: pages get a plain value back.
 
 const saveFailed = "Couldn't save your post. Please try again."
 const deleteFailed = "Couldn't delete your post. Please try again."
+const photoFailed = "Couldn't upload your photos. Please try again."
+
+// Post photos: public bucket, one folder per user (023_post_photos_tags.sql)
+const PHOTO_BUCKET = 'post-photos'
+const PHOTO_MAX_BYTES = 2 * 1024 * 1024
+export const postPhotoUrl = (path) => supabase.storage.from(PHOTO_BUCKET).getPublicUrl(path).data.publicUrl
+// photos and tags come from 023; before it is run, posts load and save without them
+const missingColumn = (error) => error?.code === '42703' || error?.code === 'PGRST204'
+const withMedia = (r) => ({ ...r, photos: r.photos ?? [], photo_urls: (r.photos ?? []).map(postPhotoUrl), tags: r.tags ?? [] })
+
+// Best effort: a file left behind only costs storage
+export const removePostPhotos = (paths) =>
+  paths.length ? supabase.storage.from(PHOTO_BUCKET).remove(paths).catch(() => {}) : Promise.resolve()
+
+// Shrinks and uploads the chosen files; { paths } or { error } (nothing is left behind on failure)
+async function uploadPostPhotos(userId, files) {
+  const paths = []
+  for (const file of files) {
+    let blob
+    try {
+      blob = await resizeToJpeg(file)
+      if (blob.size > PHOTO_MAX_BYTES) blob = await resizeToJpeg(file, 1600, 0.7)
+    } catch (error) {
+      await removePostPhotos(paths)
+      return { error: error instanceof IncompletePhotoError ? incompletePhotoMessage : `Couldn't read the photo "${file.name}". Try another one.` }
+    }
+    const path = `${userId}/${crypto.randomUUID()}.jpg`
+    const { error } = await supabase.storage.from(PHOTO_BUCKET).upload(path, blob, { contentType: 'image/jpeg', upsert: false })
+    if (error) {
+      await removePostPhotos(paths)
+      return { error: photoFailed }
+    }
+    paths.push(path)
+  }
+  return { paths }
+}
 
 // Newest posts with like counts and the author's current name and photo; null if loading failed
 export async function fetchFeed() {
@@ -12,7 +49,7 @@ export async function fetchFeed() {
   try {
     const { data, error } = await supabase.rpc('community_feed')
     if (error) return null
-    return (data ?? []).map((r) => ({
+    return (data ?? []).map((r) => withMedia({
       ...r, likes: Number(r.likes ?? 0), liked: Boolean(r.liked), mine: Boolean(r.mine), comments: Number(r.comments ?? 0),
       author_avatar_url: avatarUrl(r.author_avatar),
     }))
@@ -21,33 +58,59 @@ export async function fetchFeed() {
   }
 }
 
-// row comes from postFromForm (communityPosts.js)
-export async function createPost(row) {
+// row comes from postFromForm (communityPosts.js); files are new photos to upload (up to 3)
+export async function createPost(row, { userId, files = [] } = {}) {
   if (!supabase) return { error: saveFailed }
+  const upload = files.length ? await uploadPostPhotos(userId, files) : { paths: [] }
+  if (upload.error) return { error: upload.error }
   try {
-    const { error } = await supabase.from('community_posts').insert(row)
+    let { error } = await supabase.from('community_posts').insert({ ...row, photos: upload.paths })
+    // Before 023: a post without photos or hashtags can still be saved
+    if (missingColumn(error) && !upload.paths.length && !row.tags.length) {
+      const { tags, ...plain } = row
+      ;({ error } = await supabase.from('community_posts').insert(plain))
+    }
+    if (error) await removePostPhotos(upload.paths)
     return error ? { error: saveFailed } : { ok: true }
   } catch {
+    await removePostPhotos(upload.paths)
     return { error: saveFailed }
   }
 }
 
-// No row back means the post is gone (deleted in another tab), which is a failure too
-export async function updatePost(id, { title, city_id, body }) {
+// photos (when given): { userId, keep: saved paths to keep, files: new photos, removed: saved paths dropped }.
+// No row back means the post is gone (deleted in another tab), which is a failure too.
+export async function updatePost(id, { title, city_id, body, tags }, photos = null) {
   if (!supabase) return { error: saveFailed }
+  const upload = photos?.files.length ? await uploadPostPhotos(photos.userId, photos.files) : { paths: [] }
+  if (upload.error) return { error: upload.error }
+  const values = { title, city_id, body, tags, ...(photos && { photos: [...photos.keep, ...upload.paths] }) }
   try {
-    const { data, error } = await supabase.from('community_posts').update({ title, city_id, body }).eq('id', id).select('id')
-    return error || !data?.length ? { error: saveFailed } : { ok: true }
+    const save = (v) => supabase.from('community_posts').update(v).eq('id', id).select('id')
+    let { data, error } = await save(values)
+    if (missingColumn(error) && !upload.paths.length && !tags.length && !photos?.keep.length) {
+      ;({ data, error } = await save({ title, city_id, body }))
+    }
+    if (error || !data?.length) {
+      await removePostPhotos(upload.paths)
+      return { error: saveFailed }
+    }
+    if (photos) await removePostPhotos(photos.removed)
+    return { ok: true }
   } catch {
+    await removePostPhotos(upload.paths)
     return { error: saveFailed }
   }
 }
 
-export async function deletePost(id) {
+// photos: the post's saved photo paths, removed once the post is gone
+export async function deletePost(id, photos = []) {
   if (!supabase) return { error: deleteFailed }
   try {
     const { data, error } = await supabase.from('community_posts').delete().eq('id', id).select('id')
-    return error || !data?.length ? { error: deleteFailed } : { ok: true }
+    if (error || !data?.length) return { error: deleteFailed }
+    await removePostPhotos(photos)
+    return { ok: true }
   } catch {
     return { error: deleteFailed }
   }
@@ -72,7 +135,7 @@ export async function fetchMyPosts() {
   if (!supabase) return null
   try {
     const { data, error } = await supabase.rpc('my_posts')
-    return error ? null : data ?? []
+    return error ? null : (data ?? []).map(withMedia)
   } catch {
     return null
   }

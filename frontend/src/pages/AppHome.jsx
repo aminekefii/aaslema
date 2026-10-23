@@ -7,6 +7,7 @@ import { fetchFeed, setPostLike } from '../communityApi.js'
 import { LikeButton } from '../components/MomentsCarousel.jsx'
 import PostComments from '../components/PostComments.jsx'
 import { AuthorButton, useProfileCard } from '../components/ProfileCard.jsx'
+import { PostPhotos, PostTags } from '../components/PostMedia.jsx'
 import { initials } from '../names.js'
 import { timeAgo } from '../timeAgo.js'
 
@@ -163,6 +164,8 @@ export default function AppHome({ user }) {
                       </div>
                       <h3>{p.title}</h3>
                       <p className="cm-post__text">{p.body}</p>
+                      <PostPhotos urls={p.photo_urls} title={p.title} />
+                      <PostTags tags={p.tags} />
 
                       <div className="cm-post__actions">
                         <button onClick={() => likePost(p)} aria-disabled={likesSaving.has(`p:${p.id}`)} className={`cm-action ${p.liked ? 'is-liked' : ''}`} aria-pressed={p.liked} aria-label={p.liked ? 'Unlike' : 'Like'}>

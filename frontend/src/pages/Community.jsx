@@ -1,18 +1,19 @@
 import { useCallback, useEffect, useState } from 'react'
-import { MessageSquare, Heart, Search, Plus, MoreHorizontal, CheckCircle2, SlidersHorizontal } from 'lucide-react'
+import { MessageSquare, Heart, Search, Plus, MoreHorizontal, CheckCircle2, SlidersHorizontal, X } from 'lucide-react'
 import { cities } from '../cities.js'
 import Modal from '../components/Modal.jsx'
 import { initials } from '../names.js'
-import { postFromForm, reportFromForm, sortPosts } from '../communityPosts.js'
+import { photoChanges, postFromForm, reportFromForm, savedPhotoItems, sortPosts, tagsText } from '../communityPosts.js'
 import { DeletePostModal, PostFormModal } from '../components/PostDialogs.jsx'
 import PostComments from '../components/PostComments.jsx'
 import { AuthorButton, useProfileCard } from '../components/ProfileCard.jsx'
+import { PostPhotos, PostTags } from '../components/PostMedia.jsx'
 import { createPost, deletePost, fetchFeed, reportPost, setPostLike, updatePost } from '../communityApi.js'
 import { toggleMomentLike } from '../moments.js'
 
 // Port of aaslema-new's Community page. Everyone sees the saved posts from Supabase; visitors
 // (/community) are sent to sign in to post, like or report, signed-in users (/app/community) do it here.
-const EMPTY_POST = { title: '', content: '', cityId: '' }
+const EMPTY_POST = { title: '', content: '', cityId: '', tags: '', photos: [] }
 // [value for sortPosts, label]
 const SORTS = [['latest', 'Latest'], ['oldest', 'Oldest'], ['liked', 'Most liked']]
 const toSignIn = () => window.location.assign('/signin')
@@ -35,12 +36,15 @@ function timeAgo(iso) {
 const feedCard = (r) => ({
   id: r.id, userName: r.author_name, avatarUrl: r.author_avatar_url, createdAt: r.created_at,
   title: r.title, content: r.body, cityId: r.city_id, likes: r.likes, liked: r.liked, mine: r.mine, comments: r.comments,
+  photos: r.photos, photoUrls: r.photo_urls, tags: r.tags,
 })
 
 export default function Community({ user }) {
   const [searchTerm, setSearchTerm] = useState('')
   const [activeForum, setActiveForum] = useState('global')
   const [sort, setSort] = useState('latest')
+  // Hashtag the posts are filtered by (clicked on a post), or null
+  const [tag, setTag] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingPost, setEditingPost] = useState(null)
   const [newPost, setNewPost] = useState(EMPTY_POST)
@@ -92,16 +96,23 @@ export default function Community({ user }) {
 
   const posts = (feed ?? []).map(feedCard)
 
+  // Search also finds hashtags ("#oasis" or "oasis")
+  const query = searchTerm.toLowerCase()
+  const tagQuery = query.replace(/^#/, '')
   const filteredPosts = sortPosts(posts.filter((p) =>
     (activeForum === 'global' || p.cityId === activeForum) &&
-    (p.title.toLowerCase().includes(searchTerm.toLowerCase()) || p.content.toLowerCase().includes(searchTerm.toLowerCase())),
+    (!tag || p.tags.includes(tag)) &&
+    (p.title.toLowerCase().includes(query) || p.content.toLowerCase().includes(query) || (tagQuery && p.tags.some((t) => t.includes(tagQuery)))),
   ), sort)
   const sortLabel = SORTS.find(([value]) => value === sort)[1]
-  const filtered = activeForum !== 'global' || sort !== 'latest'
+  const filtered = activeForum !== 'global' || sort !== 'latest' || tag !== null
   const resetFilters = () => {
     setActiveForum('global')
     setSort('latest')
+    setTag(null)
   }
+  // Clicking the active hashtag again clears it
+  const pickTag = (t) => setTag((now) => (now === t ? null : t))
   const activeCityName = cities.find((c) => c.id === activeForum)?.name
 
   const openNewPost = () => {
@@ -113,7 +124,7 @@ export default function Community({ user }) {
   }
   const openEditModal = (post) => {
     setEditingPost(post)
-    setNewPost({ title: post.title, content: post.content, cityId: post.cityId })
+    setNewPost({ title: post.title, content: post.content, cityId: post.cityId, tags: tagsText(post.tags), photos: savedPhotoItems(post.photos, post.photoUrls) })
     setFormError('')
     setIsModalOpen(true)
   }
@@ -156,7 +167,9 @@ export default function Community({ user }) {
     if (error) return setFormError(error)
     setSaving(true)
     setFormError('')
-    const result = editingPost ? await updatePost(editingPost.id, row) : await createPost(row)
+    const result = editingPost
+      ? await updatePost(editingPost.id, row, { userId: user.id, ...photoChanges(newPost.photos, editingPost.photos) })
+      : await createPost(row, { userId: user.id, files: photoChanges(newPost.photos).files })
     setSaving(false)
     if (result.error) return setFormError(result.error)
     setIsModalOpen(false)
@@ -168,7 +181,7 @@ export default function Community({ user }) {
 
   const handleDeletePost = async () => {
     setDeleting(true)
-    const result = await deletePost(deletingPost.id)
+    const result = await deletePost(deletingPost.id, deletingPost.photos)
     setDeleting(false)
     if (!result.error) setFeed((prev) => prev?.filter((p) => p.id !== deletingPost.id))
     setDeletingPost(null)
@@ -251,6 +264,14 @@ export default function Community({ user }) {
                     </label>
                   ))}
                 </fieldset>
+                {tag && (
+                  <div className="cm-filters__group">
+                    <span className="cm-filters__label">Hashtag</span>
+                    <button type="button" onClick={() => setTag(null)} className="cm-filters__tag" aria-label={`Stop filtering by #${tag}`}>
+                      #{tag} <X size={14} />
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div className="cm-card cm-about">
@@ -265,7 +286,7 @@ export default function Community({ user }) {
 
             {/* Feed */}
             <div className="cm-feed">
-              <h2 className="cm-feed__title">{sortLabel} posts{activeForum === 'global' ? '' : ` in ${activeCityName}`}</h2>
+              <h2 className="cm-feed__title">{sortLabel} posts{activeForum === 'global' ? '' : ` in ${activeCityName}`}{tag ? ` tagged #${tag}` : ''}</h2>
 
               {feedLoading ? (
                 <div className="cm-card cm-empty"><p>Loading posts…</p></div>
@@ -305,6 +326,8 @@ export default function Community({ user }) {
 
                     <h3>{post.title}</h3>
                     <p className="cm-post__text">{post.content}</p>
+                    <PostPhotos urls={post.photoUrls} title={post.title} />
+                    <PostTags tags={post.tags} onTag={pickTag} active={tag} />
 
                     <div className="cm-post__actions">
                       <button onClick={() => handleLike(post)} aria-disabled={likesSaving.has(post.id)} className={`cm-action ${post.liked ? 'is-liked' : ''}`} aria-pressed={post.liked} aria-label={post.liked ? 'Unlike' : 'Like'}>

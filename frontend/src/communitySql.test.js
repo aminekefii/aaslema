@@ -112,3 +112,23 @@ describe('022_public_card.sql', () => {
     expect(card).toMatch(/m\.id = p_id and m\.approved_at is not null/)
   })
 })
+
+describe('023_post_photos_tags.sql', () => {
+  const photos = readFileSync(new URL('../../backend/supabase/023_post_photos_tags.sql', import.meta.url), 'utf8')
+
+  it('lets users upload and delete post photos only in their own folder', () => {
+    expect(photos).toMatch(/for insert to authenticated\s+with check \(bucket_id = 'post-photos' and \(storage\.foldername\(name\)\)\[1\] = auth\.uid\(\)::text\)/)
+    expect(photos).toMatch(/for delete to authenticated\s+using \(bucket_id = 'post-photos' and \(storage\.foldername\(name\)\)\[1\] = auth\.uid\(\)::text\)/)
+  })
+
+  it('limits posts to 3 photos from the author\'s folder and 5 hashtags', () => {
+    expect(photos).toMatch(/cardinality\(paths\) <= 3/)
+    expect(photos).toMatch(/split_part\(p, '\/', 1\) = owner::text/)
+    expect(photos).toMatch(/cardinality\(tags\) <= 5/)
+  })
+
+  it('keeps the feed open to visitors and My posts to its owner', () => {
+    expect(photos).toMatch(/grant execute on function public\.community_feed\(\) to anon, authenticated;/)
+    expect(photos).toMatch(/revoke all on function public\.my_posts\(\) from public, anon;/)
+  })
+})

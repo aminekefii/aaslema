@@ -831,6 +831,45 @@ button, input, select { font: inherit; }
 .cm-action--end { margin-left: auto; }
 .cm-action:disabled, .cm-action[aria-disabled='true'] { opacity: 0.6; cursor: default; }
 .cm-action.is-open { background: var(--lighter); color: var(--title); }
+/* A count that isn't a button (My posts likes) */
+.cm-action--static { cursor: default; }
+.cm-action--static:hover { background: none; color: var(--text); }
+/* Post photos: 1 fills the width, 2 side by side, 3 = one large and two small */
+.post-photos { display: grid; gap: 6px; margin-top: 14px; overflow: hidden; border-radius: 12px; }
+.post-photos--2 { grid-template-columns: 1fr 1fr; }
+.post-photos--3 { grid-template-columns: 2fr 1fr; grid-template-rows: 1fr 1fr; }
+.post-photos--3 .post-photos__item:first-child { grid-row: span 2; }
+.post-photos__item { display: block; min-height: 0; background: var(--lighter); }
+.post-photos__item img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.post-photos--1 img { max-height: 420px; }
+.post-photos--2 .post-photos__item { aspect-ratio: 4 / 3; }
+.post-photos--3 { aspect-ratio: 3 / 2; }
+.post-photos__item:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+/* Hashtags under a post; buttons on the community page filter by them */
+.post-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 0; padding: 0; list-style: none; }
+.post-tags__tag { display: inline-block; padding: 3px 10px; border: 0; border-radius: 20px; background: var(--tint); color: var(--primary); font: inherit; font-size: 13px; font-weight: 600; }
+button.post-tags__tag { cursor: pointer; }
+button.post-tags__tag:hover, .post-tags__tag.is-active { background: var(--primary); color: var(--white); }
+.cm-filters__tag {
+  display: inline-flex; align-items: center; gap: 6px; justify-self: start; padding: 5px 12px; border: 0; border-radius: 20px;
+  background: var(--primary); color: var(--white); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+}
+/* Photo picker in the post form */
+.post-picker { display: grid; gap: 6px; font-size: 15px; font-weight: 500; color: var(--title); }
+.post-picker__label small { font-weight: 400; color: var(--text); }
+.post-picker__row { display: flex; flex-wrap: wrap; gap: 10px; }
+.post-picker__item, .post-picker__add { position: relative; width: 96px; height: 96px; border-radius: 12px; }
+.post-picker__item img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+.post-picker__remove {
+  position: absolute; top: 4px; right: 4px; display: grid; place-items: center; width: 24px; height: 24px; padding: 0;
+  border: 0; border-radius: 50%; background: rgba(28, 35, 31, 0.75); color: var(--white); cursor: pointer;
+}
+.post-picker__add {
+  display: grid; place-content: center; justify-items: center; gap: 4px; border: 1px dashed var(--border);
+  background: var(--bg); color: var(--text); font: inherit; font-size: 13px; cursor: pointer;
+}
+.post-picker__add:hover { border-color: var(--primary); color: var(--primary); }
+.moment-form__hint { font-size: 13px; font-weight: 400; color: var(--text); }
 /* Author photo + name that opens their public card (signed-in users) */
 .author-btn { padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
 .author-btn:hover strong, .author-btn.cm-comment__name:hover { color: var(--primary); text-decoration: underline; }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { commentFromForm, myPostCard, postFromForm, reportFromForm, sortPosts } from './communityPosts.js'
+import { commentFromForm, myPostCard, parseTags, photoChanges, postFromForm, reportFromForm, savedPhotoItems, sortPosts, tagsText } from './communityPosts.js'
 
 const user = { email: 'leila@x.com', user_metadata: { full_name: 'Leila Ben Ali' } }
 const valid = { title: '  Sunrise at Chebika ', cityId: 'tozeur', content: '  Leave Tozeur at 5am and you get the canyon to yourself. ' }
@@ -7,7 +7,7 @@ const valid = { title: '  Sunrise at Chebika ', cityId: 'tozeur', content: '  Le
 describe('postFromForm', () => {
   it('returns the trimmed row', () => {
     expect(postFromForm(valid, user)).toEqual({
-      row: { title: 'Sunrise at Chebika', city_id: 'tozeur', body: 'Leave Tozeur at 5am and you get the canyon to yourself.', author_name: 'Leila Ben Ali' },
+      row: { title: 'Sunrise at Chebika', city_id: 'tozeur', body: 'Leave Tozeur at 5am and you get the canyon to yourself.', author_name: 'Leila Ben Ali', tags: [] },
     })
   })
 
@@ -59,7 +59,13 @@ describe('myPostCard', () => {
   it('maps a my_posts() row to a card', () => {
     expect(myPostCard(row, [{ id: 'tozeur', name: 'Tozeur' }])).toEqual({
       id: 'p1', cityId: 'tozeur', cityName: 'Tozeur', title: 'Sunrise', content: 'Leave at 5am.', postedAt: '2026-10-19T08:00:00Z', likes: 12,
+      photos: [], photoUrls: [], tags: [],
     })
+  })
+
+  it('keeps the photos (paths and links) and hashtags', () => {
+    const card = myPostCard({ ...row, photos: ['u/a.jpg'], photo_urls: ['https://x/a.jpg'], tags: ['oasis'] }, [])
+    expect([card.photos, card.photoUrls, card.tags]).toEqual([['u/a.jpg'], ['https://x/a.jpg'], ['oasis']])
   })
 
   it('shows the city id when the city is no longer listed', () => {
@@ -124,5 +130,63 @@ describe('commentFromForm', () => {
   it('refuses a comment over 1000 characters', () => {
     expect(commentFromForm('a'.repeat(1001), user).error).toBe('Your comment is too long (1000 characters max).')
     expect(commentFromForm('a'.repeat(1000), user).row.body).toHaveLength(1000)
+  })
+})
+
+describe('parseTags', () => {
+  it('reads hashtags with or without #, split by spaces or commas, lower case, no repeats', () => {
+    expect(parseTags('  #Sahara roadtrip, #sahara  #Dar_Cherait ')).toEqual({ tags: ['sahara', 'roadtrip', 'dar_cherait'] })
+  })
+
+  it('keeps accented and Arabic letters', () => {
+    expect(parseTags('#Médina #تونس')).toEqual({ tags: ['médina', 'تونس'] })
+  })
+
+  it('is empty for an empty field', () => {
+    expect(parseTags('   ')).toEqual({ tags: [] })
+    expect(parseTags(undefined)).toEqual({ tags: [] })
+  })
+
+  it('refuses symbols and over-long hashtags', () => {
+    expect(parseTags('#good #bad-tag')).toEqual({ error: 'Hashtags use letters, numbers and _ only (30 characters max): #bad-tag' })
+    expect(parseTags('#' + 'a'.repeat(31)).error).toMatch(/30 characters max/)
+    expect(parseTags('#' + 'a'.repeat(30))).toEqual({ tags: ['a'.repeat(30)] })
+  })
+
+  it('allows up to 5 hashtags', () => {
+    expect(parseTags('#a #b #c #d #e').tags).toHaveLength(5)
+    expect(parseTags('#a #b #c #d #e #f')).toEqual({ error: 'You can add up to 5 hashtags.' })
+  })
+})
+
+describe('postFromForm: hashtags', () => {
+  it('saves the hashtags with the post', () => {
+    expect(postFromForm({ ...valid, tags: '#oasis #canyon' }, user).row.tags).toEqual(['oasis', 'canyon'])
+  })
+
+  it('shows the hashtag problem', () => {
+    expect(postFromForm({ ...valid, tags: '#a-b' }, user).error).toMatch(/letters, numbers and _ only/)
+  })
+})
+
+describe('tagsText', () => {
+  it('turns saved hashtags back into the form field', () => {
+    expect(tagsText(['oasis', 'canyon'])).toBe('#oasis #canyon')
+    expect(tagsText(null)).toBe('')
+  })
+})
+
+describe('post photos in the form', () => {
+  it('lists saved photos as form items', () => {
+    expect(savedPhotoItems(['u/a.jpg', 'u/b.jpg'], ['https://x/a', 'https://x/b'])).toEqual([
+      { key: 'u/a.jpg', path: 'u/a.jpg', url: 'https://x/a' },
+      { key: 'u/b.jpg', path: 'u/b.jpg', url: 'https://x/b' },
+    ])
+  })
+
+  it('splits the form photos into kept, new and removed', () => {
+    const file = { name: 'new.jpg' }
+    const items = [{ key: 'u/b.jpg', path: 'u/b.jpg', url: 'x' }, { key: 'n1', file, url: 'blob:1' }]
+    expect(photoChanges(items, ['u/a.jpg', 'u/b.jpg'])).toEqual({ keep: ['u/b.jpg'], files: [file], removed: ['u/a.jpg'] })
   })
 })

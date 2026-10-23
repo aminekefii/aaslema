@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from 'react'
 import { CheckCircle2, Heart, MapPin } from 'lucide-react'
 import { cities } from '../cities.js'
-import { myPostCard, postFromForm } from '../communityPosts.js'
+import { myPostCard, photoChanges, postFromForm, savedPhotoItems, tagsText } from '../communityPosts.js'
 import { deletePost, fetchMyPosts, updatePost } from '../communityApi.js'
 import { DeletePostModal, PostFormModal } from '../components/PostDialogs.jsx'
+import { PostPhotos, PostTags } from '../components/PostMedia.jsx'
 import { timeAgo } from '../timeAgo.js'
 
 // Profile dashboard: every community post the user published, with likes; edit and delete here too.
@@ -40,7 +41,7 @@ export default function MyPosts({ user }) {
 
   const openEdit = (post) => {
     setEditingPost(post)
-    setForm({ title: post.title, cityId: post.cityId, content: post.content })
+    setForm({ title: post.title, cityId: post.cityId, content: post.content, tags: tagsText(post.tags), photos: savedPhotoItems(post.photos, post.photoUrls) })
     setFormError('')
   }
   const closeEdit = () => {
@@ -54,19 +55,19 @@ export default function MyPosts({ user }) {
     if (error) return setFormError(error)
     setSaving(true)
     setFormError('')
-    const result = await updatePost(editingPost.id, row)
+    const result = await updatePost(editingPost.id, row, { userId: user.id, ...photoChanges(form.photos, editingPost.photos) })
     setSaving(false)
     if (result.error) return setFormError(result.error)
-    // Saved: show the change here without reloading the list
-    const changed = myPostCard({ id: editingPost.id, city_id: row.city_id, title: row.title, body: row.body, created_at: editingPost.postedAt, likes: editingPost.likes }, cities)
-    setPosts((prev) => prev?.map((p) => (p.id === editingPost.id ? changed : p)))
     setEditingPost(null)
+    // New photos have new paths, so the list is read again (kept as it is if that fails)
+    const rows = await fetchMyPosts()
+    if (rows) setPosts(rows.map((r) => myPostCard(r, cities)))
     setToast('Changes saved')
   }
 
   const handleDelete = async () => {
     setDeleting(true)
-    const result = await deletePost(deletingPost.id)
+    const result = await deletePost(deletingPost.id, deletingPost.photos)
     setDeleting(false)
     if (!result.error) setPosts((prev) => prev?.filter((p) => p.id !== deletingPost.id))
     setDeletingPost(null)
@@ -96,6 +97,8 @@ export default function MyPosts({ user }) {
                 <MapPin size={14} aria-hidden="true" /> {post.cityName} · <time dateTime={post.postedAt}>{timeAgo(post.postedAt)}</time>
               </p>
               <p className="my-post__text">{post.content}</p>
+              <PostPhotos urls={post.photoUrls} title={post.title} />
+              <PostTags tags={post.tags} />
               <div className="cm-post__actions">
                 <span className="cm-action cm-action--static" aria-label={`${post.likes} likes`}>
                   <Heart size={16} aria-hidden="true" /> {post.likes}

@@ -9,8 +9,26 @@ export const TITLE_MAX = 120
 export const BODY_MIN = 20
 export const BODY_MAX = 2000
 const NAME_MAX = 100
+export const TAGS_MAX = 5
+const TAG = /^[\p{L}\p{N}_]{1,30}$/u
+export const PHOTOS_MAX = 3
 
-export function postFromForm({ title, cityId, content }, user) {
+// Hashtags field → lower-case hashtags without # (up to 5, no repeats), or the message to show.
+// 023_post_photos_tags.sql allows the same.
+export function parseTags(text) {
+  const words = (text ?? '').split(/[\s,]+/).map((w) => w.replace(/^#+/, '').toLowerCase()).filter(Boolean)
+  const bad = words.find((w) => !TAG.test(w))
+  if (bad) return { error: `Hashtags use letters, numbers and _ only (30 characters max): #${bad}` }
+  const tags = [...new Set(words)]
+  if (tags.length > TAGS_MAX) return { error: 'You can add up to 5 hashtags.' }
+  return { tags }
+}
+
+// Saved hashtags → the Hashtags field
+export const tagsText = (tags) => (tags ?? []).map((t) => `#${t}`).join(' ')
+
+export function postFromForm(form, user) {
+  const { title, cityId, content } = form
   const heading = (title ?? '').trim()
   if (textLength(heading) < TITLE_MIN) return { error: 'Please write a title (at least 3 characters).' }
   if (textLength(heading) > TITLE_MAX) return { error: 'Your title is too long (120 characters max).' }
@@ -18,8 +36,10 @@ export function postFromForm({ title, cityId, content }, user) {
   const body = (content ?? '').trim()
   if (textLength(body) < BODY_MIN) return { error: 'Please write at least 20 characters.' }
   if (textLength(body) > BODY_MAX) return { error: 'Your post is too long (2000 characters max).' }
+  const { tags, error } = parseTags(form.tags)
+  if (error) return { error }
   const name = Array.from(displayName(user)).slice(0, NAME_MAX).join('')
-  return { row: { title: heading, city_id: cityId, body, author_name: name } }
+  return { row: { title: heading, city_id: cityId, body, author_name: name, tags } }
 }
 
 // A my_posts() row → a My posts card
@@ -32,6 +52,9 @@ export function myPostCard(row, cityList) {
     content: row.body,
     postedAt: row.created_at,
     likes: Number(row.likes ?? 0),
+    photos: row.photos ?? [],
+    photoUrls: row.photo_urls ?? [],
+    tags: row.tags ?? [],
   }
 }
 
@@ -65,3 +88,12 @@ const sorters = {
   liked: (a, b) => b.likes - a.likes || newestFirst(a, b),
 }
 export const sortPosts = (posts, sort) => [...posts].sort(sorters[sort] ?? newestFirst)
+
+// Saved photo paths and links → the photo items of the post form
+export const savedPhotoItems = (paths = [], urls = []) => paths.map((path, i) => ({ key: path, path, url: urls[i] }))
+
+// Post form photo items (saved ones have a path, new ones a file) against the saved paths
+export function photoChanges(items, savedPaths = []) {
+  const keep = items.filter((p) => p.path).map((p) => p.path)
+  return { keep, files: items.filter((p) => p.file).map((p) => p.file), removed: savedPaths.filter((p) => !keep.includes(p)) }
+}
