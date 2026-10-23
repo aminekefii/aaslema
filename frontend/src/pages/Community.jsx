@@ -3,7 +3,7 @@ import { MessageSquare, Heart, Search, Plus, MoreHorizontal, CheckCircle2, Slide
 import { cities } from '../cities.js'
 import Modal from '../components/Modal.jsx'
 import { initials } from '../names.js'
-import { photoChanges, postFromForm, reportFromForm, savedPhotoItems, sortPosts, tagsText } from '../communityPosts.js'
+import { photoChanges, postFromForm, postMatches, reportFromForm, savedPhotoItems, sortPosts, tagsText } from '../communityPosts.js'
 import { DeletePostModal, PostFormModal } from '../components/PostDialogs.jsx'
 import PostComments from '../components/PostComments.jsx'
 import { AuthorButton, useProfileCard } from '../components/ProfileCard.jsx'
@@ -96,13 +96,10 @@ export default function Community({ user }) {
 
   const posts = (feed ?? []).map(feedCard)
 
-  // Search also finds hashtags ("#oasis" or "oasis")
-  const query = searchTerm.toLowerCase()
-  const tagQuery = query.replace(/^#/, '')
   const filteredPosts = sortPosts(posts.filter((p) =>
     (activeForum === 'global' || p.cityId === activeForum) &&
     (!tag || p.tags.includes(tag)) &&
-    (p.title.toLowerCase().includes(query) || p.content.toLowerCase().includes(query) || (tagQuery && p.tags.some((t) => t.includes(tagQuery)))),
+    postMatches(p, searchTerm),
   ), sort)
   const sortLabel = SORTS.find(([value]) => value === sort)[1]
   const filtered = activeForum !== 'global' || sort !== 'latest' || tag !== null

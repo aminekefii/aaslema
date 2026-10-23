@@ -97,3 +97,13 @@ export function photoChanges(items, savedPaths = []) {
   const keep = items.filter((p) => p.path).map((p) => p.path)
   return { keep, files: items.filter((p) => p.file).map((p) => p.file), removed: savedPaths.filter((p) => !keep.includes(p)) }
 }
+
+// Community search box: title or text, or hashtags ("#oasis", "oasis" or part of one); just "#" lists posts with hashtags
+export function postMatches(post, search) {
+  const query = (search ?? '').trim().toLowerCase()
+  if (!query) return true
+  const tags = post.tags ?? []
+  if (query === '#') return tags.length > 0
+  const tagQuery = query.replace(/^#+/, '')
+  return post.title.toLowerCase().includes(query) || post.content.toLowerCase().includes(query) || tags.some((t) => t.includes(tagQuery))
+}

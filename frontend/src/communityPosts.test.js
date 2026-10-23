@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { commentFromForm, myPostCard, parseTags, photoChanges, postFromForm, reportFromForm, savedPhotoItems, sortPosts, tagsText } from './communityPosts.js'
+import { commentFromForm, myPostCard, parseTags, photoChanges, postMatches, postFromForm, reportFromForm, savedPhotoItems, sortPosts, tagsText } from './communityPosts.js'
 
 const user = { email: 'leila@x.com', user_metadata: { full_name: 'Leila Ben Ali' } }
 const valid = { title: '  Sunrise at Chebika ', cityId: 'tozeur', content: '  Leave Tozeur at 5am and you get the canyon to yourself. ' }
@@ -188,5 +188,32 @@ describe('post photos in the form', () => {
     const file = { name: 'new.jpg' }
     const items = [{ key: 'u/b.jpg', path: 'u/b.jpg', url: 'x' }, { key: 'n1', file, url: 'blob:1' }]
     expect(photoChanges(items, ['u/a.jpg', 'u/b.jpg'])).toEqual({ keep: ['u/b.jpg'], files: [file], removed: ['u/a.jpg'] })
+  })
+})
+
+describe('postMatches', () => {
+  const post = { title: 'Sunrise at Chebika', content: 'Leave at 5am for the canyon.', tags: ['oasis', 'canyon_walk'] }
+  const plain = { title: 'Best couscous in Sfax', content: 'Try the fish couscous near the medina.', tags: [] }
+
+  it('matches everything when the search is empty', () => {
+    expect(postMatches(plain, '   ')).toBe(true)
+  })
+
+  it('finds words in the title or the text, in any case', () => {
+    expect(postMatches(post, 'CHEBIKA')).toBe(true)
+    expect(postMatches(post, '5am')).toBe(true)
+    expect(postMatches(plain, 'chebika')).toBe(false)
+  })
+
+  it('finds hashtags with or without #, and parts of them', () => {
+    expect(postMatches(post, '#oasis')).toBe(true)
+    expect(postMatches(post, 'oasis')).toBe(true)
+    expect(postMatches(post, '#can')).toBe(true)
+    expect(postMatches(plain, '#oasis')).toBe(false)
+  })
+
+  it('shows every post with a hashtag for just "#"', () => {
+    expect(postMatches(post, '#')).toBe(true)
+    expect(postMatches(plain, '#')).toBe(false)
   })
 })
