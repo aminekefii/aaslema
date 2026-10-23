@@ -1102,7 +1102,7 @@ html.dark .feature-card:hover { border-color: var(--border); }
 .profile-card__lead { margin: 0 0 12px; font-size: 15px; }
 .profile-card__lead strong { color: var(--title); overflow-wrap: anywhere; }
 /* Public card preview: a travel badge with the photo over a dark band */
-.public-card { max-width: 380px; margin-top: 8px; overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); }
+.public-card { max-width: 380px; margin: 8px auto 0; overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); }
 .public-card__band { height: 72px; background: var(--heading); }
 .public-card__body { display: grid; justify-items: center; gap: 6px; padding: 0 22px 22px; text-align: center; }
 .public-card__photo {
