@@ -417,14 +417,18 @@ button, input, select { font: inherit; }
 /* ---------- Page banner + FAQ section ---------- */
 .page-banner {
   position: relative; isolation: isolate; overflow: hidden; background: var(--heading);
-  padding: 180px 0 90px; text-align: center; color: rgba(255, 255, 255, 0.85);
+  padding: 180px 0 220px; text-align: center; color: rgba(255, 255, 255, 0.85);
 }
-/* "I ♥ Tunis" photo behind the banner; it is small (480px), so it is softened to hide the pixels */
+/* "I ♥ Tunis" photo behind the banner; it is small (480px), so it is softened to hide the pixels.
+   The letters sit low in the photo: the extra bottom padding and the lighter lower overlay keep them in view. */
 .page-banner::before {
   content: ''; position: absolute; inset: -24px; z-index: -2;
-  background: url('/images/i-love-tunis.jpg') center 60% / cover no-repeat; filter: blur(5px);
+  background: url('/images/i-love-tunis.jpg') center 78% / cover no-repeat; filter: blur(3px);
 }
-.page-banner::after { content: ''; position: absolute; inset: 0; z-index: -1; background: rgba(28, 35, 31, 0.72); }
+.page-banner::after {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(180deg, rgba(28, 35, 31, 0.82) 0%, rgba(28, 35, 31, 0.7) 50%, rgba(28, 35, 31, 0.3) 100%);
+}
 .page-banner h1 { color: var(--white); font-size: 56px; letter-spacing: -1px; margin-bottom: 10px; }
 .page-banner p { margin: 0; }
 .faq__grid { display: grid; grid-template-columns: 1fr 2fr; gap: 60px; align-items: start; }
@@ -1172,6 +1176,7 @@ a.my-moment:hover { border-color: var(--primary); }
   .grid--2, .grid--3, .about__grid, .travel-styles__grid, .faq__grid { grid-template-columns: 1fr; }
   .faq__grid { gap: 20px; }
   .page-banner h1 { font-size: 40px; }
+  .page-banner:not(.page-banner--short) { padding-bottom: 150px; }
   .hero__banner { height: 450px; }
   .about-orbit { margin: 30px auto; }
   .popular__grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 280px; }
