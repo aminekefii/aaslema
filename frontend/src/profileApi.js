@@ -5,7 +5,11 @@ import { avatarPath } from './profile.js'
 // Profile row, photo and account changes in Supabase. None of these throw: pages get a plain value back.
 
 const BUCKET = 'avatars'
-const COLUMNS = 'id, full_name, phone, city, country, avatar_path'
+const BASE_COLUMNS = 'id, full_name, phone, city, country, avatar_path'
+// bio and travel_style come from 021_profile_card.sql; until it is run, profiles load and save without them
+const COLUMNS = `${BASE_COLUMNS}, bio, travel_style`
+const missingColumn = (error) => error?.code === '42703' || error?.code === 'PGRST204'
+const withoutCardFields = ({ bio, travel_style, ...values }) => values
 const saveFailed = "Couldn't save your changes. Please try again."
 const photoFailed = "Couldn't save your photo. Please try again."
 const accountFailed = "Couldn't update your account. Please try again."
@@ -20,7 +24,9 @@ export function avatarUrl(path) {
 const refreshSession = () => supabase.auth.refreshSession().catch(() => {})
 
 const updateRow = async (userId, values) => {
-  const { data, error } = await supabase.from('profiles').update(values).eq('id', userId).select(COLUMNS).maybeSingle()
+  const update = (row, columns) => supabase.from('profiles').update(row).eq('id', userId).select(columns).maybeSingle()
+  let { data, error } = await update(values, COLUMNS)
+  if (missingColumn(error)) ({ data, error } = await update(withoutCardFields(values), BASE_COLUMNS))
   return error || !data ? null : data
 }
 
@@ -29,7 +35,9 @@ const removeFile = (path) => supabase.storage.from(BUCKET).remove([path]).catch(
 export async function fetchProfile(userId) {
   if (!supabase) return { error: true }
   try {
-    const { data, error } = await supabase.from('profiles').select(COLUMNS).eq('id', userId).maybeSingle()
+    const select = (columns) => supabase.from('profiles').select(columns).eq('id', userId).maybeSingle()
+    let { data, error } = await select(COLUMNS)
+    if (missingColumn(error)) ({ data, error } = await select(BASE_COLUMNS))
     return error || !data ? { error: true } : { profile: data }
   } catch {
     return { error: true }
@@ -86,6 +94,19 @@ export async function removeAvatar(userId, oldPath) {
     return { profile }
   } catch {
     return { error: photoFailed }
+  }
+}
+
+// Public card counts (021_profile_card.sql): destinations visited, approved moments, posts; null if loading failed
+export async function fetchProfileStats() {
+  if (!supabase) return null
+  try {
+    const { data, error } = await supabase.rpc('my_profile_stats')
+    const row = data?.[0]
+    if (error || !row) return null
+    return { visited: Number(row.visited ?? 0), moments: Number(row.moments ?? 0), posts: Number(row.posts ?? 0) }
+  } catch {
+    return null
   }
 }
 

@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import { COUNTRIES, cleanProfile, emailError, linkNotice, passwordError, profileChanged, profileForm } from '../profile.js'
-import { avatarUrl, changeEmail, changePassword, fetchProfile, removeAvatar, saveProfile, uploadAvatar } from '../profileApi.js'
+import { Compass, MapPin } from 'lucide-react'
+import {
+  COUNTRIES, PROFILE_LIMITS, TRAVEL_STYLES, cleanProfile, emailError, linkNotice, passwordError, profileChanged, profileForm, travelStyleLabel,
+} from '../profile.js'
+import { avatarUrl, changeEmail, changePassword, fetchProfile, fetchProfileStats, removeAvatar, saveProfile, uploadAvatar } from '../profileApi.js'
+import { textLength } from '../reviews.js'
 import { initials } from '../names.js'
 
 // Message under a card's button: { text, error? }
@@ -10,6 +14,42 @@ function Notice({ notice }) {
     <p className={`profile-note ${notice.error ? 'profile-note--error' : ''}`} role={notice.error ? 'alert' : 'status'}>
       {notice.text}
     </p>
+  )
+}
+
+// What other travellers will see; follows the Personal details form as it is typed (form = its values)
+function PublicCard({ profile, form, stats }) {
+  const url = avatarUrl(profile.avatar_path)
+  const name = form.full_name.trim() || profile.full_name
+  const place = [form.city.trim(), form.country.trim()].filter(Boolean).join(', ')
+  const style = travelStyleLabel(form.travel_style)
+  const bio = form.bio.trim()
+  const count = (key) => (stats ? stats[key] : '–')
+
+  return (
+    <section className="profile-card">
+      <h2>Your public card</h2>
+      <p className="profile-card__lead">Other travellers will see this card. Your phone and email are never shown.</p>
+      <article className="public-card" aria-label="Preview of your public card">
+        <div className="public-card__band" />
+        <div className="public-card__body">
+          {url
+            ? <img src={url} alt="" className="public-card__photo" />
+            : <span className="public-card__photo public-card__photo--initials" aria-hidden="true">{initials(name)}</span>}
+          <h3>{name}</h3>
+          {place && <p className="public-card__place"><MapPin size={14} /> {place}</p>}
+          {style && <p className="public-card__style"><Compass size={14} /> {style}</p>}
+          {bio
+            ? <p className="public-card__bio">{bio}</p>
+            : <p className="public-card__bio public-card__bio--empty">Add a few words about yourself in Personal details.</p>}
+          <dl className="public-card__stats">
+            <div><dt>Destinations visited</dt><dd>{count('visited')}</dd></div>
+            <div><dt>Moments shared</dt><dd>{count('moments')}</dd></div>
+            <div><dt>Posts</dt><dd>{count('posts')}</dd></div>
+          </dl>
+        </div>
+      </article>
+    </section>
   )
 }
 
@@ -60,8 +100,8 @@ function PhotoCard({ user, profile, onSaved }) {
   )
 }
 
-function DetailsCard({ user, profile, onSaved }) {
-  const [form, setForm] = useState(() => profileForm(profile))
+// form / setForm live in the page so the public card can follow what is typed
+function DetailsCard({ user, profile, onSaved, form, setForm }) {
   const [busy, setBusy] = useState(false)
   const [notice, setNotice] = useState(null)
 
@@ -79,7 +119,6 @@ function DetailsCard({ user, profile, onSaved }) {
     setBusy(false)
     if (result.error) return setNotice({ text: result.error, error: true })
     onSaved(result.profile)
-    setForm(profileForm(result.profile))
     setNotice({ text: 'Saved.' })
   }
 
@@ -109,6 +148,18 @@ function DetailsCard({ user, profile, onSaved }) {
           <datalist id="profile-countries">
             {COUNTRIES.map((c) => <option key={c} value={c} />)}
           </datalist>
+          <label className="auth-field">
+            Travel style
+            <select name="travel_style" value={form.travel_style} onChange={set('travel_style')}>
+              <option value="">Not set</option>
+              {TRAVEL_STYLES.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+            </select>
+          </label>
+          <label className="auth-field">
+            About you
+            <textarea name="bio" rows={3} placeholder="Where you like to travel, what you're looking for…" value={form.bio} onChange={set('bio')} />
+            <small>{textLength(form.bio.trim())} / {PROFILE_LIMITS.bio} characters, shown on your public card.</small>
+          </label>
           <button type="submit" className="btn btn--primary profile-card__submit" disabled={!profileChanged(profile, form)}>
             {busy ? 'Saving…' : 'Save changes'}
           </button>
@@ -201,6 +252,10 @@ function PasswordCard() {
 export default function EditProfile({ user }) {
   // undefined while loading, null if loading failed
   const [profile, setProfile] = useState(undefined)
+  // Personal details form values (also shown live on the public card); undefined until the profile loads
+  const [form, setForm] = useState(undefined)
+  // Public card counts; null if they couldn't load
+  const [stats, setStats] = useState(null)
   const userId = user.id
   // Read once: email-change links land here with a message or an error in the hash
   const [emailNotice] = useState(() => linkNotice(window.location.hash))
@@ -217,20 +272,32 @@ export default function EditProfile({ user }) {
   useEffect(() => {
     let live = true
     fetchProfile(userId).then((result) => {
-      if (live) setProfile(result.profile ?? null)
+      if (!live) return
+      setProfile(result.profile ?? null)
+      if (result.profile) setForm(profileForm(result.profile))
+    })
+    fetchProfileStats().then((result) => {
+      if (live) setStats(result)
     })
     return () => { live = false }
   }, [userId])
+
+  // Saving details resets the form to what was saved; photo changes leave typed details alone
+  const savedDetails = (saved) => {
+    setProfile(saved)
+    setForm(profileForm(saved))
+  }
 
   return (
     <>
       <h1>Edit profile</h1>
       {profile === undefined && <p className="profile-note">Loading your profile…</p>}
       {profile === null && <p className="profile-note profile-note--error" role="alert">Couldn't load your profile. Please refresh the page.</p>}
-      {profile && (
+      {profile && form && (
         <div className="profile-cards">
+          <PublicCard profile={profile} form={form} stats={stats} />
           <PhotoCard user={user} profile={profile} onSaved={setProfile} />
-          <DetailsCard user={user} profile={profile} onSaved={setProfile} />
+          <DetailsCard user={user} profile={profile} onSaved={savedDetails} form={form} setForm={setForm} />
           <EmailCard user={user} initialNotice={emailNotice} />
           <PasswordCard />
         </div>

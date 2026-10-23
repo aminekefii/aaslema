@@ -1,21 +1,21 @@
 import { describe, expect, it } from 'vitest'
 import {
-  avatarPath, cleanProfile, COUNTRIES, emailError, linkNotice, passwordError, profileChanged, profileForm,
+  avatarPath, cleanProfile, COUNTRIES, emailError, linkNotice, passwordError, profileChanged, profileForm, TRAVEL_STYLES,
 } from './profile.js'
 
-const form = (over = {}) => ({ full_name: 'Leila Ben Ali', phone: '', city: '', country: '', ...over })
-const row = (over = {}) => ({ id: 'u1', full_name: 'Leila Ben Ali', phone: null, city: null, country: null, avatar_path: null, ...over })
+const form = (over = {}) => ({ full_name: 'Leila Ben Ali', phone: '', city: '', country: '', bio: '', travel_style: '', ...over })
+const row = (over = {}) => ({ id: 'u1', full_name: 'Leila Ben Ali', phone: null, city: null, country: null, avatar_path: null, bio: null, travel_style: null, ...over })
 
 describe('profileForm', () => {
   it('turns empty columns into empty strings', () => {
-    expect(profileForm(row({ city: 'Sfax' }))).toEqual({ full_name: 'Leila Ben Ali', phone: '', city: 'Sfax', country: '' })
+    expect(profileForm(row({ city: 'Sfax' }))).toEqual({ full_name: 'Leila Ben Ali', phone: '', city: 'Sfax', country: '', bio: '', travel_style: '' })
   })
 })
 
 describe('cleanProfile', () => {
   it('trims fields and turns empty optional fields into null', () => {
     expect(cleanProfile(form({ full_name: '  Leila  ', city: ' Sfax ', country: '   ' }))).toEqual({
-      values: { full_name: 'Leila', phone: null, city: 'Sfax', country: null },
+      values: { full_name: 'Leila', phone: null, city: 'Sfax', country: null, bio: null, travel_style: null },
     })
   })
 
@@ -48,6 +48,26 @@ describe('cleanProfile', () => {
   })
 })
 
+describe('cleanProfile: public card fields', () => {
+  it('trims the bio and keeps its line breaks', () => {
+    expect(cleanProfile(form({ bio: '  Backpacking the south.\nNext: Tataouine.  ' })).values.bio).toBe('Backpacking the south.\nNext: Tataouine.')
+  })
+
+  it('limits the bio to 300 characters', () => {
+    expect(cleanProfile(form({ bio: 'a'.repeat(300) })).values.bio).toHaveLength(300)
+    expect(cleanProfile(form({ bio: 'a'.repeat(301) }))).toEqual({ error: 'About you is too long (300 characters max).' })
+  })
+
+  it('accepts only a listed travel style', () => {
+    expect(cleanProfile(form({ travel_style: 'bikepacker' })).values.travel_style).toBe('bikepacker')
+    expect(cleanProfile(form({ travel_style: 'astronaut' }))).toEqual({ error: 'Please choose a travel style from the list.' })
+  })
+
+  it('lists five travel styles with labels', () => {
+    expect(TRAVEL_STYLES.map(([value]) => value)).toEqual(['backpacker', 'bikepacker', 'road-tripper', 'culture', 'beach'])
+  })
+})
+
 describe('profileChanged', () => {
   it('is false when the cleaned form matches the saved row', () => {
     expect(profileChanged(row(), form())).toBe(false)
@@ -57,6 +77,8 @@ describe('profileChanged', () => {
   it('is true when a field differs', () => {
     expect(profileChanged(row(), form({ phone: '+216 20 123 456' }))).toBe(true)
     expect(profileChanged(row({ country: 'Tunisia' }), form())).toBe(true)
+    expect(profileChanged(row(), form({ bio: 'Hi' }))).toBe(true)
+    expect(profileChanged(row({ travel_style: 'beach' }), form({ travel_style: 'beach' }))).toBe(false)
   })
 
   it('is true for an invalid form, so Save can show the error', () => {

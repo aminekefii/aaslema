@@ -79,3 +79,18 @@ describe('020_feed_moment_likes.sql', () => {
     expect(likes).toMatch(/grant execute on function public\.feed_moments\(\) to authenticated;/)
   })
 })
+
+describe('021_profile_card.sql', () => {
+  const card = readFileSync(new URL('../../backend/supabase/021_profile_card.sql', import.meta.url), 'utf8')
+
+  it('lets users edit only their bio and travel style, and keeps the counts to signed-in users', () => {
+    expect(card).toMatch(/grant update \(bio, travel_style\) on public\.profiles to authenticated;/)
+    expect(card).toMatch(/revoke all on function public\.my_profile_stats\(\) from public, anon;/)
+  })
+
+  it('counts only the caller\'s own visits, approved moments and posts', () => {
+    expect(card).toMatch(/v\.user_id = auth\.uid\(\)/)
+    expect(card).toMatch(/m\.user_id = auth\.uid\(\) and m\.approved_at is not null/)
+    expect(card).toMatch(/c\.user_id = auth\.uid\(\)/)
+  })
+})

@@ -2,7 +2,17 @@ import { textLength } from './reviews.js'
 
 // Edit profile form rules; 009_profiles.sql enforces the same limits.
 
-export const PROFILE_LIMITS = { name: 80, place: 60, phoneMin: 6, phoneMax: 20, passwordMin: 8 }
+export const PROFILE_LIMITS = { name: 80, place: 60, phoneMin: 6, phoneMax: 20, passwordMin: 8, bio: 300 }
+
+// Public card travel style: [value saved, label shown]; 021_profile_card.sql allows the same values
+export const TRAVEL_STYLES = [
+  ['backpacker', 'Backpacker'],
+  ['bikepacker', 'Bikepacker'],
+  ['road-tripper', 'Road tripper'],
+  ['culture', 'Culture & history'],
+  ['beach', 'Beach & relax'],
+]
+export const travelStyleLabel = (value) => TRAVEL_STYLES.find(([v]) => v === value)?.[1] ?? null
 
 // Suggestions for the Country field; any other text is allowed too
 export const COUNTRIES = [
@@ -19,6 +29,8 @@ export const profileForm = (row) => ({
   phone: row?.phone ?? '',
   city: row?.city ?? '',
   country: row?.country ?? '',
+  bio: row?.bio ?? '',
+  travel_style: row?.travel_style ?? '',
 })
 
 export function cleanProfile(form) {
@@ -26,6 +38,8 @@ export function cleanProfile(form) {
   const phone = form.phone.trim().replace(/\s+/g, ' ')
   const city = form.city.trim()
   const country = form.country.trim()
+  const bio = form.bio.trim()
+  const style = form.travel_style
 
   if (!name) return { error: 'Please enter your name.' }
   if (textLength(name) > PROFILE_LIMITS.name) return { error: 'Name is too long (80 characters max).' }
@@ -34,8 +48,15 @@ export function cleanProfile(form) {
   }
   if (textLength(city) > PROFILE_LIMITS.place) return { error: 'City is too long (60 characters max).' }
   if (textLength(country) > PROFILE_LIMITS.place) return { error: 'Country is too long (60 characters max).' }
+  if (textLength(bio) > PROFILE_LIMITS.bio) return { error: 'About you is too long (300 characters max).' }
+  if (style && !travelStyleLabel(style)) return { error: 'Please choose a travel style from the list.' }
 
-  return { values: { full_name: name, phone: phone || null, city: city || null, country: country || null } }
+  return {
+    values: {
+      full_name: name, phone: phone || null, city: city || null, country: country || null,
+      bio: bio || null, travel_style: style || null,
+    },
+  }
 }
 
 // Drives the Save button; an invalid form counts as changed so Save can show why
