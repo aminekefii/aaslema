@@ -9,17 +9,17 @@ Last updated: 2026-10-20 (Netlify config added)
   `/app/community`), My posts (`/app/profile/posts`), post reports (admin page `/admin/reports`, read only) and the
   Feed at `/app` (newest moments and posts, view only) are merged into `main` and pushed to `origin/main` (`bd2aae7`).
 - Only other branch: `google-sign-in` (not merged, see below).
-- Frontend tests: 15 files, 245 tests, all passing (`npx vitest run` in `frontend/`).
-- Supabase SQL lives in `backend/supabase/` (`001`–`017`). Each file is run
+- Frontend tests: 15 files, 246 tests, all passing (`npx vitest run` in `frontend/`).
+- Supabase SQL lives in `backend/supabase/` (`001`–`018`). Each file is run
   by hand in the Supabase SQL editor; check that `004_city_likes_visits.sql`,
   `005_city_visit_counts.sql`, `006_reviews.sql`, `007_moments.sql`,
-  `008_moment_likes.sql`, `009_profiles.sql`, `010_author_photos.sql`, `011_my_moments.sql`, `012_city_plans.sql`, `013_festival_plans.sql`, `014_community_posts.sql`, `015_my_posts.sql`, `016_post_reports.sql` and `017_feed_moments.sql` have been
+  `008_moment_likes.sql`, `009_profiles.sql`, `010_author_photos.sql`, `011_my_moments.sql`, `012_city_plans.sql`, `013_festival_plans.sql`, `014_community_posts.sql`, `015_my_posts.sql`, `016_post_reports.sql`, `017_feed_moments.sql` and `018_public_community_feed.sql` have been
   applied before testing likes, visits, the Most Visited section, Rate Your Trip reviews, destination moments, moment
-  likes, the profile page, author photos, My moments, My plan (destinations and festivals), community posts, My posts, post reports and the Feed.
+  likes, the profile page, author photos, My moments, My plan (destinations and festivals), community posts, My posts, post reports, the Feed and the public community page.
 
 ## Waiting on you
 
-- In the Supabase SQL Editor run, in order: `006`–`008` if not done yet, then `009_profiles.sql`, then `010_author_photos.sql`, then `011_my_moments.sql`, then `012_city_plans.sql`, then `013_festival_plans.sql`, then `014_community_posts.sql`, then `015_my_posts.sql`, then `016_post_reports.sql`, then `017_feed_moments.sql`.
+- In the Supabase SQL Editor run, in order: `006`–`008` if not done yet, then `009_profiles.sql`, then `010_author_photos.sql`, then `011_my_moments.sql`, then `012_city_plans.sql`, then `013_festival_plans.sql`, then `014_community_posts.sql`, then `015_my_posts.sql`, then `016_post_reports.sql`, then `017_feed_moments.sql`, then `018_public_community_feed.sql`.
   If you ever re-run `006` or `008` later, run `010` again afterwards (they replace its review and moment lists).
 - Supabase Auth → URL Configuration: add `<site>/app/profile/edit` (and the localhost one) to Redirect URLs, so email-change links come back to Edit profile (not needed if a `/**` wildcard covers it).
 - Continue with Google (to do later). The code is ready on branch `google-sign-in` (`372cc21`, not merged; `main`
@@ -104,6 +104,7 @@ Last updated: 2026-10-20 (Netlify config added)
 | My posts in the profile dashboard: your posts with likes, edit and delete (`015_my_posts.sql`) | — (designed in chat) | `9c2d59d` |
 | Post reports: users report other people's posts; admin Post reports page, read only, See post "Coming soon" (`016_post_reports.sql`) | — (designed in chat) | `c85a1d7` |
 | Feed at `/app`: newest moments and posts, view only (`017_feed_moments.sql`) | — (designed in chat) | `bd2aae7` |
+| Landing page FAQ at `/#faq` (FAQ page and nav link removed, `b2c444d`); `/community` shows the real posts to visitors, who are sent to sign in to post, like or report (`018_public_community_feed.sql`) | — (designed in chat) | next commit |
 
 Specs and plans are in `docs/superpowers/specs/` and `docs/superpowers/plans/`.
 
@@ -111,7 +112,7 @@ Specs and plans are in `docs/superpowers/specs/` and `docs/superpowers/plans/`.
 
 From the specs' "Future work" sections:
 
-1. **Community follow-ups:** comments, admin See post / handling reports / deleting posts, moderation (admins can't delete posts yet: only by hand in Supabase), visitors reading real posts, sharing; Feed design.
+1. **Community follow-ups:** comments, admin See post / handling reports / deleting posts, moderation (admins can't delete posts yet: only by hand in Supabase), sharing; Feed design.
 2. **Admin part 4:** move destinations, festivals and FAQs into the database.
 3. **Profile:** more sidebar sections (My reviews); delete/edit own moments; name + photo on Feed posts once they're in Supabase; photos on admin pages.
 4. **AI Planner:** needs an AI provider and a backend endpoint; it can start from the user's plan (`city_plans`).

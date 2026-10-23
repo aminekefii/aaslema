@@ -42,3 +42,11 @@ describe('017_feed_moments.sql', () => {
     expect(feed).toMatch(/grant execute on function public\.feed_moments\(\) to authenticated;/)
   })
 })
+
+describe('018_public_community_feed.sql', () => {
+  const open = readFileSync(new URL('../../backend/supabase/018_public_community_feed.sql', import.meta.url), 'utf8')
+
+  it('lets signed-out visitors read the feed', () => {
+    expect(open).toMatch(/grant execute on function public\.community_feed\(\) to anon;/)
+  })
+})

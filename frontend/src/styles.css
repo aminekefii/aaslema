@@ -793,8 +793,6 @@ button, input, select { font: inherit; }
 }
 .cm-action:hover { background: var(--lighter); color: var(--title); }
 .cm-action.is-liked { color: var(--primary); }
-.cm-action--static { cursor: default; }
-.cm-action--static:hover { background: none; color: var(--text); }
 .cm-action--end { margin-left: auto; }
 .cm-action:disabled, .cm-action[aria-disabled='true'] { opacity: 0.6; cursor: default; }
 .cm-delete-actions { margin-top: 20px; }

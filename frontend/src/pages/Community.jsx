@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { MessageSquare, Heart, Share2, Search, Plus, MoreHorizontal, CheckCircle2 } from 'lucide-react'
 import { cities } from '../cities.js'
-import { samplePosts } from '../community.js'
 import Modal from '../components/Modal.jsx'
 import { initials } from '../names.js'
 import { postFromForm, reportFromForm } from '../communityPosts.js'
@@ -9,18 +8,10 @@ import { DeletePostModal, PostFormModal } from '../components/PostDialogs.jsx'
 import { createPost, deletePost, fetchFeed, reportPost, setPostLike, updatePost } from '../communityApi.js'
 import { toggleMomentLike } from '../moments.js'
 
-// Port of aaslema-new's Community page. Signed in (/app/community), posts and likes are saved
-// in Supabase; visitors (/community) see example posts, and their own posts and likes stay in this browser.
-const POSTS_KEY = 'community_posts'
-const LIKES_KEY = 'community_likes'
+// Port of aaslema-new's Community page. Everyone sees the saved posts from Supabase; visitors
+// (/community) are sent to sign in to post, like or report, signed-in users (/app/community) do it here.
 const EMPTY_POST = { title: '', content: '', cityId: '' }
-
-const load = (key, fallback) => {
-  try { return JSON.parse(localStorage.getItem(key)) ?? fallback } catch { return fallback }
-}
-const save = (key, value) => {
-  try { localStorage.setItem(key, JSON.stringify(value)) } catch { /* storage full or blocked */ }
-}
+const toSignIn = () => window.location.assign('/signin')
 
 function timeAgo(iso) {
   if (!iso) return 'Just now'
@@ -45,8 +36,6 @@ const feedCard = (r) => ({
 export default function Community({ user }) {
   const [searchTerm, setSearchTerm] = useState('')
   const [activeForum, setActiveForum] = useState('global')
-  const [myPosts, setMyPosts] = useState(() => load(POSTS_KEY, []))
-  const [likedIds, setLikedIds] = useState(() => new Set(load(LIKES_KEY, [])))
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingPost, setEditingPost] = useState(null)
   const [newPost, setNewPost] = useState(EMPTY_POST)
@@ -56,9 +45,9 @@ export default function Community({ user }) {
   const [reporting, setReporting] = useState(false)
   const [reportError, setReportError] = useState('')
   const [toast, setToast] = useState(null)
-  // Signed in only: the saved feed (null when it failed), likes being saved, form and delete state
+  // The saved feed (null when it failed); signed in only: likes being saved, form and delete state
   const [feed, setFeed] = useState(null)
-  const [feedLoading, setFeedLoading] = useState(Boolean(user))
+  const [feedLoading, setFeedLoading] = useState(true)
   const [likesSaving, setLikesSaving] = useState(() => new Set())
   const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState('')
@@ -84,7 +73,7 @@ export default function Community({ user }) {
   // A token refresh brings a new user object; load once per sign-in, not on every refresh
   const signedIn = Boolean(user)
   useEffect(() => {
-    if (signedIn) loadFeed()
+    loadFeed()
   }, [signedIn, loadFeed])
 
   useEffect(() => {
@@ -93,14 +82,7 @@ export default function Community({ user }) {
     return () => clearTimeout(id)
   }, [toast])
 
-  const posts = useMemo(
-    () => user
-      ? (feed ?? []).map(feedCard)
-      : [...myPosts, ...samplePosts]
-        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-        .map((p) => ({ ...p, liked: likedIds.has(p.id), likes: p.likes + (likedIds.has(p.id) ? 1 : 0) })),
-    [user, feed, myPosts, likedIds],
-  )
+  const posts = (feed ?? []).map(feedCard)
 
   const filteredPosts = posts.filter((p) =>
     (activeForum === 'global' || p.cityId === activeForum) &&
@@ -109,6 +91,7 @@ export default function Community({ user }) {
   const activeCityName = cities.find((c) => c.id === activeForum)?.name
 
   const openNewPost = () => {
+    if (!user) return toSignIn()
     setEditingPost(null)
     setNewPost({ ...EMPTY_POST, cityId: activeForum === 'global' ? '' : activeForum })
     setFormError('')
@@ -124,10 +107,9 @@ export default function Community({ user }) {
     if (!saving) setIsModalOpen(false)
   }
 
-  const handleLike = (post) => (user ? handleSavedLike(post) : handleLocalLike(post))
-
   // Flips straight away; a failed save flips that post back
-  const handleSavedLike = async (post) => {
+  const handleLike = async (post) => {
+    if (!user) return toSignIn()
     if (likesSaving.has(post.id)) return
     const flip = () => setFeed((prev) => prev?.map((p) => (p.id === post.id ? toggleMomentLike(p) : p)))
     setLikesSaving((prev) => new Set(prev).add(post.id))
@@ -144,16 +126,7 @@ export default function Community({ user }) {
     })
   }
 
-  const handleLocalLike = (post) => {
-    const next = new Set(likedIds)
-    next.has(post.id) ? next.delete(post.id) : next.add(post.id)
-    setLikedIds(next)
-    save(LIKES_KEY, [...next])
-  }
-
-  const handleSavePost = (e) => (user ? handleSavedPost(e) : handleLocalPost(e))
-
-  const handleSavedPost = async (e) => {
+  const handleSavePost = async (e) => {
     e.preventDefault()
     if (saving) return
     const { row, error } = postFromForm(newPost, user)
@@ -170,25 +143,6 @@ export default function Community({ user }) {
     refreshFeed()
   }
 
-  const handleLocalPost = (e) => {
-    e.preventDefault()
-    const fields = {
-      title: newPost.title.trim(),
-      content: newPost.content.trim(),
-      cityId: newPost.cityId,
-      cityName: cities.find((c) => c.id === newPost.cityId)?.name || 'Tunisia',
-    }
-    const updated = editingPost
-      ? myPosts.map((p) => (p.id === editingPost.id ? { ...p, ...fields } : p))
-      : [{ id: `mine-${Date.now()}`, mine: true, userName: 'You', likes: 0, comments: 0, createdAt: new Date().toISOString(), ...fields }, ...myPosts]
-    setMyPosts(updated)
-    save(POSTS_KEY, updated)
-    setIsModalOpen(false)
-    setEditingPost(null)
-    setNewPost(EMPTY_POST)
-    setToast(editingPost ? 'Changes saved' : 'Post published')
-  }
-
   const handleDeletePost = async () => {
     setDeleting(true)
     const result = await deletePost(deletingPost.id)
@@ -199,6 +153,7 @@ export default function Community({ user }) {
   }
 
   const openReport = (post) => {
+    if (!user) return toSignIn()
     setReportingPost(post)
     setReportReason('')
     setReportError('')
@@ -207,19 +162,17 @@ export default function Community({ user }) {
     if (!reporting) setReportingPost(null)
   }
 
-  // Signed in: saved for the admins' Post reports page. Visitors: only the thank-you, as before
+  // Saved for the admins' Post reports page
   const handleReportPost = async (e) => {
     e.preventDefault()
-    if (user) {
-      if (reporting) return
-      const { row, error } = reportFromForm(reportReason)
-      if (error) return setReportError(error)
-      setReporting(true)
-      setReportError('')
-      const result = await reportPost(reportingPost.id, row)
-      setReporting(false)
-      if (result.error) return setReportError(result.error)
-    }
+    if (reporting) return
+    const { row, error } = reportFromForm(reportReason)
+    if (error) return setReportError(error)
+    setReporting(true)
+    setReportError('')
+    const result = await reportPost(reportingPost.id, row)
+    setReporting(false)
+    if (result.error) return setReportError(result.error)
     setReportingPost(null)
     setReportReason('')
     setToast('Report received. Thank you for keeping the community safe.')
@@ -265,9 +218,9 @@ export default function Community({ user }) {
             <div className="cm-feed">
               <h2 className="cm-feed__title">{activeForum === 'global' ? 'Latest posts' : `Latest in ${activeCityName}`}</h2>
 
-              {user && feedLoading ? (
+              {feedLoading ? (
                 <div className="cm-card cm-empty"><p>Loading posts…</p></div>
-              ) : user && !feed ? (
+              ) : !feed ? (
                 <div className="cm-card cm-empty">
                   <MessageSquare size={32} />
                   <h3>Couldn't load posts.</h3>
@@ -291,8 +244,8 @@ export default function Community({ user }) {
                         <strong>{post.userName}</strong>
                         <small>{timeAgo(post.createdAt)}</small>
                       </div>
-                      {/* Signed-in users can't report their own posts */}
-                      {!(user && post.mine) && (
+                      {/* Nobody reports their own posts */}
+                      {!post.mine && (
                         <button onClick={() => openReport(post)} className="cm-icon-btn" title="Report post" aria-label="Report post">
                           <MoreHorizontal size={18} />
                         </button>
@@ -306,13 +259,11 @@ export default function Community({ user }) {
                       <button onClick={() => handleLike(post)} aria-disabled={likesSaving.has(post.id)} className={`cm-action ${post.liked ? 'is-liked' : ''}`} aria-pressed={post.liked} aria-label={post.liked ? 'Unlike' : 'Like'}>
                         <Heart size={16} fill={post.liked ? 'currentColor' : 'none'} /> {post.likes}
                       </button>
-                      {/* Comments come later for saved posts */}
-                      {!user && <span className="cm-action cm-action--static"><MessageSquare size={16} /> {post.comments}</span>}
                       <button onClick={() => setShowShare(true)} className="cm-action">
                         <Share2 size={16} /> Share
                       </button>
                       {post.mine && <button onClick={() => openEditModal(post)} className="cm-action cm-action--end">Edit</button>}
-                      {post.mine && user && <button onClick={() => setDeletingPost(post)} className="cm-action">Delete</button>}
+                      {post.mine && <button onClick={() => setDeletingPost(post)} className="cm-action">Delete</button>}
                     </div>
                   </article>
                 ))
