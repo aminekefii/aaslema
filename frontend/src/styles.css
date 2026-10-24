@@ -420,10 +420,11 @@ button, input, select { font: inherit; }
   position: relative; isolation: isolate; overflow: hidden; background: var(--heading);
   padding: 180px 0 90px; text-align: center; color: rgba(255, 255, 255, 0.85);
 }
-/* "I ♥ Tunis" photo behind the banner; it is small (480px), so it is softened to hide the pixels */
+/* "I ♥ Tunis" photo behind the banner; it is small (550px wide), so it is softened to hide the pixels */
 .page-banner::before {
   content: ''; position: absolute; inset: -24px; z-index: -2;
-  background: url('/images/i-love-tunis.jpg') center 60% / cover no-repeat; filter: blur(5px);
+  /* The red letters are 62–89% down the photo: anchored low so the wide header shows all of them */
+  background: url('/images/i-love-tunis.jpg') center 89% / cover no-repeat; filter: blur(5px);
 }
 .page-banner::after { content: ''; position: absolute; inset: 0; z-index: -1; background: rgba(28, 35, 31, 0.72); }
 .page-banner h1 { color: var(--white); font-size: 56px; letter-spacing: -1px; margin-bottom: 10px; }
