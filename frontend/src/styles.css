@@ -34,6 +34,9 @@
   --surface: #fff;
   --title: #0f2a47;
   --tint: #fff4f5;
+  /* Fact chips (vibe, population, city): pale sand + ink text (11.9:1). Hashtags and icon discs: pale blue + blue (5.6:1) */
+  --chip: #f1e7d4;
+  --blue-tint: #e8f0fa;
   --dot: #d8d2c6;
 }
 
@@ -49,6 +52,8 @@ html.dark {
   --lighter: #102238;
   --border: rgba(255, 255, 255, 0.09);
   --tint: rgba(227, 6, 24, 0.16);
+  --chip: rgba(233, 217, 188, 0.12);
+  --blue-tint: rgba(127, 176, 236, 0.14);
   --primary-ink: #ff5a66;
   --blue-ink: #7fb0ec;
   --dot: #2a3b52;
@@ -76,7 +81,7 @@ h1, h2, h3, h4 {
   margin: 0 0 0.5rem; font-family: var(--font-display); font-weight: 650; line-height: 1.15;
   letter-spacing: -0.015em; color: var(--title); text-wrap: balance;
 }
-h3 a:hover { color: var(--primary-ink); }
+h3 a:hover { color: var(--blue-ink); }
 p { margin: 0 0 1rem; }
 button, input, select, textarea { font: inherit; }
 ::selection { background: var(--primary); color: var(--white); }
@@ -363,9 +368,9 @@ input[type='radio'], input[type='checkbox'] { accent-color: var(--primary); }
 .feature-card:hover { box-shadow: var(--shadow); border-color: transparent; transform: translateY(-4px); }
 .feature-card__icon {
   width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; margin-bottom: 14px;
-  background: var(--tint); color: var(--primary-ink); transition: 0.4s;
+  background: var(--blue-tint); color: var(--blue-ink); transition: 0.4s;
 }
-.feature-card:hover .feature-card__icon { background: var(--primary); color: var(--white); }
+.feature-card:hover .feature-card__icon { background: var(--blue); color: var(--white); }
 .feature-card h3 { font-size: 18px; margin-bottom: 6px; }
 .feature-card p { margin: 0; font-size: 15px; line-height: 1.5; }
 
@@ -377,7 +382,7 @@ input[type='radio'], input[type='checkbox'] { accent-color: var(--primary); }
 .travel-style { display: flex; gap: 18px; }
 .travel-style__icon {
   width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0; display: grid; place-items: center;
-  background: var(--tint); color: var(--primary-ink);
+  background: var(--blue-tint); color: var(--blue-ink);
 }
 .travel-style h3 { font-size: 20px; margin-bottom: 6px; }
 .travel-style p { margin: 0; font-size: 16px; }
@@ -456,7 +461,7 @@ input[type='radio'], input[type='checkbox'] { accent-color: var(--primary); }
 .blog-card__body { padding: 20px 20px 10px; }
 .tag {
   display: inline-block; font-size: 14px; padding: 2px 16px; border-radius: 20px;
-  background: var(--tint); color: var(--primary-ink); font-weight: 500; margin-bottom: 12px;
+  background: var(--chip); color: var(--title); font-weight: 500; margin-bottom: 12px;
 }
 .blog-card h3 { font-size: 22px; margin-bottom: 14px; }
 .blog-card__meta { display: flex; flex-wrap: wrap; gap: 6px 20px; font-size: 14px; }
@@ -523,7 +528,7 @@ input[type='radio'], input[type='checkbox'] { accent-color: var(--primary); }
 .guide-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-top: 14px; }
 .guide-card__head > div { min-width: 0; }
 .guide-card h2 { font-size: 20px; margin: 0; transition: color 0.3s; }
-.guide-card:hover h2 { color: var(--primary-ink); }
+.guide-card:hover h2 { color: var(--blue-ink); }
 .guide-card__head p { margin: 2px 0 0; font-size: 15px; }
 .guide-card__likes { display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0; margin-top: 4px; font-size: 14px; }
 .guide-card__likes.is-liked { color: var(--primary-ink); }
@@ -531,7 +536,7 @@ input[type='radio'], input[type='checkbox'] { accent-color: var(--primary); }
 .guide-card__chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
 .chip {
   display: inline-flex; align-items: center; gap: 4px; padding: 3px 12px; border-radius: 20px;
-  font-size: 13px; font-weight: 500; background: var(--tint); color: var(--primary-ink);
+  font-size: 13px; font-weight: 500; background: var(--chip); color: var(--title);
 }
 .guide__empty {
   padding: 50px 24px; text-align: center; border-radius: 20px;
@@ -592,7 +597,7 @@ input[type='radio'], input[type='checkbox'] { accent-color: var(--primary); }
 .city-note--error { color: #e57373; }
 .city-facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 28px 0 0; }
 .city-facts > div { display: flex; align-items: center; gap: 10px; }
-.city-facts svg { flex-shrink: 0; color: var(--primary-ink); }
+.city-facts svg { flex-shrink: 0; color: var(--cta); }
 .city-facts dt { font-size: 13px; }
 .city-facts dd { margin: 0; color: var(--white); font-weight: 500; font-size: 16px; }
 .city-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
@@ -620,7 +625,7 @@ input[type='radio'], input[type='checkbox'] { accent-color: var(--primary); }
 .city-overview { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; align-items: start; }
 .city-overview__main, .city-stack { display: grid; gap: 48px; }
 .city-heading { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-.city-heading svg { color: var(--primary-ink); }
+.city-heading svg { color: var(--blue-ink); }
 .city-heading h2, .city-h2 { font-size: 28px; margin: 0; }
 .city-h2 { margin-bottom: 16px; }
 .city-sub { margin: -10px 0 16px; font-size: 15px; }
@@ -634,7 +639,7 @@ input[type='radio'], input[type='checkbox'] { accent-color: var(--primary); }
 .city-list li { padding: 14px 20px; font-size: 16px; font-weight: 500; color: var(--title); border-top: 1px solid var(--border); }
 .city-list li:first-child { border-top: 0; }
 .city-list--dots li { display: flex; align-items: center; gap: 12px; }
-.city-list--dots li::before { content: ''; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; background: var(--primary); }
+.city-list--dots li::before { content: ''; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; background: var(--blue); }
 .city-sidebar { display: grid; gap: 24px; }
 .city-sidebar .cd-card { padding: 22px; }
 .cd-card__head { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
@@ -654,7 +659,7 @@ input[type='radio'], input[type='checkbox'] { accent-color: var(--primary); }
 .city-highlight__top { display: flex; align-items: flex-start; justify-content: space-between; }
 .city-highlight__icon {
   width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center;
-  background: var(--tint); color: var(--primary-ink);
+  background: var(--blue-tint); color: var(--blue-ink);
 }
 .city-highlight h3 { font-size: 19px; margin: 0; }
 .city-highlight p { margin: 0; font-size: 15px; }
@@ -707,7 +712,7 @@ input[type='radio'], input[type='checkbox'] { accent-color: var(--primary); }
 .moment-review__close { margin-top: 20px; }
 .city-empty { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 56px 20px; text-align: center; }
 .city-empty p { margin: 0; font-size: 15px; }
-.city-missing svg { color: var(--primary-ink); margin: 0 auto 12px; display: block; }
+.city-missing svg { color: var(--blue-ink); margin: 0 auto 12px; display: block; }
 .city-missing .btn { margin-top: 24px; }
 
 /* Modals (moment upload, share) */
@@ -800,7 +805,7 @@ input[type='radio'], input[type='checkbox'] { accent-color: var(--primary); }
 .auth-submit { width: 100%; margin-top: 2px; padding: 10px 32px; }
 .auth-notice {
   display: flex; gap: 10px; align-items: flex-start; margin: 18px 0 0; padding: 12px 14px; border-radius: 12px;
-  background: var(--tint); color: var(--title); font-size: 14px; line-height: 1.5;
+  background: var(--chip); color: var(--title); font-size: 14px; line-height: 1.5;
 }
 .auth-notice svg { flex-shrink: 0; margin-top: 1px; color: var(--primary-ink); }
 .auth-notice--error { background: #fdecec; color: #8f1d1d; }
@@ -815,7 +820,7 @@ input[type='radio'], input[type='checkbox'] { accent-color: var(--primary); }
 .fest { max-width: 980px; }
 .fest__signin {
   display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 30px; padding: 14px 18px;
-  border: 1px solid var(--border); border-radius: var(--radius); background: var(--tint); color: var(--title); font-weight: 500;
+  border: 1px solid var(--border); border-radius: var(--radius); background: var(--chip); color: var(--title); font-weight: 500;
 }
 .fest__signin svg { color: var(--primary-ink); }
 .fest__signin a { color: var(--primary-ink); font-weight: 600; }
@@ -899,9 +904,9 @@ input[type='radio'], input[type='checkbox'] { accent-color: var(--primary); }
 .post-photos__item:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
 /* Hashtags under a post; buttons on the community page filter by them */
 .post-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 0; padding: 0; list-style: none; }
-.post-tags__tag { display: inline-block; padding: 3px 10px; border: 0; border-radius: 20px; background: var(--tint); color: var(--primary-ink); font: inherit; font-size: 13px; font-weight: 600; }
+.post-tags__tag { display: inline-block; padding: 3px 10px; border: 0; border-radius: 20px; background: var(--blue-tint); color: var(--blue-ink); font: inherit; font-size: 13px; font-weight: 600; }
 button.post-tags__tag { cursor: pointer; }
-button.post-tags__tag:hover, .post-tags__tag.is-active { background: var(--primary); color: var(--white); }
+button.post-tags__tag:hover, .post-tags__tag.is-active { background: var(--blue); color: var(--white); }
 /* Sidebar Hashtag field, with a clear button once something is typed */
 .cm-filters__tag-field { position: relative; }
 .cm-filters__tag-field input {
@@ -1027,7 +1032,7 @@ button.post-tags__tag:hover, .post-tags__tag.is-active { background: var(--prima
 .contact__card a:hover { color: var(--primary-ink); }
 .contact__icon {
   width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0; display: grid; place-items: center;
-  background: var(--tint); color: var(--primary-ink);
+  background: var(--blue-tint); color: var(--blue-ink);
 }
 .contact__form {
   display: grid; gap: 18px; padding: 40px; border-radius: 20px;
@@ -1052,7 +1057,7 @@ button.post-tags__tag:hover, .post-tags__tag.is-active { background: var(--prima
 .review-page { max-width: 720px; }
 .review-page__note { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin: 0; }
 .review-form__status { margin: 0; justify-self: start; padding: 2px 12px; border-radius: 999px; font-size: 14px; font-weight: 500; background: rgba(217, 142, 43, 0.12); color: var(--secondary); }
-.review-form__status--live { background: var(--tint); color: var(--primary-dark); }
+.review-form__status--live { background: rgba(94, 125, 58, 0.14); color: var(--success); }
 .review-form__stars { display: flex; gap: 4px; }
 .review-form__stars button { padding: 2px; border: 0; background: none; color: var(--border); cursor: pointer; }
 .review-form__stars button.on { color: #fbbf24; }
@@ -1144,7 +1149,7 @@ html.dark .feature-card:hover { border-color: var(--border); }
 .admin-table th { background: var(--lighter); color: var(--title); font-weight: 600; }
 .admin-table tr:last-child td { border-bottom: 0; }
 .admin-badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 13px; font-weight: 500; }
-.admin-badge--ok { background: var(--tint); color: var(--primary-dark); }
+.admin-badge--ok { background: rgba(94, 125, 58, 0.14); color: var(--success); }
 .admin-badge--warn { background: rgba(217, 142, 43, 0.12); color: var(--secondary); }
 .admin-note { padding: 24px 0; color: var(--text); }
 .admin-note--error { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; color: #c0392b; }
@@ -1223,7 +1228,7 @@ html.dark .feature-card:hover { border-color: var(--border); }
 .public-card__photo--initials { display: grid; place-items: center; background: var(--primary); color: var(--white); font-size: 28px; font-weight: 700; }
 .public-card h3 { margin: 6px 0 0; font-size: 22px; color: var(--title); overflow-wrap: anywhere; }
 .public-card__place, .public-card__style { display: flex; align-items: center; gap: 6px; margin: 0; font-size: 14px; }
-.public-card__style { padding: 3px 12px; border-radius: 20px; background: var(--tint); color: var(--primary-ink); font-weight: 600; }
+.public-card__style { padding: 3px 12px; border-radius: 20px; background: var(--chip); color: var(--title); font-weight: 600; }
 .public-card__bio { margin: 8px 0 0; font-size: 15px; line-height: 1.55; white-space: pre-line; overflow-wrap: anywhere; color: var(--title); }
 .public-card__bio--empty { color: var(--text); font-style: italic; }
 .public-card__stats {
