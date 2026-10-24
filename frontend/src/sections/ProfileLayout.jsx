@@ -14,7 +14,8 @@ export default function ProfileLayout({ user, children }) {
     <>
       <section className="page-banner page-banner--short">
         <div className="container">
-          <h1>{displayName(user)}</h1>
+          {/* "Aaslema" is hello in Tunisian */}
+          <h1>Aaslema {displayName(user)} <span aria-hidden="true">👋</span></h1>
           <p>{user.email}</p>
         </div>
       </section>

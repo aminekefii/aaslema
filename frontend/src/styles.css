@@ -913,6 +913,8 @@ button.post-tags__tag:hover, .post-tags__tag.is-active { background: var(--prima
 .cm-comments__form .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .cm-delete-actions { margin-top: 20px; }
 .my-posts { display: grid; gap: 16px; margin-top: 20px; }
+/* My posts: title on the left, New post on the right (below it on phones) */
+.my-posts__head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px 20px; }
 .my-post h3 { margin-top: 0; }
 .my-post__meta { display: flex; align-items: center; gap: 6px; margin: 0 0 10px; font-size: 13px; }
 .my-post__text { margin: 0; font-size: 15px; line-height: 1.55; white-space: pre-line; overflow-wrap: anywhere; }

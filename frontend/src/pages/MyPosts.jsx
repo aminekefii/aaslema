@@ -1,17 +1,19 @@
 import { useCallback, useEffect, useState } from 'react'
-import { CheckCircle2, Heart, MapPin } from 'lucide-react'
+import { CheckCircle2, Heart, MapPin, Plus } from 'lucide-react'
 import { cities } from '../cities.js'
 import { myPostCard, photoChanges, postFromForm, savedPhotoItems, tagsText } from '../communityPosts.js'
-import { deletePost, fetchMyPosts, updatePost } from '../communityApi.js'
+import { createPost, deletePost, fetchMyPosts, updatePost } from '../communityApi.js'
 import { DeletePostModal, PostFormModal } from '../components/PostDialogs.jsx'
 import { PostPhotos, PostTags } from '../components/PostMedia.jsx'
 import { timeAgo } from '../timeAgo.js'
 
-// Profile dashboard: every community post the user published, with likes; edit and delete here too.
+// Profile dashboard: every community post the user published, with likes; new post, edit and delete here too.
 export default function MyPosts({ user }) {
   // undefined while loading, null if loading failed
   const [posts, setPosts] = useState(undefined)
   const [editingPost, setEditingPost] = useState(null)
+  // The form is open for a new post (creating) or for editingPost
+  const [creating, setCreating] = useState(false)
   const [form, setForm] = useState(null)
   const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState('')
@@ -39,13 +41,22 @@ export default function MyPosts({ user }) {
     return () => clearTimeout(id)
   }, [toast])
 
+  const openNew = () => {
+    setEditingPost(null)
+    setCreating(true)
+    setForm({ title: '', cityId: '', content: '', tags: '', photos: [] })
+    setFormError('')
+  }
   const openEdit = (post) => {
+    setCreating(false)
     setEditingPost(post)
     setForm({ title: post.title, cityId: post.cityId, content: post.content, tags: tagsText(post.tags), photos: savedPhotoItems(post.photos, post.photoUrls) })
     setFormError('')
   }
-  const closeEdit = () => {
-    if (!saving) setEditingPost(null)
+  const closeForm = () => {
+    if (saving) return
+    setEditingPost(null)
+    setCreating(false)
   }
 
   const handleSave = async (e) => {
@@ -55,14 +66,17 @@ export default function MyPosts({ user }) {
     if (error) return setFormError(error)
     setSaving(true)
     setFormError('')
-    const result = await updatePost(editingPost.id, row, { userId: user.id, ...photoChanges(form.photos, editingPost.photos) })
+    const result = creating
+      ? await createPost(row, { userId: user.id, files: photoChanges(form.photos).files })
+      : await updatePost(editingPost.id, row, { userId: user.id, ...photoChanges(form.photos, editingPost.photos) })
     setSaving(false)
     if (result.error) return setFormError(result.error)
     setEditingPost(null)
-    // New photos have new paths, so the list is read again (kept as it is if that fails)
+    setCreating(false)
+    // New posts and photos get new ids and paths, so the list is read again (kept as it is if that fails)
     const rows = await fetchMyPosts()
     if (rows) setPosts(rows.map((r) => myPostCard(r, cities)))
-    setToast('Changes saved')
+    setToast(creating ? 'Post published' : 'Changes saved')
   }
 
   const handleDelete = async () => {
@@ -76,8 +90,13 @@ export default function MyPosts({ user }) {
 
   return (
     <>
-      <h1>My posts</h1>
-      <p className="profile-card__lead">Posts you published in the community.</p>
+      <div className="my-posts__head">
+        <div>
+          <h1>My posts</h1>
+          <p className="profile-card__lead">Posts you published in the community.</p>
+        </div>
+        <button type="button" onClick={openNew} className="btn btn--primary"><Plus size={18} /> New post</button>
+      </div>
       {posts === undefined && <p className="profile-note">Loading your posts…</p>}
       {posts === null && (
         <p className="profile-note profile-note--error my-moments__error" role="alert">
@@ -86,7 +105,7 @@ export default function MyPosts({ user }) {
         </p>
       )}
       {posts?.length === 0 && (
-        <p className="profile-note">You haven't published any posts yet. <a href="/app/community">Go to Community</a></p>
+        <p className="profile-note">You haven't published any posts yet. Write your first one with New post, or <a href="/app/community">see what others share</a>.</p>
       )}
       {posts?.length > 0 && (
         <div className="my-posts">
@@ -111,8 +130,8 @@ export default function MyPosts({ user }) {
         </div>
       )}
 
-      {editingPost && (
-        <PostFormModal editing post={form} onChange={setForm} onSubmit={handleSave} onClose={closeEdit} saving={saving} error={formError} />
+      {(editingPost || creating) && (
+        <PostFormModal editing={!creating} post={form} onChange={setForm} onSubmit={handleSave} onClose={closeForm} saving={saving} error={formError} />
       )}
 
       {deletingPost && <DeletePostModal onConfirm={handleDelete} onClose={() => setDeletingPost(null)} deleting={deleting} />}
