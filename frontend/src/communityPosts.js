@@ -116,3 +116,21 @@ export function postHasTag(post, text) {
   const wanted = tagFilterText(text)
   return !wanted || (post.tags ?? []).some((t) => t.includes(wanted))
 }
+
+// Landing page "Stories & Tips": the n most liked community_feed() rows (newest first on a tie) as cards
+export function storyCards(rows, cityList, n = 3) {
+  const liked = [...rows].sort((a, b) => b.likes - a.likes || new Date(b.created_at) - new Date(a.created_at))
+  return liked.slice(0, n).map((r) => {
+    const city = cityList.find((c) => c.id === r.city_id)
+    return {
+      id: r.id,
+      title: r.title,
+      tag: city?.name ?? r.city_id,
+      date: new Date(r.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric', timeZone: 'UTC' }),
+      likes: r.likes,
+      comments: r.comments,
+      image: r.photo_urls?.[0] ?? city?.image ?? null,
+      href: `/community#${r.id}`,
+    }
+  })
+}

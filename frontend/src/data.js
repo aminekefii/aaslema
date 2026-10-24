@@ -142,12 +142,6 @@ export const ctas = [
   { region: 'cap-bon', image: '/images/cities/nabeul-2.jpg', tag: 'Hammamet, July to August', title: 'International Festival of Hammamet' },
 ]
 
-export const posts = [
-  { image: '/images/cities/jendouba-2.jpg', tag: 'History', title: 'Bulla Regia: The Roman Villas Built Underground in Jendouba', date: '25 February 2026', comments: 5 },
-  { image: '/images/cities/medenine-2.jpg', tag: 'Backpacking', title: 'Sleeping in a Ksar: A Backpacker’s Guide to Medenine', date: '18 March 2026', comments: 8 },
-  { image: '/images/cities/gafsa-2.jpg', tag: 'Bikepacking', title: 'Gafsa to Tozeur by Bike: Roman Pools, Oases and Gorges', date: '02 April 2026', comments: 3 },
-]
-
 // [label, href] pairs, mirroring the footer of aaslema-new
 export const footerColumns = [
   { title: 'Explore', links: [['Destinations', '/destinations'], ['Trip planner', '/app/profile/planner'], ['Community', '/community']] },

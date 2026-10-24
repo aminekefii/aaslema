@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { commentFromForm, myPostCard, parseTags, photoChanges, postHasTag, postMatches, tagFilterText, postFromForm, reportFromForm, savedPhotoItems, sortPosts, tagsText } from './communityPosts.js'
+import { commentFromForm, myPostCard, parseTags, photoChanges, postHasTag, postMatches, tagFilterText, postFromForm, reportFromForm, savedPhotoItems, sortPosts, storyCards, tagsText } from './communityPosts.js'
 
 const user = { email: 'leila@x.com', user_metadata: { full_name: 'Leila Ben Ali' } }
 const valid = { title: '  Sunrise at Chebika ', cityId: 'tozeur', content: '  Leave Tozeur at 5am and you get the canyon to yourself. ' }
@@ -237,5 +237,31 @@ describe('tagFilterText', () => {
   it('turns the field into a hashtag without # or spaces', () => {
     expect(tagFilterText('  #Sahara ')).toBe('sahara')
     expect(tagFilterText('##')).toBe('')
+  })
+})
+
+describe('storyCards', () => {
+  const cityList = [{ id: 'tozeur', name: 'Tozeur', image: '/images/cities/tozeur-1.jpg' }]
+  const row = (id, likes, created_at, extra = {}) => ({ id, title: `Post ${id}`, city_id: 'tozeur', likes, comments: 2, created_at, photo_urls: [], ...extra })
+  const rows = [
+    row('a', 1, '2026-10-01T12:00:00Z'),
+    row('b', 9, '2026-10-02T12:00:00Z'),
+    row('c', 4, '2026-10-03T12:00:00Z'),
+    row('d', 4, '2026-10-05T12:00:00Z', { photo_urls: ['https://x/d1.jpg', 'https://x/d2.jpg'] }),
+  ]
+
+  it('keeps the 3 most liked posts, newest first on a tie', () => {
+    expect(storyCards(rows, cityList).map((p) => p.id)).toEqual(['b', 'd', 'c'])
+  })
+
+  it('makes a landing page card that opens the post on the community page', () => {
+    expect(storyCards(rows, cityList)[1]).toEqual({
+      id: 'd', title: 'Post d', tag: 'Tozeur', date: '05 October 2026', likes: 4, comments: 2,
+      image: 'https://x/d1.jpg', href: '/community#d',
+    })
+  })
+
+  it("uses the city's photo when the post has none", () => {
+    expect(storyCards(rows, cityList)[0].image).toBe('/images/cities/tozeur-1.jpg')
   })
 })

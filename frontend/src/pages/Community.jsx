@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { MessageSquare, Heart, Search, Plus, MoreHorizontal, CheckCircle2, SlidersHorizontal, X } from 'lucide-react'
 import { cities } from '../cities.js'
 import Modal from '../components/Modal.jsx'
@@ -88,6 +88,15 @@ export default function Community({ user }) {
   useEffect(() => {
     loadFeed()
   }, [signedIn, loadFeed])
+
+  // Opened from a landing page story (/community#<post id>): scroll to that post once the posts are in
+  const scrolledToHash = useRef(false)
+  useEffect(() => {
+    const id = window.location.hash.slice(1)
+    if (!feed || !id || scrolledToHash.current) return
+    scrolledToHash.current = true
+    document.getElementById(id)?.scrollIntoView({ block: 'center' })
+  }, [feed])
 
   useEffect(() => {
     if (!toast) return
