@@ -46,10 +46,10 @@ export const profileNavLinks = [
   ['My moments', '/app/profile'],
   ['My posts', '/app/profile/posts'],
   ['My plan', '/app/profile/plan'],
-  ['AI Planner', '/app/profile/planner'],
   ['Visited destinations', '/app/profile/visited'],
   ['Edit profile', '/app/profile/edit'],
   ['Rate your trip', '/app/profile/review'],
+  ['AI Planner', '/app/profile/planner'],
 ]
 
 export const faqs = [
