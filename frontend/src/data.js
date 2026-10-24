@@ -156,6 +156,6 @@ export const footerColumns = [
 ]
 
 export const images = {
-  about: '/images/about-traveler.png',
+  about: '/images/about-backpacker.jpg',
   footer: '/images/cities/ben-arous-2.jpg',
 }

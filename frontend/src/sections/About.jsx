@@ -48,7 +48,7 @@ export default function About() {
                 <Icon size={22} />
               </span>
             ))}
-            <img src={images.about} alt="Smiling traveler with a suitcase" loading="lazy" />
+            <img src={images.about} alt="Backpacker carrying a loaded pack with a rope, binoculars and sandals" loading="lazy" />
           </div>
         </div>
       </div>
