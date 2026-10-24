@@ -19,26 +19,22 @@ export default function About() {
       <div className="container about__grid">
         <div className="about__content" data-aos="fade-left">
           <div className="section-title section-title--left">
-            <h2>Travel Tunisia Like a Local: Why Backpackers Choose Aaslema</h2>
+            <h2>Travel Tunisia like someone who lives here</h2>
           </div>
           <p>Louages between towns, guesthouses in the medina, coastal roads and gravel tracks into the Sahara. Aaslema brings together city guides, an AI trip planner and a community of travelers who have ridden the route before you.</p>
-
-          <div className="divider">
-            <span>Guides for all <em><CountUp end={24} duration={3000} /> governorates</em> of Tunisia</span>
-          </div>
 
           <div className="about__counters">
             <div className="counter">
               <strong><CountUp end={24} duration={3000} /></strong>
-              <span>City Guides</span>
+              <span>city guides, one for every governorate</span>
             </div>
             <div className="counter">
               <strong><CountUp end={3} duration={3000} /></strong>
-              <span>Ways to Travel: Backpacking, Bikepacking &amp; History</span>
+              <span>ways to travel: backpacking, bikepacking and history</span>
             </div>
           </div>
 
-          <a href="/destinations" className="btn btn--primary">Browse Destinations <ArrowRight size={16} /></a>
+          <a href="/destinations" className="btn btn--primary">Browse destinations <ArrowRight size={16} /></a>
         </div>
 
         <div data-aos="fade-right">

@@ -1,5 +1,4 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { Quote } from 'lucide-react'
 import Stars from '../components/Stars.jsx'
 import Modal from '../components/Modal.jsx'
 import usePerView from '../usePerView.js'
@@ -64,7 +63,7 @@ export default function Testimonials() {
     <section className="section reviews">
       <div className="container">
         <div className="reviews__head" data-aos="fade-up">
-          <h2>What Our Users Say</h2>
+          <h2>What travellers say</h2>
           <p>Backpackers and bikepackers on the routes, guesthouses and people they met across Tunisia.</p>
         </div>
 
@@ -85,8 +84,7 @@ export default function Testimonials() {
               return (
               <figure key={key} className="review" style={{ flexBasis: `${100 / perView}%` }}>
                 <div className="review__bubble">
-                  <Quote size={40} className="review__quote" />
-                  <blockquote ref={(el) => { quotes.current[key] = el }}>“ {t.quote} ”</blockquote>
+                  <blockquote ref={(el) => { quotes.current[key] = el }}>“{t.quote}”</blockquote>
                   {clipped[key] && <button type="button" className="review__more" onClick={() => setOpenCard(t)}>Read more</button>}
                   <Stars count={t.rating ?? 5} />
                 </div>

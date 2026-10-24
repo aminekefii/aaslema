@@ -23,7 +23,7 @@ export default function Blog() {
   return (
     <section className="section blog" id="blog">
       <div className="container">
-        <SectionTitle title="Stories &amp; Tips from the Road" />
+        <SectionTitle title="Stories and tips from the road" />
         <div className="grid grid--3">
           {posts.map((p) => (
             <article key={p.id} className="blog-card">
@@ -38,7 +38,7 @@ export default function Blog() {
               </div>
               <div className="blog-card__image">
                 {p.image && <img src={p.image} alt="" loading="lazy" />}
-                <a href={p.href} className="btn btn--sm btn--light">Read More <ArrowRight size={14} /></a>
+                <a href={p.href} className="btn btn--sm btn--light">Read post <ArrowRight size={14} /></a>
               </div>
             </article>
           ))}
