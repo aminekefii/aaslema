@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { LogOut, Menu, X, Compass } from 'lucide-react'
-import { brand, appNavLinks } from '../data.js'
+import { LogOut, Menu, X } from 'lucide-react'
+import Logo from '../components/Logo.jsx'
+import { appNavLinks } from '../data.js'
 import Switcher from '../components/Switcher.jsx'
 import { currentPath } from '../route.js'
 import { isAdmin } from '../roles.js'
@@ -27,10 +28,7 @@ export default function AppHeader({ user, onSignOut }) {
   return (
     <header className={`header ${scrolled ? 'header--fixed' : ''}`}>
       <div className="container header__inner">
-        <a href="/app" className="logo">
-          <Compass size={30} strokeWidth={2.2} />
-          <span>{brand.name}</span>
-        </a>
+        <Logo href="/app" />
 
         <nav className={`nav nav--app ${open ? 'nav--open' : ''}`}>
           {appNavLinks.map(([label, href]) => (

@@ -1,4 +1,5 @@
-import { ArrowUp, Compass } from 'lucide-react'
+import { ArrowUp } from 'lucide-react'
+import Logo from '../components/Logo.jsx'
 import { brand, footerColumns, images } from '../data.js'
 import { isAppPath, redirectFor } from '../redirects.js'
 import { currentPath } from '../route.js'
@@ -12,7 +13,7 @@ export default function Footer() {
       <div className="container">
         <div className="footer__links">
           <div className="footer__about">
-            <a href={isAppPath(currentPath) ? '/app' : '/'} className="logo"><Compass size={30} strokeWidth={2.2} /><span>{brand.name}</span></a>
+            <Logo href={isAppPath(currentPath) ? '/app' : '/'} />
             <p>A travel guide for backpackers and bikepackers exploring Tunisia, from the medinas to the Sahara.</p>
           </div>
           {footerColumns.map((col) => (

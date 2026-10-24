@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Camera, Compass, ExternalLink, Flag, LogOut, Mail, Menu, Star, Users, X } from 'lucide-react'
-import { adminNavLinks, brand } from '../data.js'
+import { Camera, ExternalLink, Flag, LogOut, Mail, Menu, Star, Users, X } from 'lucide-react'
+import { adminNavLinks } from '../data.js'
+import Logo from '../components/Logo.jsx'
 import Switcher from '../components/Switcher.jsx'
 import { currentPath } from '../route.js'
 import { supabase } from '../supabase.js'
@@ -49,10 +50,9 @@ export default function AdminLayout({ user, onSignOut, children }) {
     <div className="admin">
       <aside className="admin-side">
         <div className="admin-side__top">
-          <a href="/admin" className="logo">
-            <Compass size={28} strokeWidth={2.2} />
-            <span>{brand.name}<small className="admin-side__label">Admin</small></span>
-          </a>
+          <Logo href="/admin" className="logo--admin">
+            <small className="admin-side__label">Admin</small>
+          </Logo>
           <button type="button" className="admin-menu-toggle" onClick={() => setOpen(!open)} aria-label="Toggle menu" aria-expanded={open}>
             {open ? <X /> : <Menu />}
           </button>

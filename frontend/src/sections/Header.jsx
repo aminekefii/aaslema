@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { ArrowRight, LogOut, Menu, X, Compass } from 'lucide-react'
-import { brand, navLinks } from '../data.js'
+import { ArrowRight, LogOut, Menu, X } from 'lucide-react'
+import Logo from '../components/Logo.jsx'
+import { navLinks } from '../data.js'
 import Switcher from '../components/Switcher.jsx'
 import { currentPath } from '../route.js'
 import { supabase, useUser } from '../supabase.js'
@@ -22,10 +23,7 @@ export default function Header() {
   return (
     <header className={`header ${scrolled ? 'header--fixed' : ''} ${solid ? 'header--solid' : ''}`}>
       <div className="container header__inner">
-        <a href="/" className="logo">
-          <Compass size={30} strokeWidth={2.2} />
-          <span>{brand.name}</span>
-        </a>
+        <Logo href="/" />
 
         <nav className={`nav ${open ? 'nav--open' : ''}`}>
           {navLinks.map(([label, href]) => (
