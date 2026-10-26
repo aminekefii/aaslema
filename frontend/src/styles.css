@@ -623,7 +623,8 @@ input[type='radio'], input[type='checkbox'] { accent-color: var(--primary); }
 .city-panel { animation: city-fade 0.2s ease; }
 @keyframes city-fade { from { opacity: 0; } to { opacity: 1; } }
 .city-overview { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; align-items: start; }
-.city-overview__main, .city-stack { display: grid; gap: 48px; }
+/* minmax(0, 1fr): the column stays as wide as the page; an auto column grows to fit the moments carousel on phones */
+.city-overview__main, .city-stack { display: grid; grid-template-columns: minmax(0, 1fr); gap: 48px; }
 .city-heading { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
 .city-heading svg { color: var(--blue-ink); }
 .city-heading h2, .city-h2 { font-size: 28px; margin: 0; }
