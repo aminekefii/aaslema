@@ -19,7 +19,7 @@ Each later part gets its own spec and plan.
 
 | Question | Decision |
 |---|---|
-| Admin credentials | No hard-coded login. The existing account `aminekefi416@gmail.com` is marked admin in Supabase (not deleted and re-created) |
+| Admin credentials | No hard-coded login. The existing account `owner@example.com` is marked admin in Supabase (not deleted and re-created) |
 | Where the admin mark lives | `auth.users.raw_app_meta_data.role = 'admin'` (exposed as `user.app_metadata.role` and in the JWT); users cannot change app metadata themselves |
 | Where data is protected | In the database: the users list comes from a function that refuses non-admins. Hiding `/admin` in the UI is convenience only |
 | Admin after sign in | Lands on `/admin`; can still use `/app` via "View site" |
@@ -143,11 +143,11 @@ accounts, paging comes later if needed.
 -- Mark the site owner's account as admin. Sign out and back in afterwards.
 update auth.users
 set raw_app_meta_data = coalesce(raw_app_meta_data, '{}'::jsonb) || '{"role": "admin"}'::jsonb
-where email = 'aminekefi416@gmail.com';
+where email = 'owner@example.com';
 
 -- To remove admin rights again:
 -- update auth.users set raw_app_meta_data = raw_app_meta_data - 'role'
--- where email = 'aminekefi416@gmail.com';
+-- where email = 'owner@example.com';
 ```
 
 Merging with `||` keeps the account's other app metadata (e.g. `provider`).

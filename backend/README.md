@@ -44,6 +44,8 @@ afterwards (they replace its review and moment lists).
 | 21 | `021_profile_card.sql` | bio, travel style and counts for the public profile card |
 | 22 | `022_public_card.sql` | signed-in users see other people's cards (from a post, moment or comment) |
 | 23 | `023_post_photos_tags.sql` | up to 3 photos and 5 hashtags per post; the `post-photos` bucket |
+| 24 | `024_admin_reported_posts.sql` | admins open and delete reported posts from Post reports |
+| 25 | `025_delete_my_moments.sql` | users delete their own moments from My moments |
 
 Each file starts with a comment saying what it does and which files must run before it.
 `frontend/src/communitySql.test.js` checks the key permissions in these files (who can read and
@@ -53,3 +55,40 @@ write what), so a change that opens data up by mistake fails the tests.
 
 In Supabase → Authentication → URL Configuration, add the site's URLs (and `http://localhost:5500`)
 to the Redirect URLs, including `/app/profile/edit` so email-change links come back to Edit profile.
+
+## Setup on a new Supabase project
+
+The SQL files hold the whole structure (tables, permissions, functions, buckets), so a new,
+empty Supabase project is all you need. The project starts with no data: no users, posts,
+moments, reviews or photos.
+
+1. **Create the project.** On [supabase.com](https://supabase.com), create a new project and
+   wait until it is ready.
+2. **Run the SQL.** Open SQL Editor → New query. Paste each file from `supabase/`, from
+   `001_admin_users.sql` to the last one, and run it, **in number order**, one at a time.
+   Skip `002_make_admin.sql` for now (step 6). Each run should end with "Success".
+3. **Check the buckets.** Storage should now show `avatars`, `moments` and `post-photos`.
+4. **Auth URLs.** Authentication → URL Configuration:
+   - Site URL: the live site's address (e.g. `https://<site>.netlify.app`).
+   - Redirect URLs: add `http://localhost:5500/**` and `https://<site>/**` (every address the
+     site runs on). Password reset and email-change links only come back to these.
+5. **Connect the site.** Project Settings → API Keys: copy the project URL and the
+   **publishable** key (never the secret key).
+   - Locally: copy `frontend/.env.example` to `frontend/.env.local` and paste them in.
+   - On Netlify: Site configuration → Environment variables → `VITE_SUPABASE_URL` and
+     `VITE_SUPABASE_PUBLISHABLE_KEY`, then redeploy.
+6. **Make the admin.** Sign up on the site with the owner's email and confirm it. In
+   `002_make_admin.sql`, replace `owner@example.com` (in the `update` and in the commented
+   removal lines) with the owner's email, then run it. It must return exactly one row. Sign out and sign in again: the account now opens `/admin`.
+7. **Try it.** Sign up as a normal user and post something, upload a moment, report a post from
+   another account, then approve and delete things from the admin pages.
+
+Optional, only if needed:
+
+- **Emails.** Supabase's built-in email sender allows only a few emails per hour. For real
+  users, set your own SMTP server under Authentication → Emails → SMTP Settings, and edit the
+  email templates there if you want them branded.
+- **Google sign-in.** Not on `main` yet (branch `google-sign-in`); the Google Cloud and Supabase
+  steps are under "Continue with Google" in `CHECKPOINT.md`.
+
+When a new SQL file is added later, run only that file, before deploying the code that uses it.

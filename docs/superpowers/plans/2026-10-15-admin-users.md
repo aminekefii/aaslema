@@ -119,11 +119,11 @@ grant execute on function public.admin_list_users() to authenticated;
 -- Afterwards, sign out and sign in again so the session picks up the mark.
 update auth.users
 set raw_app_meta_data = coalesce(raw_app_meta_data, '{}'::jsonb) || '{"role": "admin"}'::jsonb
-where email = 'aminekefi416@gmail.com';
+where email = 'owner@example.com';
 
 -- To remove admin rights again:
 -- update auth.users set raw_app_meta_data = raw_app_meta_data - 'role'
--- where email = 'aminekefi416@gmail.com';
+-- where email = 'owner@example.com';
 ```
 
 - [ ] **Step 3: Verify by reading**
@@ -866,7 +866,7 @@ git commit -m "Route admins into the /admin area"
 
 - [ ] **Step 6: Manual check (site owner, in the browser)**
 
-After running `backend/supabase/001_admin_users.sql` then `002_make_admin.sql` in the Supabase SQL Editor, rebuild (`docker compose up -d --build` or `npm run dev`), sign out and sign in as `aminekefi416@gmail.com`:
+After running `backend/supabase/001_admin_users.sql` then `002_make_admin.sql` in the Supabase SQL Editor, rebuild (`docker compose up -d --build` or `npm run dev`), sign out and sign in as `owner@example.com`:
 
 1. Admin sign in → lands on `/admin` with the sidebar. (Before signing in again after the SQL, an old session lands on `/app` instead — expected.)
 2. Totals and table show real accounts; search narrows by name and by email.

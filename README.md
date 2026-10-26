@@ -50,7 +50,7 @@ frontend/              React site
   public/images/       photos, logo, header backgrounds
   CREDITS.md           photo credits and licences
 backend/
-  supabase/            numbered SQL files (001–023), run in order
+  supabase/            numbered SQL files (001–025), run in order
   README.md            what each SQL file does
 docs/superpowers/      design specs and implementation plans
 netlify.toml           Netlify build and routing
@@ -63,7 +63,8 @@ docker-compose.yml     local run with Docker
    project URL and **publishable** key (Supabase → Project Settings → API Keys). Never put the
    secret key in the frontend.
 2. **Database.** In the Supabase SQL Editor, run every file in `backend/supabase/` once, in
-   number order (they are safe to re-run). See [`backend/README.md`](backend/README.md).
+   number order (they are safe to re-run). For a brand-new Supabase project, follow
+   [Setup on a new Supabase project](backend/README.md#setup-on-a-new-supabase-project).
 3. **Start the site:**
 
    ```bash
