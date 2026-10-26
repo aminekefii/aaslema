@@ -74,8 +74,18 @@ export function emailError(current, next) {
   return null
 }
 
-export function passwordError(password, confirm) {
+// New passwords (sign up, reset, Edit profile). Matches Supabase's "Letters and digits" rule,
+// so a password like 00000000 is refused here before Supabase refuses it.
+export const PASSWORD_HINT = 'At least 8 characters, with letters and numbers.'
+export function newPasswordError(password) {
   if (password.length < PROFILE_LIMITS.passwordMin) return 'Password must be at least 8 characters.'
+  if (!/\p{L}/u.test(password) || !/\p{N}/u.test(password)) return 'Password must include letters and numbers.'
+  return null
+}
+
+export function passwordError(password, confirm) {
+  const weak = newPasswordError(password)
+  if (weak) return weak
   if (password !== confirm) return "Passwords don't match."
   return null
 }

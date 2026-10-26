@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Eye, EyeOff, Info } from 'lucide-react'
 import { supabase, useUser } from '../supabase.js'
 import { homeFor } from '../roles.js'
+import { PASSWORD_HINT, newPasswordError } from '../profile.js'
 
 // Sign in / Sign up / Reset password pages, backed by Supabase Auth (email + password).
 
@@ -125,6 +126,8 @@ export function SignIn() {
 
 export function SignUp() {
   const signUp = async (form) => {
+    const weak = newPasswordError(form.get('password'))
+    if (weak) return { text: weak, error: true }
     const { data, error } = await supabase.auth.signUp({
       email: form.get('email'),
       password: form.get('password'),
@@ -155,7 +158,7 @@ export function SignUp() {
         Email
         <input type="email" name="email" autoComplete="email" placeholder="you@example.com" required />
       </label>
-      <PasswordField label="Password" autoComplete="new-password" minLength={8} hint="At least 8 characters." />
+      <PasswordField label="Password" autoComplete="new-password" minLength={8} hint={PASSWORD_HINT} />
       <button type="submit" className="btn btn--primary auth-submit">Create account</button>
     </AuthShell>
   )
@@ -174,6 +177,8 @@ export function ResetPassword() {
   }
 
   const savePassword = async (form) => {
+    const weak = newPasswordError(form.get('password'))
+    if (weak) return { text: weak, error: true }
     const { error } = await supabase.auth.updateUser({ password: form.get('password') })
     if (error) return { text: error.message, error: true }
     window.location.assign('/')
@@ -184,7 +189,7 @@ export function ResetPassword() {
 
   return user ? (
     <AuthShell title="Choose a new password" lead={`For ${user.email}.`} onSubmit={savePassword} google={false}>
-      <PasswordField label="New password" autoComplete="new-password" minLength={8} hint="At least 8 characters." />
+      <PasswordField label="New password" autoComplete="new-password" minLength={8} hint={PASSWORD_HINT} />
       <button type="submit" className="btn btn--primary auth-submit">Save password</button>
     </AuthShell>
   ) : (

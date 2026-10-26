@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import {
-  COUNTRIES, PROFILE_LIMITS, TRAVEL_STYLES, cleanProfile, emailError, linkNotice, passwordError, profileChanged, profileForm,
+  COUNTRIES, PASSWORD_HINT, PROFILE_LIMITS, TRAVEL_STYLES, cleanProfile, emailError, linkNotice, passwordError, profileChanged, profileForm,
 } from '../profile.js'
 import { ProfileCard } from '../components/ProfileCard.jsx'
 import { avatarUrl, changeEmail, changePassword, fetchProfile, fetchProfileStats, removeAvatar, saveProfile, uploadAvatar } from '../profileApi.js'
@@ -219,7 +219,7 @@ function PasswordCard() {
           <label className="auth-field">
             New password
             <input type="password" name="new-password" autoComplete="new-password" value={password} onChange={field(setPassword)} />
-            <small>At least 8 characters.</small>
+            <small>{PASSWORD_HINT}</small>
           </label>
           <label className="auth-field">
             Confirm password

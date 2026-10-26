@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
-  avatarPath, cleanProfile, COUNTRIES, emailError, linkNotice, passwordError, profileChanged, profileForm, TRAVEL_STYLES,
+  avatarPath, cleanProfile, COUNTRIES, emailError, linkNotice, newPasswordError, passwordError, profileChanged, profileForm, TRAVEL_STYLES,
 } from './profile.js'
 
 const form = (over = {}) => ({ full_name: 'Leila Ben Ali', phone: '', city: '', country: '', bio: '', travel_style: '', ...over })
@@ -102,8 +102,22 @@ describe('emailError', () => {
 describe('passwordError', () => {
   it('needs 8 characters and a matching confirmation', () => {
     expect(passwordError('short', 'short')).toBe('Password must be at least 8 characters.')
-    expect(passwordError('longenough', 'different')).toBe("Passwords don't match.")
-    expect(passwordError('longenough', 'longenough')).toBeNull()
+    expect(passwordError('longenough1', 'different')).toBe("Passwords don't match.")
+    expect(passwordError('longenough1', 'longenough1')).toBeNull()
+  })
+
+  it('needs letters and numbers', () => {
+    expect(passwordError('00000000', '00000000')).toBe('Password must include letters and numbers.')
+    expect(passwordError('aaaaaaaa', 'aaaaaaaa')).toBe('Password must include letters and numbers.')
+  })
+})
+
+describe('newPasswordError', () => {
+  it('accepts letters with numbers, any language', () => {
+    expect(newPasswordError('tunis2026')).toBeNull()
+    expect(newPasswordError('مدينة2026')).toBeNull()
+    expect(newPasswordError('12345678')).toBe('Password must include letters and numbers.')
+    expect(newPasswordError('abc1')).toBe('Password must be at least 8 characters.')
   })
 })
 

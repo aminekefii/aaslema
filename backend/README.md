@@ -72,6 +72,9 @@ moments, reviews or photos.
    - Site URL: the live site's address (e.g. `https://<site>.netlify.app`).
    - Redirect URLs: add `http://localhost:5500/**` and `https://<site>/**` (every address the
      site runs on). Password reset and email-change links only come back to these.
+   - Authentication → Sign In / Providers → Email: set Minimum password length to `8` and
+     Password requirements to "Letters and digits". The site checks the same rule, but only
+     this setting stops someone going around the site.
 5. **Connect the site.** Project Settings → API Keys: copy the project URL and the
    **publishable** key (never the secret key).
    - Locally: copy `frontend/.env.example` to `frontend/.env.local` and paste them in.
