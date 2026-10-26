@@ -1,14 +1,18 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Heart, Navigation } from 'lucide-react'
+import { CheckCircle2, Heart, Navigation, Trash2 } from 'lucide-react'
+import Modal from '../components/Modal.jsx'
 import { cities } from '../cities.js'
 import { myMomentCard } from '../moments.js'
-import { fetchMyMoments } from '../momentsApi.js'
+import { deleteMyMoment, fetchMyMoments } from '../momentsApi.js'
 import { timeAgo } from '../timeAgo.js'
 
-// Profile dashboard: every moment the user uploaded, pending ones too. View only.
+// Profile dashboard: every moment the user uploaded, pending ones too. Delete asks first.
 export default function MyMoments() {
   // undefined while loading, null if loading failed
   const [moments, setMoments] = useState(undefined)
+  const [deletingMoment, setDeletingMoment] = useState(null)
+  const [deleting, setDeleting] = useState(false)
+  const [toast, setToast] = useState(null)
 
   const load = useCallback(async () => {
     setMoments(undefined)
@@ -23,6 +27,21 @@ export default function MyMoments() {
   useEffect(() => {
     load()
   }, [load])
+
+  useEffect(() => {
+    if (!toast) return
+    const id = setTimeout(() => setToast(null), 2600)
+    return () => clearTimeout(id)
+  }, [toast])
+
+  const handleDelete = async () => {
+    setDeleting(true)
+    const result = await deleteMyMoment(deletingMoment.key, deletingMoment.imagePath)
+    setDeleting(false)
+    if (!result.error) setMoments((prev) => prev?.filter((m) => m.key !== deletingMoment.key))
+    setDeletingMoment(null)
+    setToast(result.error ?? 'Moment deleted')
+  }
 
   return (
     <>
@@ -59,10 +78,31 @@ export default function MyMoments() {
                       <Heart size={14} aria-hidden="true" /> {m.likes}
                     </span>
                   )}
+                  <button type="button" onClick={() => setDeletingMoment(m)} className="my-moment__delete" aria-label={`Delete moment: ${m.caption}`}>
+                    <Trash2 size={14} aria-hidden="true" /> Delete
+                  </button>
                 </div>
               </div>
             </article>
           ))}
+        </div>
+      )}
+
+      {deletingMoment && (
+        <Modal title="Delete this moment?" labelId="delete-moment-title" onClose={() => !deleting && setDeletingMoment(null)}>
+          <p className="modal__sub">The photo and its likes will be removed. This can't be undone.</p>
+          <div className="cm-form-actions cm-delete-actions">
+            <button type="button" onClick={() => setDeletingMoment(null)} disabled={deleting} className="cm-text-btn">Cancel</button>
+            <button type="button" onClick={handleDelete} disabled={deleting} className="btn btn--primary">
+              {deleting ? 'Deleting…' : 'Delete'}
+            </button>
+          </div>
+        </Modal>
+      )}
+
+      {toast && (
+        <div className="cm-toast" role="status">
+          <CheckCircle2 size={18} /> {toast}
         </div>
       )}
     </>

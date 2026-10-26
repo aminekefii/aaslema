@@ -1262,8 +1262,13 @@ html.dark .feature-card:hover { border-color: var(--border); }
 .my-moment__body strong { color: var(--title); overflow-wrap: anywhere; }
 .my-moment__spot { display: flex; align-items: center; gap: 4px; margin: 0; color: var(--blue-ink); font-size: 13px; }
 .my-moment__caption { margin: 0; font-size: 15px; overflow-wrap: anywhere; }
-.my-moment__footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; font-size: 13px; }
+.my-moment__footer { display: flex; align-items: center; gap: 12px; width: 100%; font-size: 13px; }
 .my-moment__likes { display: inline-flex; align-items: center; gap: 4px; }
+.my-moment__delete {
+  display: inline-flex; align-items: center; gap: 4px; margin-left: auto; padding: 4px 8px; border: 0; border-radius: 8px;
+  background: none; color: var(--text); font-size: 13px; font-weight: 600; cursor: pointer;
+}
+.my-moment__delete:hover { background: var(--lighter); color: #c0392b; }
 .my-moments__error { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
 /* Visited destinations reuses the My moments grid and cards; the whole card is a link */
 a.my-moment { color: inherit; transition: border-color 0.2s; }

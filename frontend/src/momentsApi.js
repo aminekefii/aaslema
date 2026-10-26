@@ -116,3 +116,20 @@ export async function uploadMoment(file, row, userId) {
     return { error: uploadFailed }
   }
 }
+
+const deleteFailed = "Couldn't delete your moment. Please try again."
+
+// Delete one of the signed-in user's moments, then its photo (025_delete_my_moments.sql)
+export async function deleteMyMoment(id, imagePath) {
+  if (!supabase) return { error: deleteFailed }
+  try {
+    // A delete that matches no row returns no error, so check it hit one
+    const { data, error } = await supabase.from('moments').delete().eq('id', id).select('id')
+    if (error || !data?.length) return { error: deleteFailed }
+    // Best effort: a file left behind is unused and unreadable
+    await supabase.storage.from(BUCKET).remove([imagePath]).catch(() => {})
+    return { ok: true }
+  } catch {
+    return { error: deleteFailed }
+  }
+}

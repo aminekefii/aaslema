@@ -130,7 +130,7 @@ describe('myMomentCard', () => {
 
   it('builds a card for a pending moment', () => {
     expect(myMomentCard(row, list)).toEqual({
-      key: 'm1', url: 'https://x/p.jpg', cityName: 'Tozeur', spot: 'Chebika', caption: 'Oasis at dawn',
+      key: 'm1', imagePath: 'u/p.jpg', url: 'https://x/p.jpg', cityName: 'Tozeur', spot: 'Chebika', caption: 'Oasis at dawn',
       published: false, postedAt: '2026-10-16T10:00:00Z', likes: 3,
     })
   })

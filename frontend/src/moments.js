@@ -65,6 +65,7 @@ export const toggleMomentLike = (moment) => ({
 export function myMomentCard(row, cityList) {
   return {
     key: row.id,
+    imagePath: row.image_path,
     url: row.url ?? null,
     cityName: cityList.find((c) => c.id === row.city_id)?.name ?? row.city_id,
     spot: row.spot,

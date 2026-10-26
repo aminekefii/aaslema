@@ -133,6 +133,14 @@ describe('023_post_photos_tags.sql', () => {
   })
 })
 
+describe('025_delete_my_moments.sql', () => {
+  const del = readFileSync(new URL('../../backend/supabase/025_delete_my_moments.sql', import.meta.url), 'utf8')
+
+  it('lets users delete only their own moments', () => {
+    expect(del).toMatch(/for delete to authenticated\s+using \(user_id = auth\.uid\(\)\);/)
+  })
+})
+
 describe('024_admin_reported_posts.sql', () => {
   const admin = readFileSync(new URL('../../backend/supabase/024_admin_reported_posts.sql', import.meta.url), 'utf8')
 
