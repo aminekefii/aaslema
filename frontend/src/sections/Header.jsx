@@ -29,6 +29,13 @@ export default function Header() {
           {navLinks.map(([label, href]) => (
             <a key={label} href={href} className={href === currentPath || currentPath.startsWith(`${href}/`) ? 'active' : ''} onClick={() => setOpen(false)}>{label}</a>
           ))}
+          {/* The header's Sign In / Sign Out buttons are hidden on phones, so the menu gets its own */}
+          {user && <button type="button" className="app-nav__signout" onClick={() => supabase.auth.signOut()}>Sign Out</button>}
+          {user === null && (
+            <a href="/signin" className="btn btn--primary nav__signin" onClick={() => setOpen(false)}>
+              Sign In <ArrowRight size={16} />
+            </a>
+          )}
         </nav>
 
         <div className="header__actions">
