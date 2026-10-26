@@ -3,6 +3,7 @@ import { MapPin, Mail, Clock, Phone, Send } from 'lucide-react'
 import { brand } from '../data.js'
 import { supabase } from '../supabase.js'
 import { messageFromForm } from '../contactMessage.js'
+import { TOO_OFTEN, isTooOften } from '../rateLimit.js'
 
 const details = [
   { icon: MapPin, label: 'Address', value: brand.address },
@@ -34,8 +35,8 @@ export default function Contact({ user }) {
         if (!supabase) throw new Error('Supabase is not configured')
         const { error } = await supabase.from('contact_messages').insert(result.row)
         if (error) throw error
-      } catch {
-        return setStatus({ error: sendFailed })
+      } catch (error) {
+        return setStatus({ error: isTooOften(error) ? TOO_OFTEN : sendFailed })
       }
     }
     form.reset()

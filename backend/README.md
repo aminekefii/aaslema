@@ -46,6 +46,7 @@ afterwards (they replace its review and moment lists).
 | 23 | `023_post_photos_tags.sql` | up to 3 photos and 5 hashtags per post; the `post-photos` bucket |
 | 24 | `024_admin_reported_posts.sql` | admins open and delete reported posts from Post reports |
 | 25 | `025_delete_my_moments.sql` | users delete their own moments from My moments |
+| 26 | `026_rate_limits.sql` | hourly limits on contact messages, posts, comments, reports and moments |
 
 Each file starts with a comment saying what it does and which files must run before it.
 `frontend/src/communitySql.test.js` checks the key permissions in these files (who can read and
@@ -95,3 +96,14 @@ Optional, only if needed:
   steps are under "Continue with Google" in `CHECKPOINT.md`.
 
 When a new SQL file is added later, run only that file, before deploying the code that uses it.
+
+## Security in the Docker image
+
+`frontend/security-headers.conf` adds security headers to every page nginx serves, including a
+Content-Security-Policy that only allows scripts from the site itself and data from
+`*.supabase.co`. If the Supabase project uses a custom domain, add it to `img-src` and
+`connect-src` there. On another host (Netlify, Vercel, Apache…), copy the same headers into
+that host's settings.
+
+The hourly limits in `026_rate_limits.sql` are arguments on each trigger (`'10'` posts, `'30'`
+comments, …); edit them and run the file again to change them.

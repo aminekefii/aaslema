@@ -2,6 +2,7 @@ import { supabase } from './supabase.js'
 import { IncompletePhotoError, incompletePhotoMessage, resizeToJpeg } from './imageResize.js'
 import { avatarUrl } from './profileApi.js'
 import { momentPath } from './moments.js'
+import { TOO_OFTEN, isTooOften } from './rateLimit.js'
 
 // Destination moments in Supabase. None of these throw: pages get a plain value back.
 
@@ -109,7 +110,7 @@ export async function uploadMoment(file, row, userId) {
     if (error) {
       // No moment points at the photo, so remove it (uploaders may delete unused photos)
       await supabase.storage.from(BUCKET).remove([path]).catch(() => {})
-      return { error: uploadFailed }
+      return { error: isTooOften(error) ? TOO_OFTEN : uploadFailed }
     }
     return { ok: true }
   } catch {

@@ -15,7 +15,8 @@ async function openPhoto(file) {
     return await createImageBitmap(file)
   } catch (error) {
     if (!heic) throw error
-    const { heicTo } = await import('heic-to')
+    // The csp build works under the site's Content-Security-Policy (no eval)
+    const { heicTo } = await import('heic-to/csp')
     return heicTo({ blob: file, type: 'bitmap' })
   }
 }

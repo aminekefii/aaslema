@@ -50,7 +50,7 @@ frontend/              React site
   public/images/       photos, logo, header backgrounds
   CREDITS.md           photo credits and licences
 backend/
-  supabase/            numbered SQL files (001–025), run in order
+  supabase/            numbered SQL files (001–026), run in order
   README.md            what each SQL file does
 docs/superpowers/      design specs and implementation plans
 netlify.toml           Netlify build and routing

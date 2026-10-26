@@ -151,3 +151,19 @@ describe('024_admin_reported_posts.sql', () => {
     expect(admin).toMatch(/using \(bucket_id = 'post-photos' and public\.is_admin\(\)\)/)
   })
 })
+
+describe('026_rate_limits.sql', () => {
+  const limits = readFileSync(new URL('../../backend/supabase/026_rate_limits.sql', import.meta.url), 'utf8')
+
+  it('limits every table people can flood, with the code the site recognises', () => {
+    for (const table of ['community_posts', 'community_post_comments', 'post_reports', 'moments', 'contact_messages']) {
+      expect(limits).toMatch(new RegExp(`before insert on public\.${table}\n`))
+    }
+    expect(limits.match(/errcode = 'P0429'/g)).toHaveLength(2)
+  })
+
+  it('keeps the limit functions out of the API', () => {
+    expect(limits).toMatch(/revoke all on function public\.enforce_hourly_limit\(\) from public, anon, authenticated;/)
+    expect(limits).toMatch(/revoke all on function public\.enforce_contact_limit\(\) from public, anon, authenticated;/)
+  })
+})

@@ -1,6 +1,7 @@
 import { supabase } from './supabase.js'
 import { avatarUrl } from './profileApi.js'
 import { IncompletePhotoError, incompletePhotoMessage, resizeToJpeg } from './imageResize.js'
+import { TOO_OFTEN, isTooOften } from './rateLimit.js'
 
 // Community posts and likes in Supabase (014_community_posts.sql). None of these throw: pages get a plain value back.
 
@@ -71,6 +72,7 @@ export async function createPost(row, { userId, files = [] } = {}) {
       ;({ error } = await supabase.from('community_posts').insert(plain))
     }
     if (error) await removePostPhotos(upload.paths)
+    if (isTooOften(error)) return { error: TOO_OFTEN }
     return error ? { error: saveFailed } : { ok: true }
   } catch {
     await removePostPhotos(upload.paths)
@@ -161,6 +163,7 @@ export async function createComment(postId, row) {
   if (!supabase) return { error: commentFailed }
   try {
     const { error } = await supabase.from('community_post_comments').insert({ post_id: postId, ...row })
+    if (isTooOften(error)) return { error: TOO_OFTEN }
     return error ? { error: commentFailed } : { ok: true }
   } catch {
     return { error: commentFailed }
@@ -186,6 +189,7 @@ export async function reportPost(postId, row) {
   try {
     const { error } = await supabase.from('post_reports').insert({ post_id: postId, reason: row.reason })
     if (!error) return { ok: true }
+    if (isTooOften(error)) return { error: TOO_OFTEN }
     return { error: error.code === '23505' ? 'You already reported this post.' : reportFailed }
   } catch {
     return { error: reportFailed }
