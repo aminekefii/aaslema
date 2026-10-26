@@ -132,3 +132,14 @@ describe('023_post_photos_tags.sql', () => {
     expect(photos).toMatch(/revoke all on function public\.my_posts\(\) from public, anon;/)
   })
 })
+
+describe('024_admin_reported_posts.sql', () => {
+  const admin = readFileSync(new URL('../../backend/supabase/024_admin_reported_posts.sql', import.meta.url), 'utf8')
+
+  it('lets only admins see and delete reported posts', () => {
+    expect(admin.match(/if not public\.is_admin\(\) then/g)).toHaveLength(2)
+    expect(admin).toMatch(/revoke all on function public\.admin_reported_post\(uuid\) from public, anon;/)
+    expect(admin).toMatch(/revoke all on function public\.admin_delete_post\(uuid\) from public, anon;/)
+    expect(admin).toMatch(/using \(bucket_id = 'post-photos' and public\.is_admin\(\)\)/)
+  })
+})

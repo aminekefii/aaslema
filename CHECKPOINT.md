@@ -6,20 +6,20 @@ Last updated: 2026-10-20 (Netlify config added)
 
 - Profile dashboard, author photos, the Rate your trip move, My moments, Visited destinations, My plan and the AI Planner
   move, the festivals sign-in note, festivals in the plan, community posts (publish, edit, delete, like on
-  `/app/community`), My posts (`/app/profile/posts`), post reports (admin page `/admin/reports`, read only) and the
+  `/app/community`), My posts (`/app/profile/posts`), post reports (admin page `/admin/reports`; See post and Delete post not committed yet, need `024`) and the
   Feed at `/app` (newest moments and posts, view only) are merged into `main` and pushed to `origin/main` (`bd2aae7`).
 - Only other branch: `google-sign-in` (not merged, see below).
 - Frontend tests: 16 files, 288 tests, all passing (`npx vitest run` in `frontend/`).
 - Supabase SQL lives in `backend/supabase/` (`001`–`023`). Each file is run
   by hand in the Supabase SQL editor; check that `004_city_likes_visits.sql`,
   `005_city_visit_counts.sql`, `006_reviews.sql`, `007_moments.sql`,
-  `008_moment_likes.sql`, `009_profiles.sql`, `010_author_photos.sql`, `011_my_moments.sql`, `012_city_plans.sql`, `013_festival_plans.sql`, `014_community_posts.sql`, `015_my_posts.sql`, `016_post_reports.sql`, `017_feed_moments.sql`, `018_public_community_feed.sql`, `019_post_comments.sql`, `020_feed_moment_likes.sql`, `021_profile_card.sql`, `022_public_card.sql` and `023_post_photos_tags.sql` have been
+  `008_moment_likes.sql`, `009_profiles.sql`, `010_author_photos.sql`, `011_my_moments.sql`, `012_city_plans.sql`, `013_festival_plans.sql`, `014_community_posts.sql`, `015_my_posts.sql`, `016_post_reports.sql`, `017_feed_moments.sql`, `018_public_community_feed.sql`, `019_post_comments.sql`, `020_feed_moment_likes.sql`, `021_profile_card.sql`, `022_public_card.sql`, `023_post_photos_tags.sql` and `024_admin_reported_posts.sql` have been
   applied before testing likes, visits, the Most Visited section, Rate Your Trip reviews, destination moments, moment
   likes, the profile page, author photos, My moments, My plan (destinations and festivals), community posts, My posts, post reports, the Feed, the public community page, post comments, likes on the Feed, the public profile card, seeing other users' cards and post photos and hashtags.
 
 ## Waiting on you
 
-- In the Supabase SQL Editor run, in order: `006`–`008` if not done yet, then `009_profiles.sql`, then `010_author_photos.sql`, then `011_my_moments.sql`, then `012_city_plans.sql`, then `013_festival_plans.sql`, then `014_community_posts.sql`, then `015_my_posts.sql`, then `016_post_reports.sql`, then `017_feed_moments.sql`, then `018_public_community_feed.sql`, then `019_post_comments.sql`, then `020_feed_moment_likes.sql`, then `021_profile_card.sql`, then `022_public_card.sql`, then `023_post_photos_tags.sql`.
+- In the Supabase SQL Editor run, in order: `006`–`008` if not done yet, then `009_profiles.sql`, then `010_author_photos.sql`, then `011_my_moments.sql`, then `012_city_plans.sql`, then `013_festival_plans.sql`, then `014_community_posts.sql`, then `015_my_posts.sql`, then `016_post_reports.sql`, then `017_feed_moments.sql`, then `018_public_community_feed.sql`, then `019_post_comments.sql`, then `020_feed_moment_likes.sql`, then `021_profile_card.sql`, then `022_public_card.sql`, then `023_post_photos_tags.sql`, then `024_admin_reported_posts.sql` (admin See post / Delete post on Post reports).
   If you ever re-run `006` or `008` later, run `010` again afterwards (they replace its review and moment lists).
 - Supabase Auth → URL Configuration: add `<site>/app/profile/edit` (and the localhost one) to Redirect URLs, so email-change links come back to Edit profile (not needed if a `/**` wildcard covers it).
 - Continue with Google (to do later). The code is ready on branch `google-sign-in` (`372cc21`, not merged; `main`

@@ -202,3 +202,31 @@ export async function fetchPostReports() {
     return { error: { message: e.message } }
   }
 }
+
+// Admins: one reported post with photo links (024_admin_reported_posts.sql); { post: null } if it's gone
+export async function fetchReportedPost(postId) {
+  if (!supabase) return { error: {} }
+  try {
+    const { data, error } = await supabase.rpc('admin_reported_post', { p_post_id: postId })
+    if (error) return { error }
+    return { post: data?.[0] ? withMedia(data[0]) : null }
+  } catch (e) {
+    return { error: { message: e.message } }
+  }
+}
+
+const adminDeleteFailed = "Couldn't delete this post. Please try again."
+
+// Admins: delete any post and its photos; its reports, likes and comments go with it
+export async function adminDeletePost(postId) {
+  if (!supabase) return { error: adminDeleteFailed }
+  try {
+    const { data, error } = await supabase.rpc('admin_delete_post', { p_post_id: postId })
+    // null means the post was already gone, which is a failure too
+    if (error || !data) return { error: adminDeleteFailed }
+    await removePostPhotos(data)
+    return { ok: true }
+  } catch {
+    return { error: adminDeleteFailed }
+  }
+}
